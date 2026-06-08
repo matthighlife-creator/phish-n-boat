@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DanFinder — Horn Island (Live)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=Bebas+Neue&display=swap');
+  :root {
+    --red:#D0021B;--dark:#0f1923;--darker:#080e14;--panel:#141f2b;--panel2:#1a2a38;
+    --border:#1e2f3f;--blue:#1a8cb8;--blue-light:#2ab5e8;--text:#c8dae8;--muted:#6a8fa8;
+    --white:#f0f8ff;--green:#2ecc71;--green-dark:#1a7a42;--orange:#e67e22;--yellow:#f1c40f;
+    --matt-bg:#0d1a12;--matt-panel:#122018;--matt-panel2:#1a2e22;--matt-border:#1f3828;
+    --matt-green:#2ecc71;--matt-gold:#d4a017;--matt-teal:#1abc9c;--matt-text:#c8dfc8;--matt-muted:#5a8a6a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;}
+  .app-switcher{display:flex;background:#050c12;border-bottom:2px solid #1a2f40;position:sticky;top:0;z-index:200;}
+  .app-btn{flex:1;padding:10px 8px;text-align:center;cursor:pointer;transition:all .25s;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:3px solid transparent;color:#3a5a70;}
+  .app-btn.active-dan{color:#fff;border-bottom-color:var(--red);background:rgba(208,2,27,.08);}
+  .app-btn.active-matt{color:var(--matt-green);border-bottom-color:var(--matt-green);background:rgba(46,204,113,.06);}
+  .app-btn .btn-icon{font-size:18px;display:block;margin-bottom:1px;}
+  .app-btn .btn-label{font-size:11px;}
+  #matt-app{display:none;}
+  .topnav{background:var(--red);padding:0 16px;height:48px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-icon{width:28px;height:28px;}
+  .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#fff;}
+  .logo-text span{font-weight:400;opacity:.85;}
+  .dan-tag{background:rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;}
+  .location-banner{background:var(--dark);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
+  .location-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+  .location-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .go-fish-badge{background:var(--green);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+  .loc-toggle{display:flex;gap:8px;padding:8px 16px;background:var(--dark);border-bottom:1px solid var(--border);}
+  .loc-btn{flex:1;text-align:center;padding:8px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s;}
+  .loc-btn.active{background:rgba(42,181,232,.15);border-color:var(--blue-light);color:var(--blue-light);}
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#2ecc71;margin-right:5px;animation:blink 1.6s ease-in-out infinite;vertical-align:middle;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .summary-strip{background:var(--panel);border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);}
+  .strip-item{padding:12px 14px;border-right:1px solid var(--border);text-align:center;}
+  .strip-item:last-child{border-right:none;}
+  .strip-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
+  .strip-value{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--white);line-height:1;}
+  .strip-unit{font-size:11px;color:var(--muted);margin-top:2px;}
+  .dan-tabs{display:flex;background:var(--dark);border-bottom:1px solid var(--border);}
+  .dan-tab{flex:1;padding:11px 8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;}
+  .dan-tab.active{color:var(--white);border-bottom-color:var(--blue-light);}
+  .dan-tab-content{display:none;}
+  .dan-tab-content.active{display:block;}
+  .forecast-table{width:100%;border-collapse:collapse;}
+  .forecast-table th{background:var(--dark);color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
+  .forecast-table td{padding:9px 10px;text-align:center;border-bottom:1px solid rgba(30,47,63,.6);border-right:1px solid rgba(30,47,63,.4);font-size:13px;}
+  .forecast-table tr:last-child td{border-bottom:none;}
+  .forecast-table tr:nth-child(even) td{background:rgba(20,31,43,.4);}
+  .time-cell{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--white);text-align:left!important;padding-left:14px!important;}
+  .wind-speed-cell{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
+  .tip-card{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--blue-light);border-radius:4px;padding:14px 16px;margin:10px;}
+  .tip-card.good{border-left-color:var(--green);}
+  .tip-card.warn{border-left-color:var(--orange);}
+  .tip-card.info{border-left-color:var(--blue-light);}
+  .tip-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .tip-icon{font-size:18px;}
+  .tip-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
+  .tip-body{font-size:13px;color:var(--text);line-height:1.5;}
+  .tip-body strong{color:var(--white);}
+  .temp-section{margin:10px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px 16px;}
+  .temp-header{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
+  .temp-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .temp-big{font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:700;color:var(--orange);line-height:1;}
+  .temp-deg{font-size:24px;color:var(--muted);}
+  .temp-gauge{flex:1;height:10px;background:var(--dark);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
+  .temp-fill{height:100%;width:75%;background:linear-gradient(to right,#1a8cb8,#e67e22);border-radius:5px;}
+  .species-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px;}
+  .species-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
+  .species-emoji{font-size:22px;}
+  .species-info{flex:1;}
+  .species-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
+  .species-status{font-size:11px;margin-top:2px;}
+  .hot{color:var(--green);}.warm{color:var(--yellow);}.slow{color:var(--muted);}
+  .dan-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:12px 14px 4px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .tide-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(30,47,63,.5);}
+  .tide-time{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--white);font-weight:600;}
+  .tide-type{font-size:12px;color:var(--muted);text-transform:uppercase;}
+  .tide-height{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--blue-light);font-weight:600;}
+  .loading{padding:20px 14px;text-align:center;color:var(--muted);font-size:13px;}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--blue-light);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .data-source{font-size:10px;color:var(--muted);padding:8px 14px 14px;text-align:center;line-height:1.5;}
+  .data-source strong{color:var(--blue-light);}
+  .matts-tips-btn{display:flex;align-items:center;gap:12px;margin:10px;padding:14px 16px;background:linear-gradient(135deg,#0d1a12,#122018);border:1px solid var(--matt-border);border-left:4px solid var(--matt-green);border-radius:4px;cursor:pointer;transition:all .2s;}
+  .matts-tips-btn:hover{border-color:var(--matt-green);background:rgba(46,204,113,.08);}
+  .matts-tips-icon{font-size:28px;}
+  .matts-tips-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--matt-green);}
+  .matts-tips-sub{font-size:12px;color:var(--matt-muted);margin-top:2px;}
+  .matts-tips-arrow{margin-left:auto;font-size:20px;color:var(--matt-green);}
+  /* MATT APP */
+  #matt-app{background:var(--matt-bg);min-height:100vh;}
+  .matt-header{background:linear-gradient(135deg,#0a1a0d,#122018,#0f2a18);border-bottom:2px solid #1a7a42;padding:14px 16px 10px;}
+  .matt-guide-label{font-size:10px;color:var(--matt-green);text-transform:uppercase;letter-spacing:2px;font-weight:600;}
+  .matt-guide-title{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#f0fff4;line-height:1;}
+  .matt-guide-subtitle{font-size:12px;color:var(--matt-muted);margin-top:3px;font-style:italic;}
+  .matt-header-top{display:flex;align-items:flex-start;justify-content:space-between;}
+  .matt-badges{display:flex;flex-direction:column;gap:6px;}
+  .matt-flir-badge{background:rgba(46,204,113,.12);border:1px solid #1a7a42;border-radius:6px;padding:6px 10px;text-align:center;}
+  .matt-flir-badge .icon{font-size:20px;}
+  .matt-flir-badge .label{font-size:9px;color:var(--matt-green);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+  .matt-tabs{display:flex;background:var(--matt-panel);border-bottom:1px solid var(--matt-border);overflow-x:auto;}
+  .matt-tab{flex:1;min-width:70px;padding:10px 6px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:var(--matt-muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;white-space:nowrap;}
+  .matt-tab.active{color:var(--matt-green);border-bottom-color:var(--matt-green);background:rgba(46,204,113,.05);}
+  .matt-tab-content{display:none;}
+  .matt-tab-content.active{display:block;}
+  .m-section-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--matt-muted);text-transform:uppercase;letter-spacing:1.2px;padding:12px 14px 6px;border-bottom:1px solid var(--matt-border);}
+  .m-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-radius:4px;margin:10px;overflow:hidden;}
+  .m-card-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--matt-border);background:var(--matt-panel2);}
+  .m-card-icon{font-size:20px;}
+  .m-card-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#f0fff4;}
+  .m-card-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;}
+  .mbadge-green{background:rgba(46,204,113,.2);color:var(--matt-green);border:1px solid #1a7a42;}
+  .mbadge-gold{background:rgba(212,160,23,.2);color:var(--matt-gold);border:1px solid rgba(212,160,23,.4);}
+  .mbadge-blue{background:rgba(41,128,185,.2);color:#5dade2;border:1px solid rgba(41,128,185,.4);}
+  .m-card-body{padding:12px 14px;line-height:1.6;color:var(--matt-text);}
+  .m-card-body strong{color:#f0fff4;}
+  .m-card-body em{color:var(--matt-teal);font-style:normal;}
+  .m-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px;}
+  .m-tool-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-radius:4px;padding:12px;}
+  .m-tool-label{font-size:9px;color:var(--matt-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-weight:600;}
+  .m-tool-value{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;color:#f0fff4;}
+  .m-tool-unit{font-size:14px;color:var(--matt-muted);}
+  .m-tool-status{font-size:12px;margin-top:5px;font-weight:600;}
+  .m-range-bar-wrap{margin:10px 14px;}
+  .m-range-label-row{display:flex;justify-content:space-between;font-size:10px;color:var(--matt-muted);margin-bottom:4px;}
+  .m-range-bar{height:8px;border-radius:4px;background:linear-gradient(to right,#2980b9,#2ecc71,#d4a017,#e07b2a,#c0392b);position:relative;}
+  .m-range-marker{position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--matt-bg);transform:translateX(-50%);box-shadow:0 0 6px rgba(255,255,255,.5);transition:left .6s ease;}
+  .m-sal-table{width:100%;border-collapse:collapse;}
+  .m-sal-table th{background:var(--matt-panel2);color:var(--matt-muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:7px 12px;text-align:left;border-bottom:1px solid var(--matt-border);}
+  .m-sal-table td{padding:9px 12px;border-bottom:1px solid rgba(31,56,40,.5);font-size:13px;color:var(--matt-text);vertical-align:top;}
+  .m-sal-table tr:last-child td{border-bottom:none;}
+  .m-sal-table tr:nth-child(even) td{background:rgba(18,32,24,.4);}
+  .ppt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;}
+  .m-species-item{border-bottom:1px solid var(--matt-border);padding:12px 14px;}
+  .m-species-item:last-child{border-bottom:none;}
+  .m-species-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .m-species-emoji{font-size:22px;}
+  .m-species-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#f0fff4;}
+  .m-species-hot{margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;}
+  .m-species-detail{font-size:12px;color:var(--matt-text);line-height:1.5;}
+  .m-species-detail strong{color:#f0fff4;}
+  .m-species-detail em{color:var(--matt-teal);font-style:normal;}
+  .m-rig-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-left:4px solid var(--matt-gold);border-radius:4px;margin:10px;padding:12px 14px;}
+  .m-rig-card.blue-left{border-left-color:var(--matt-teal);}
+  .m-rig-card.green-left{border-left-color:var(--matt-green);}
+  .m-rig-card.orange-left{border-left-color:#e07b2a;}
+  .m-rig-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#f0fff4;margin-bottom:5px;}
+  .m-rig-body{font-size:13px;line-height:1.6;color:var(--matt-text);}
+  .m-rig-body strong{color:#f0fff4;}
+  .m-highlight-box{background:rgba(46,204,113,.07);border:1px solid #1a7a42;border-radius:4px;padding:10px 13px;margin:10px;font-size:13px;line-height:1.6;color:var(--matt-text);}
+  .m-hb-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--matt-green);margin-bottom:4px;}
+  .back-to-dan{display:flex;align-items:center;gap:10px;margin:10px;padding:12px 16px;background:rgba(208,2,27,.08);border:1px solid rgba(208,2,27,.25);border-radius:4px;cursor:pointer;}
+  .back-to-dan:hover{background:rgba(208,2,27,.15);}
+  .back-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:#e88;font-weight:700;}
+  .back-sub{font-size:11px;color:var(--matt-muted);}
+  .bottom-pad{height:24px;}
+</style>
+</head>
+<body>
+
+<div class="app-switcher">
+  <div class="app-btn active-dan" id="switcher-dan" onclick="showApp('dan')"><span class="btn-icon">🎣</span><span class="btn-label">DanFinder</span></div>
+  <div class="app-btn" id="switcher-matt" onclick="showApp('matt')"><span class="btn-icon">🔬</span><span class="btn-label">Matt's Guide</span></div>
+</div>
+
+<!-- DAN APP -->
+<div id="dan-app">
+  <div class="topnav">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M14 4 L17 13 L26 13 L19 18 L22 27 L14 22 L6 27 L9 18 L2 13 L11 13 Z" fill="white" opacity="0.9"/></svg>
+      <div class="logo-text">Dan<span>Finder</span></div>
+    </div>
+    <div class="dan-tag">DAN BRYAN</div>
+  </div>
+  <div class="location-banner">
+    <div>
+      <div class="location-name" id="loc-name">📍 Horn Island, MS</div>
+      <div class="location-sub" id="loc-sub">Home base: 800 Roys Rd, Gautier · ~18 mi · est. 45 min run</div>
+    </div>
+    <div class="go-fish-badge"><span class="live-dot"></span>LIVE</div>
+  </div>
+  <div class="loc-toggle">
+    <div class="loc-btn active" id="loc-home" onclick="setHome()">🏠 Dan's Spot</div>
+    <div class="loc-btn" id="loc-near" onclick="setNearMe()">🌊 Salt / Near Me</div>
+    <div class="loc-btn" id="loc-fresh" onclick="setFreshwater()">🏞️ Freshwater</div>
+  </div>
+  <div class="summary-strip">
+    <div class="strip-item"><div class="strip-label">Wind</div><div class="strip-value" id="s-wind" style="color:#2ab5e8;">—</div><div class="strip-unit" id="s-wind-dir">loading</div></div>
+    <div class="strip-item"><div class="strip-label">Gusts</div><div class="strip-value" id="s-gust" style="color:#e67e22;">—</div><div class="strip-unit">knots</div></div>
+    <div class="strip-item"><div class="strip-label">Water</div><div class="strip-value" id="s-water" style="color:#e67e22;">—</div><div class="strip-unit">Fahrenheit</div></div>
+    <div class="strip-item"><div class="strip-label">Tide</div><div class="strip-value" id="s-tide" style="color:#2ab5e8;">—</div><div class="strip-unit" id="s-tide-dir">loading</div></div>
+  </div>
+  <div class="dan-tabs">
+    <div class="dan-tab active" onclick="danTab('wind')">💨 Wind</div>
+    <div class="dan-tab" onclick="danTab('fishing')">🎣 Fishing</div>
+    <div class="dan-tab" onclick="danTab('tides')">🌊 Tides</div>
+  </div>
+
+  <div id="dan-wind" class="dan-tab-content active">
+    <div class="dan-section-title"><span>LIVE WIND · PASCAGOULA NOAA</span><span id="wind-updated" style="color:var(--blue-light);font-size:11px;"></span></div>
+    <div id="wind-content"><div class="loading"><span class="spinner"></span>Pulling live wind from NOAA…</div></div>
+    <div class="dan-section-title" style="margin-top:4px;">MATT'S FIELD GUIDE</div>
+    <div class="matts-tips-btn" onclick="showApp('matt')"><div class="matts-tips-icon">🔬</div><div><div class="matts-tips-title">Matt's Horn Island Playbook</div><div class="matts-tips-sub">FLIR thermal · Salinity guide · Rigs · Species · Regs</div></div><div class="matts-tips-arrow">›</div></div>
+    <div class="data-source">Wind data from <strong id="wind-src-station">NOAA CO-OPS Station 8741533</strong> (live met sensor). Refreshes automatically.</div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="dan-fishing" class="dan-tab-content">
+    <div class="temp-section">
+      <div class="temp-header">🌡 Live Water Temperature · Pascagoula NOAA</div>
+      <div class="temp-row">
+        <div class="temp-big" id="water-big">—<span class="temp-deg">°F</span></div>
+        <div style="flex:1;"><div class="temp-gauge"><div class="temp-fill" id="water-fill"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between;"><span>60°</span><span>Ideal</span><span>90°</span></div></div>
+      </div>
+      <div id="water-tip" style="font-size:13px;color:var(--text);line-height:1.5;margin-top:6px;">Loading live water temperature…</div>
+    </div>
+    <div class="dan-section-title">WHAT'S BITING RIGHT NOW</div>
+    <div class="species-grid" id="species-grid"></div>
+    <div class="dan-section-title" style="margin-top:4px;">DAN'S FISHING TIPS</div>
+    <div id="dan-fishing-tips"></div>
+    <div class="dan-section-title" style="margin-top:4px;">MATT'S FIELD GUIDE</div>
+    <div class="matts-tips-btn" onclick="showApp('matt')"><div class="matts-tips-icon">🔬</div><div><div class="matts-tips-title">Matt's Horn Island Playbook</div><div class="matts-tips-sub">FLIR thermal readings · Salinity chart · Full rig guide</div></div><div class="matts-tips-arrow">›</div></div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="dan-tides" class="dan-tab-content">
+    <div class="dan-section-title"><span>LIVE TIDES · HORN ISLAND NOAA</span><span id="tide-updated" style="color:var(--blue-light);font-size:11px;"></span></div>
+    <div id="tide-content"><div class="loading"><span class="spinner"></span>Pulling today's tides from NOAA…</div></div>
+    <div class="dan-section-title" style="margin-top:4px;">BEST FISHING WINDOWS</div>
+    <div class="tip-card info"><div class="tip-header"><span class="tip-icon">🕐</span><span class="tip-title">Fish the Moving Water</span></div><div class="tip-body">Best bite is <strong>1–2 hours before and after a tide change.</strong> Incoming tide pushes bait onto the east end flats — that's where reds and specks stack up.</div></div>
+    <div class="tip-card good"><div class="tip-header"><span class="tip-icon">🌅</span><span class="tip-title" id="best-window">Top Window: calculating…</span></div><div class="tip-body">Incoming tide + low light + calm wind = <strong>prime time.</strong> Popping cork and live shrimp over the east end grass flats.</div></div>
+    <div class="data-source">Tide predictions from <strong id="tide-src-station">NOAA CO-OPS Station 8742221</strong> (official MLLW datum).</div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<!-- MATT APP -->
+<div id="matt-app">
+  <div class="matt-header">
+    <div class="matt-header-top">
+      <div><div class="matt-guide-label">🎣 Personal Field Guide</div><div class="matt-guide-title">Matt's Horn Island<br>Fishing Playbook</div><div class="matt-guide-subtitle">Gautier, MS · Mississippi Sound · Gulf Coast</div></div>
+      <div class="matt-badges"><div class="matt-flir-badge"><div class="icon">🌡️</div><div class="label">FLIR Thermal</div></div><div class="matt-flir-badge"><div class="icon">🧪</div><div class="label">Salinity</div></div></div>
+    </div>
+  </div>
+  <div class="matt-tabs">
+    <div class="matt-tab active" onclick="mattTab('tools')">🔬 My Tools</div>
+    <div class="matt-tab" onclick="mattTab('species')">🐟 Species</div>
+    <div class="matt-tab" onclick="mattTab('rigs')">🪝 Rigs</div>
+    <div class="matt-tab" onclick="mattTab('spots')">📍 Spots</div>
+    <div class="matt-tab" onclick="mattTab('rules')">📋 Rules</div>
+  </div>
+
+  <div id="matt-tools" class="matt-tab-content active">
+    <div class="m-highlight-box"><div class="m-hb-title">🌡️ Why FLIR + Hydrometer = Unfair Advantage</div>Most fishermen guess at conditions. You'll <strong>measure them.</strong> Water temp tells you where the fish are. Salinity tells you <em>which</em> fish are there and how active. Read a flat in 60 seconds.</div>
+    <div class="m-section-title">🌡️ FLIR THERMAL — vs LIVE NOAA WATER TEMP</div>
+    <div class="m-tool-grid">
+      <div class="m-tool-card"><div class="m-tool-label">Live NOAA Water</div><div class="m-tool-value" id="m-water">—<span class="m-tool-unit">°F</span></div><div class="m-tool-status" id="m-water-status" style="color:#e07b2a;">loading…</div></div>
+      <div class="m-tool-card"><div class="m-tool-label">Ideal Speck Temp</div><div class="m-tool-value">68<span class="m-tool-unit">-76°</span></div><div class="m-tool-status" style="color:var(--matt-green);">✓ Target zone</div></div>
+    </div>
+    <div class="m-range-bar-wrap">
+      <div class="m-range-label-row"><span>55° Cold</span><span>68–76° Speck Zone</span><span>90°+ Dead</span></div>
+      <div class="m-range-bar"><div class="m-range-marker" id="m-temp-marker" style="left:73%;"></div></div>
+      <div class="m-range-label-row" style="margin-top:4px;"><span>55°</span><span>65°</span><span>75°</span><span>85°</span><span>95°</span></div>
+    </div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">📸</span><span class="m-card-title">How to Use the FLIR Here</span></div><div class="m-card-body">Scan slowly for <strong>temperature breaks</strong> — edges where warm meets cool. Fish stack on those lines.<br><br><strong>Best targets:</strong><br>• <em>Channel edges</em> — deeper water stays cooler, fish the drop<br>• <em>Grass flat margins</em> — shaded patches run 2–4° cooler<br>• <em>Inlet mouths</em> — tidal water often a different temp<br>• <em>Shaded cuts</em> — north side of Horn Island in summer<br><br><strong>Rule:</strong> The live NOAA reading above is your baseline. Your FLIR finds the cooler pockets within it — that's where the fish are.</div></div>
+    <div class="m-section-title" style="margin-top:6px;">🧪 HYDROMETER — SALINITY FOR TROUT</div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🧪</span><span class="m-card-title">Salinity & What It Means</span><span class="m-card-badge mbadge-blue">PPT Scale</span></div><div class="m-card-body" style="padding:0;"><table class="m-sal-table"><thead><tr><th>Salinity (PPT)</th><th>Conditions</th><th>Speck Bite?</th></tr></thead><tbody>
+      <tr><td><span class="ppt" style="color:#5dade2;">0–5</span></td><td>Fresh — rain runoff</td><td style="color:#c0392b;">❌ Avoid — specks gone</td></tr>
+      <tr><td><span class="ppt" style="color:#2ecc71;">5–15</span></td><td>Low / brackish</td><td style="color:#d4a017;">⚡ Fair — find higher spots</td></tr>
+      <tr><td><span class="ppt" style="color:#2ecc71;">15–25</span></td><td>Ideal inshore mix</td><td style="color:var(--matt-green);">✅ Prime speck zone</td></tr>
+      <tr><td><span class="ppt" style="color:#d4a017;">25–32</span></td><td>High / Gulf influence</td><td style="color:#d4a017;">⚡ Good for reds</td></tr>
+      <tr><td><span class="ppt" style="color:#e07b2a;">32+</span></td><td>Full ocean</td><td style="color:#e07b2a;">🐠 Mackerel / cobia</td></tr>
+    </tbody></table></div></div>
+    <div class="m-highlight-box" style="margin-top:4px;"><div class="m-hb-title">💡 After Heavy Rain — Critical Rule</div>Pascagoula River dumps freshwater into the Sound after rain — salinity near the river mouth can crash to near-zero. <strong>Always check before committing.</strong> Under 10 PPT? Run east toward Horn Island. Specks return in 2–3 days once it stabilizes.</div>
+    <div class="back-to-dan" onclick="showApp('dan')"><span style="font-size:22px;">🎣</span><div><div class="back-label">← Back to DanFinder</div><div class="back-sub">Live wind · tides · Dan's tips</div></div></div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="matt-species" class="matt-tab-content">
+    <div class="m-section-title">HORN ISLAND · SPECIES & HOW TO READ THEM</div>
+    <div class="m-card"><div style="padding:0;">
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Speckled Trout</span><span class="m-species-hot" style="color:var(--matt-green);">● HOT</span></div><div class="m-species-detail"><strong>FLIR target:</strong> 68–76°F. Above 80°, push to channel drop-offs.<br><strong>Salinity:</strong> 15–25 PPT.<br><strong>Best:</strong> First 90 min of daylight, again at last light.<br><em>Bait: Live shrimp under popping cork, 1/4 oz gold spoon, Gulp! on jig head.</em></div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐠</span><span class="m-species-name">Redfish</span><span class="m-species-hot" style="color:var(--matt-green);">● HOT</span></div><div class="m-species-detail"><strong>FLIR trick:</strong> Reds tolerate 80–86°F — if specks went deep, switch to reds.<br><strong>East end surf</strong> at first light. Reds up to 40–50 lbs work the break.<br><em>Bait: Gold spoon, live blue crab chunk, large Gulp! on the bottom.</em></div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦈</span><span class="m-species-name">Flounder</span><span class="m-species-hot" style="color:#d4a017;">● ACTIVE</span></div><div class="m-species-detail"><strong>Ambush predators</strong> — you go to them. FLIR tip: scan sandy patches, sometimes show as a cooler outline.<br><em>Bait: Bucktail jig, curly tail, live finger mullet. Slow on the bottom.</em></div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐡</span><span class="m-species-name">Tripletail</span><span class="m-species-hot" style="color:#d4a017;">● SIGHT FISH</span></div><div class="m-species-detail"><strong>April–October.</strong> Every crab trap float and channel marker. Pitch a live shrimp 3–4 ft ahead, drift natural. Don't twitch.<br><em>Salinity: 20–30 PPT.</em></div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Spanish Mackerel</span><span class="m-species-hot" style="color:#d4a017;">● ACTIVE</span></div><div class="m-species-detail"><strong>Clear water + 25+ PPT</strong> = mackerel in. Watch for diving birds.<br><em>Bait: Small silver spoons, fast retrieve.</em></div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦀</span><span class="m-species-name">Cobia</span><span class="m-species-hot" style="color:#d4a017;">● APR–OCT</span></div><div class="m-species-detail">Up to 100 lbs. Chum near buoys and structure. Look for them near the surface.<br><em>Bait: Live eel, live croaker, heavy bucktail jig.</em></div></div>
+    </div></div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="matt-rigs" class="matt-tab-content">
+    <div class="m-section-title">PROVEN RIGS · HORN ISLAND</div>
+    <div class="m-rig-card"><div class="m-rig-name">🪝 #1 — Popping Cork (Speck & Red)</div><div class="m-rig-body"><strong>Setup:</strong> Popping cork → 18–24" fluoro leader → 1/8 oz jig head → live shrimp or Gulp!<br><strong>When:</strong> Incoming tide, grass flats, 2–4 ft. Pop every 3–4 sec — specks hit on the pause.<br><strong>FLIR first:</strong> Above 82°? Move to channel edge.</div></div>
+    <div class="m-rig-card blue-left"><div class="m-rig-name">🪝 #2 — Carolina Bottom Rig (Reds & Flounder)</div><div class="m-rig-body"><strong>Setup:</strong> 1 oz egg sinker → swivel → 18" 20lb fluoro → circle hook #3/0 → live shrimp or crab chunk<br><strong>When:</strong> Surf east end, channel bottom. Cast, let it sit. Don't yank — circle hook sets itself. Works all day.</div></div>
+    <div class="m-rig-card green-left"><div class="m-rig-name">🪝 #3 — Free-lined Shrimp (Tripletail)</div><div class="m-rig-body"><strong>Setup:</strong> No weight. 2/0 hook through horn of shrimp. 20lb mono.<br><strong>When:</strong> Sight fishing floats. Pitch 3–4 ft ahead. Let it sink natural. Do not twitch.<br><strong>Salinity:</strong> Only worth it at 20+ PPT.</div></div>
+    <div class="m-rig-card orange-left"><div class="m-rig-name">🪝 #4 — Gold Spoon (Surf Reds & Mackerel)</div><div class="m-rig-body"><strong>Setup:</strong> 1/2 oz Johnson Silver Minnow gold → 18" 25lb fluoro<br><strong>Reds:</strong> Cast parallel to beach, slow steady retrieve.<br><strong>Mackerel:</strong> Cast far, fast retrieve just under surface. Watch for birds.</div></div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="matt-spots" class="matt-tab-content">
+    <div class="m-section-title">KEY LOCATIONS · GAUTIER TO HORN ISLAND</div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🏠</span><span class="m-card-title">Dan's Dock → Horn Island</span><span class="m-card-badge mbadge-blue">~18 mi · 45 min</span></div><div class="m-card-body"><strong>800 Roys Rd, Gautier</strong> — Pascagoula River system, head south through Back Bay, cross Sound southeast.<br><br>⚠️ <strong>Check wind before leaving.</strong> SSE under 12 knots = comfortable. 15+ = rough. Head back by 11am if afternoon wind builds.</div></div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🐠</span><span class="m-card-title">East End — Horn Island Surf</span><span class="m-card-badge mbadge-green">Big Reds</span></div><div class="m-card-body">Prime surf spot. Wade the beach at first light. <strong>Redfish to 50 lbs</strong> work the break in summer.<br><br><strong>FLIR move:</strong> Scan the surf line for cooler pockets where deeper water surges in.<br><br>Also: pompano, sharks, large flounder, surface mackerel in clear water.</div></div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🌿</span><span class="m-card-title">North Side Flats — Sound Side</span><span class="m-card-badge mbadge-green">Speck Zone</span></div><div class="m-card-body">Grass flats on the Mississippi Sound side. <strong>Speck country.</strong><br><br><strong>Salinity check first</strong> — after rain, Pascagoula pushes freshwater in. Under 12 PPT? Move east or wait.<br><br>Popping cork + live shrimp, incoming tide, 2–3 ft over grass. Best: first 2 hours after sunup.</div></div>
+    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🔵</span><span class="m-card-title">Channel Edges — Midday Heat Move</span><span class="m-card-badge mbadge-gold">Summer</span></div><div class="m-card-body">When FLIR shows flats above 82°F, fish push to channel edges 3–5° cooler at depth. Carolina rig on the bottom. Reds and big specks both stack here when shallow water dies.</div></div>
+    <div class="bottom-pad"></div>
+  </div>
+
+  <div id="matt-rules" class="matt-tab-content">
+    <div class="m-section-title">MS SALTWATER REGS · QUICK REFERENCE</div>
+    <div class="m-card"><div style="padding:0;">
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Speckled Trout</span></div><div class="m-species-detail"><strong>Limit:</strong> 15 &nbsp;|&nbsp; <strong>Min:</strong> 12" &nbsp;|&nbsp; Max 2 over 15"/day</div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐠</span><span class="m-species-name">Redfish</span></div><div class="m-species-detail"><strong>Limit:</strong> 3 &nbsp;|&nbsp; <strong>Slot:</strong> 16"–23" &nbsp;|&nbsp; 1 over 23"/day</div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦈</span><span class="m-species-name">Flounder</span></div><div class="m-species-detail"><strong>Limit:</strong> 10 &nbsp;|&nbsp; <strong>Min:</strong> 12" &nbsp;|&nbsp; Check season — closures occur</div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Cobia</span></div><div class="m-species-detail"><strong>Limit:</strong> 2 &nbsp;|&nbsp; <strong>Min:</strong> 33"</div></div>
+      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐡</span><span class="m-species-name">Spanish Mackerel</span></div><div class="m-species-detail"><strong>Limit:</strong> 15 &nbsp;|&nbsp; <strong>Min:</strong> 12"</div></div>
+    </div></div>
+    <div class="m-highlight-box"><div class="m-hb-title">⚠️ Always Verify Before You Go</div>Confirm current limits at <strong>mdmr.ms.gov</strong>. Flounder has seen seasonal closures. License required — mdmr.ms.gov or any local Walmart / Bass Pro.</div>
+    <div class="bottom-pad"></div>
+  </div>
+</div>
+
+<script>
+/* ====== NOAA LIVE DATA ====== */
+const HORN = {
+  tide:"8742221", met:"8741533",
+  name:"📍 Horn Island, MS",
+  sub:"Home base: 800 Roys Rd, Gautier · ~18 mi · est. 45 min run",
+  metLabel:"Pascagoula NOAA", tideLabel:"Horn Island NOAA"
+};
+// Active stations — start at Dan's spot
+let TIDE_STATION = HORN.tide;
+let MET_STATION  = HORN.met;
+const API = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter";
+const MDAPI = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json";
+
+function ymd(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
+
+/* distance between two lat/lon points (miles) */
+function distMi(la1,lo1,la2,lo2){
+  const R=3958.8, rad=Math.PI/180;
+  const dLa=(la2-la1)*rad, dLo=(lo2-lo1)*rad;
+  const a=Math.sin(dLa/2)**2+Math.cos(la1*rad)*Math.cos(la2*rad)*Math.sin(dLo/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+/* find nearest station of a given type from NOAA's station list */
+async function nearestStation(lat,lon,type){
+  const r=await fetch(`${MDAPI}?type=${type}`);
+  const j=await r.json();
+  const list=j.stations||[];
+  let best=null, bestD=Infinity;
+  list.forEach(s=>{
+    if(s.lat==null||s.lng==null) return;
+    const d=distMi(lat,lon,s.lat,s.lng);
+    if(d<bestD){bestD=d;best=s;}
+  });
+  return best?{id:best.id,name:best.name,dist:bestD}:null;
+}
+
+/* ---- LOCATION TOGGLE ---- */
+function setHome(){
+  mode='salt';
+  const tideTab=document.querySelectorAll('.dan-tab')[2];
+  if(tideTab) tideTab.style.display='';
+  TIDE_STATION=HORN.tide; MET_STATION=HORN.met;
+  document.getElementById('loc-name').textContent=HORN.name;
+  document.getElementById('loc-sub').textContent=HORN.sub;
+  document.getElementById('loc-home').classList.add('active');
+  document.getElementById('loc-near').classList.remove('active');
+  resetLoading();
+  refreshAll();
+}
+
+function setNearMe(){
+  mode='salt';
+  const tideTab=document.querySelectorAll('.dan-tab')[2];
+  if(tideTab) tideTab.style.display='';
+  document.getElementById('loc-near').classList.add('active');
+  document.getElementById('loc-home').classList.remove('active');
+  document.getElementById('loc-name').textContent='📍 Finding you…';
+  document.getElementById('loc-sub').textContent='Reading device location';
+  if(!navigator.geolocation){
+    document.getElementById('loc-name').textContent='📍 Location unavailable';
+    document.getElementById('loc-sub').textContent='This device/browser does not allow location';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat=pos.coords.latitude, lon=pos.coords.longitude;
+    document.getElementById('loc-name').textContent='📍 Near you';
+    document.getElementById('loc-sub').textContent='Finding nearest NOAA stations…';
+    try{
+      const [tide,met]=await Promise.all([
+        nearestStation(lat,lon,'tidepredictions'),
+        nearestStation(lat,lon,'met')
+      ]);
+      if(tide) TIDE_STATION=tide.id;
+      if(met)  MET_STATION=met.id;
+      const tName=tide?tide.name:'nearest station';
+      const mDist=met?` · weather ${met.dist.toFixed(0)} mi`:'';
+      document.getElementById('loc-name').textContent='📍 '+tName;
+      document.getElementById('loc-sub').textContent=
+        `Nearest NOAA tide station ${tide?tide.dist.toFixed(0)+' mi':''}${mDist}`;
+      resetLoading();
+      refreshAll();
+    }catch(e){
+      document.getElementById('loc-name').textContent='📍 Lookup failed';
+      document.getElementById('loc-sub').textContent='Could not reach NOAA station list — tap Dan\u2019s Spot to go back';
+    }
+  }, err=>{
+    document.getElementById('loc-name').textContent='📍 Location blocked';
+    document.getElementById('loc-sub').textContent='Allow location access, or tap Dan\u2019s Spot';
+    document.getElementById('loc-near').classList.remove('active');
+    document.getElementById('loc-home').classList.add('active');
+  }, {enableHighAccuracy:true, timeout:10000, maximumAge:300000});
+}
+
+/* ---- FRESHWATER MODE — National Weather Service ---- */
+let mode='salt';
+
+function setFreshwater(){
+  mode='fresh';
+  document.getElementById('loc-fresh').classList.add('active');
+  document.getElementById('loc-near').classList.remove('active');
+  document.getElementById('loc-home').classList.remove('active');
+  document.getElementById('loc-name').textContent='🏞️ Finding you…';
+  document.getElementById('loc-sub').textContent='Reading device location';
+  const tideTab=document.querySelectorAll('.dan-tab')[2];
+  if(tideTab) tideTab.style.display='none';
+  if(!navigator.geolocation){
+    document.getElementById('loc-name').textContent='🏞️ Location unavailable';
+    document.getElementById('loc-sub').textContent='This device/browser does not allow location';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    loadNWS(pos.coords.latitude,pos.coords.longitude);
+  }, err=>{
+    document.getElementById('loc-name').textContent='🏞️ Location blocked';
+    document.getElementById('loc-sub').textContent='Allow location access, or tap Dan\u2019s Spot';
+  }, {enableHighAccuracy:true, timeout:10000, maximumAge:300000});
+}
+
+async function loadNWS(lat,lon){
+  document.getElementById('wind-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling live forecast from National Weather Service…</div>';
+  ['s-wind','s-gust','s-water','s-tide'].forEach(id=>document.getElementById(id).textContent='—');
+  try{
+    const pr=await fetch(`https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`,{headers:{'Accept':'application/geo+json'}});
+    const pj=await pr.json();
+    const place=pj.properties.relativeLocation&&pj.properties.relativeLocation.properties;
+    const placeName=place?`${place.city}, ${place.state}`:'your location';
+    document.getElementById('loc-name').textContent='🏞️ '+placeName;
+    document.getElementById('loc-sub').textContent='Live from National Weather Service';
+    const fr=await fetch(pj.properties.forecastHourly,{headers:{'Accept':'application/geo+json'}});
+    const fj=await fr.json();
+    const periods=fj.properties.periods.slice(0,12);
+    const now=periods[0];
+    function windToKnots(str){const nums=(str.match(/\d+/g)||[]).map(Number);const mph=nums.length?Math.max(...nums):0;return Math.round(mph*0.868976);}
+    const knots=windToKnots(now.windSpeed);
+    document.getElementById('s-wind').textContent=knots||'—';
+    document.getElementById('s-wind-dir').textContent=(now.windDirection||'')+' knots';
+    document.getElementById('s-gust').textContent='—';
+    document.getElementById('s-water').textContent=now.temperature;
+    document.getElementById('s-tide').textContent='—';
+    document.getElementById('s-tide-dir').textContent='no tide (inland)';
+    let rows='';
+    periods.forEach(p=>{
+      const t=new Date(p.startTime).toLocaleTimeString([], {hour:'numeric'});
+      const kn=windToKnots(p.windSpeed);
+      const c=kn<=8?'#2ecc71':kn<=13?'#f1c40f':kn<=18?'#e67e22':'#e74c3c';
+      rows+=`<tr><td class="time-cell">${t}</td><td style="color:var(--text);">${p.windDirection}</td><td class="wind-speed-cell" style="color:${c};">${kn}<span style="font-size:11px;color:var(--muted);"> kn</span></td><td style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;">${p.temperature}°</td><td style="color:var(--muted);font-size:11px;">${p.shortForecast}</td></tr>`;
+    });
+    const safe=knots<=12;
+    document.getElementById('wind-content').innerHTML=`
+      <div class="tip-card ${safe?'good':'warn'}">
+        <div class="tip-header"><span class="tip-icon">${safe?'🛶':'⚠️'}</span><span class="tip-title">Right Now: ${knots} kn ${now.windDirection} · ${now.temperature}°F</span></div>
+        <div class="tip-body">${now.shortForecast}. ${safe?'<strong>Comfortable on the water.</strong> Good conditions for a lake or river.':'<strong>Wind is up</strong> — small craft and kayaks beware. Open water will be choppy.'}</div>
+      </div>
+      <table class="forecast-table"><thead><tr><th style="text-align:left;padding-left:14px;">Hour</th><th>Dir</th><th>Wind</th><th>Air</th><th>Sky</th></tr></thead><tbody>${rows}</tbody></table>`;
+    document.getElementById('wind-updated').textContent='✓ live NWS';
+    document.getElementById('wind-src-station').textContent='National Weather Service ('+placeName+')';
+    document.getElementById('water-big').innerHTML=now.temperature+'<span class="temp-deg">°F</span>';
+    let pct=Math.max(0,Math.min(100,((now.temperature-40)/60)*100));
+    document.getElementById('water-fill').style.width=pct+'%';
+    document.getElementById('water-tip').innerHTML='<strong style="color:var(--blue-light);">Air temperature shown</strong> (NWS doesn\'t read water temp inland). Surface water usually lags air temp a few degrees — cooler in morning, warming through afternoon. Your FLIR is the real tool here: scan for warm shallows in spring, cool inflows in summer.';
+    document.getElementById('m-water').innerHTML=now.temperature+'<span class="m-tool-unit">°F</span>';
+    document.getElementById('m-water-status').textContent='air temp (use FLIR for water)';
+    document.getElementById('m-water-status').style.color='#5dade2';
+  }catch(e){
+    document.getElementById('wind-content').innerHTML='<div class="loading">Could not reach the National Weather Service right now. Refreshes when you reconnect.</div>';
+    document.getElementById('wind-updated').textContent='offline';
+  }
+}
+
+function resetLoading(){
+  document.getElementById('wind-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling live wind from NOAA…</div>';
+  document.getElementById('tide-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling today\u2019s tides from NOAA…</div>';
+  document.getElementById('water-tip').textContent='Loading live water temperature…';
+  ['s-wind','s-gust','s-water','s-tide'].forEach(id=>document.getElementById(id).textContent='—');
+}
+
+/* ---- APP SWITCHING ---- */
+function showApp(app){
+  document.getElementById('dan-app').style.display=app==='dan'?'block':'none';
+  document.getElementById('matt-app').style.display=app==='matt'?'block':'none';
+  document.getElementById('switcher-dan').className='app-btn'+(app==='dan'?' active-dan':'');
+  document.getElementById('switcher-matt').className='app-btn'+(app==='matt'?' active-matt':'');
+  window.scrollTo(0,0);
+}
+function danTab(tab){
+  ['wind','fishing','tides'].forEach(t=>document.getElementById('dan-'+t).classList.toggle('active',t===tab));
+  document.querySelectorAll('.dan-tab').forEach((el,i)=>el.classList.toggle('active',['wind','fishing','tides'][i]===tab));
+}
+function mattTab(tab){
+  ['tools','species','rigs','spots','rules'].forEach(t=>document.getElementById('matt-'+t).classList.toggle('active',t===tab));
+  document.querySelectorAll('.matt-tab').forEach((el,i)=>el.classList.toggle('active',['tools','species','rigs','spots','rules'][i]===tab));
+}
+
+/* ---- STATIC: species + Dan's tips ---- */
+const species=[
+  {icon:"🐟",name:"Speckled Trout",status:"HOT",cls:"hot",note:"Surf & grass flats"},
+  {icon:"🐠",name:"Redfish",status:"HOT",cls:"hot",note:"East end, incoming tide"},
+  {icon:"🦈",name:"Flounder",status:"ACTIVE",cls:"warm",note:"Sandy bottom, jigs"},
+  {icon:"🐟",name:"Spanish Mack",status:"ACTIVE",cls:"warm",note:"Clear water, trolling"},
+  {icon:"🐟",name:"Cobia",status:"FAIR",cls:"warm",note:"Near buoys & floats"},
+  {icon:"🦐",name:"Pompano",status:"ACTIVE",cls:"warm",note:"Sandy surf zone"},
+  {icon:"🐠",name:"Black Drum",status:"SLOW",cls:"slow",note:"Structure & bridges"},
+  {icon:"🐡",name:"Sheepshead",status:"SLOW",cls:"slow",note:"Pilings & structure"},
+];
+const grid=document.getElementById('species-grid');
+species.forEach(s=>{const d=document.createElement('div');d.className='species-card';d.innerHTML=`<div class="species-emoji">${s.icon}</div><div class="species-info"><div class="species-name">${s.name}</div><div class="species-status ${s.cls}">● ${s.status} · <span style="color:var(--muted);">${s.note}</span></div></div>`;grid.appendChild(d);});
+const danTips=[
+  {icon:"🎣",type:"good",title:"East End Surf — First Light",body:"Wade the surf on the eastern tip at dawn. <strong>Big redfish up to 40–50 lbs</strong> work the break. Gold spoons and large Gulp! shrimp."},
+  {icon:"🦐",type:"info",title:"Live Shrimp: Never Wrong",body:"Live shrimp under a popping cork over the <strong>north side grass flats</strong> is the bread-and-butter rig around Horn Island."},
+  {icon:"🐡",type:"info",title:"Tripletail Around the Buoys",body:"April–October — <strong>every crab trap float and channel marker</strong> is worth checking. Pitch a live shrimp just ahead."},
+];
+const tipsEl=document.getElementById('dan-fishing-tips');
+danTips.forEach(t=>{const d=document.createElement('div');d.className=`tip-card ${t.type}`;d.innerHTML=`<div class="tip-header"><span class="tip-icon">${t.icon}</span><span class="tip-title">${t.title}</span></div><div class="tip-body">${t.body}</div>`;tipsEl.appendChild(d);});
+
+/* ---- LIVE TIDES ---- */
+async function loadTides(){
+  const today=new Date();
+  const url=`${API}?date=today&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=DanFinder&format=json`;
+  try{
+    const r=await fetch(url); const j=await r.json();
+    if(!j.predictions) throw new Error("no data");
+    const preds=j.predictions;
+    let html='';
+    preds.forEach(p=>{
+      const hi=p.type==='H';
+      const t=new Date(p.t.replace(' ','T'));
+      const tstr=t.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+      html+=`<div class="tide-row"><div style="font-size:18px;">${hi?'🔼':'🔽'}</div><div><div class="tide-time">${tstr}</div><div class="tide-type">${hi?'High Tide':'Low Tide'}</div></div><div class="tide-height">${parseFloat(p.v).toFixed(1)} ft</div></div>`;
+    });
+    document.getElementById('tide-content').innerHTML=html;
+    document.getElementById('tide-updated').textContent='✓ live';
+    document.getElementById('tide-src-station').textContent='NOAA CO-OPS Station '+TIDE_STATION;
+    // next high tide for "best window"
+    const now=new Date();
+    const nextHigh=preds.find(p=>p.type==='H' && new Date(p.t.replace(' ','T'))>now);
+    if(nextHigh){
+      const ht=new Date(nextHigh.t.replace(' ','T'));
+      const start=new Date(ht.getTime()-90*60000);
+      const s=start.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+      const e=ht.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+      document.getElementById('best-window').textContent=`Top Window: ${s} – ${e} (incoming to high tide)`;
+    } else {
+      document.getElementById('best-window').textContent='Top Window: fish the next incoming tide';
+    }
+    // tide direction for summary strip
+    if(preds.length){
+      const next=preds.find(p=>new Date(p.t.replace(' ','T'))>now)||preds[preds.length-1];
+      document.getElementById('s-tide').textContent=parseFloat(next.v).toFixed(1);
+      document.getElementById('s-tide-dir').textContent=(next.type==='H'?'rising →':'falling →');
+    }
+  }catch(e){
+    document.getElementById('tide-content').innerHTML='<div class="loading">Could not reach NOAA tides right now. It refreshes when you reconnect.</div>';
+    document.getElementById('tide-updated').textContent='offline';
+  }
+}
+
+/* ---- LIVE WIND ---- */
+async function loadWind(){
+  const url=`${API}?date=latest&station=${MET_STATION}&product=wind&time_zone=lst_ldt&units=english&application=DanFinder&format=json`;
+  try{
+    const r=await fetch(url); const j=await r.json();
+    if(!j.data||!j.data.length) throw new Error("no data");
+    const d=j.data[0];
+    const mph=parseFloat(d.s);          // speed mph
+    const gust=parseFloat(d.g);         // gust mph
+    const dir=d.dr||'';                 // text dir
+    const knots=Math.round(mph*0.868976);
+    const gustK=Math.round(gust*0.868976);
+    document.getElementById('s-wind').textContent=isNaN(knots)?'—':knots;
+    document.getElementById('s-wind-dir').textContent=(dir?dir+' ':'')+'knots';
+    document.getElementById('s-gust').textContent=isNaN(gustK)?'—':gustK;
+    // build summary block
+    const t=new Date(d.t.replace(' ','T'));
+    const tstr=t.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+    const safe = knots<=12;
+    document.getElementById('wind-content').innerHTML=`
+      <div class="tip-card ${safe?'good':'warn'}">
+        <div class="tip-header"><span class="tip-icon">${safe?'⛵':'⚠️'}</span><span class="tip-title">Right Now: ${knots} kn ${dir} · gusting ${gustK} kn</span></div>
+        <div class="tip-body">${safe
+          ? 'Comfortable for the crossing from Roys Rd dock. <strong>Good window to run to Horn Island.</strong> Still keep an eye on the afternoon — the Sound builds fast.'
+          : 'Wind is up. <strong>Crossing the Sound will be choppy.</strong> Consider waiting for it to lay down, or fish closer in. Dan, you know how that Sound turns.'}</div>
+      </div>
+      <div class="tip-card info">
+        <div class="tip-header"><span class="tip-icon">🧭</span><span class="tip-title">Boating Rule of Thumb</span></div>
+        <div class="tip-body">Under <strong>12 knots</strong> = comfortable. <strong>12–18</strong> = doable but watch it. <strong>Over 18</strong> = rough crossing, think twice. Reading taken ${tstr}.</div>
+      </div>`;
+    document.getElementById('wind-updated').textContent='✓ live';
+    document.getElementById('wind-src-station').textContent='NOAA CO-OPS Station '+MET_STATION;
+  }catch(e){
+    document.getElementById('wind-content').innerHTML='<div class="loading">Could not reach NOAA wind right now. Refreshes when you reconnect.</div>';
+    document.getElementById('wind-updated').textContent='offline';
+  }
+}
+
+/* ---- LIVE WATER TEMP ---- */
+async function loadWaterTemp(){
+  const url=`${API}?date=latest&station=${MET_STATION}&product=water_temperature&time_zone=lst_ldt&units=english&application=DanFinder&format=json`;
+  try{
+    const r=await fetch(url); const j=await r.json();
+    if(!j.data||!j.data.length) throw new Error("no data");
+    const temp=parseFloat(j.data[0].v);
+    const tt=Math.round(temp);
+    document.getElementById('s-water').textContent=tt;
+    document.getElementById('water-big').innerHTML=tt+'<span class="temp-deg">°F</span>';
+    // gauge fill 60-90 range
+    let pct=Math.max(0,Math.min(100,((temp-60)/30)*100));
+    document.getElementById('water-fill').style.width=pct+'%';
+    // tip logic
+    let tip;
+    if(temp>=82){tip='<strong style="color:var(--yellow);">Summer peak temps.</strong> Fish early and late — reds and specks push to cooler channel edges by 10am. Work the surf at first light, then go deep.';}
+    else if(temp>=68&&temp<82){tip='<strong style="color:var(--green);">Prime range.</strong> Specks and reds both active. Standard popping cork and live shrimp working well across the flats.';}
+    else if(temp<68&&temp>=58){tip='<strong style="color:var(--blue-light);">Cooler water.</strong> Slow your presentation. Bottom fishing for black drum and sheepshead near structure outperforms.';}
+    else if(temp<58){tip='<strong style="color:var(--blue-light);">Cold water.</strong> Fish are sluggish. Fish slow and deep, midday when it warms slightly.';}
+    else{tip='Live water temperature from NOAA Pascagoula station.';}
+    document.getElementById('water-tip').innerHTML=tip;
+    // Matt's tools mirror
+    document.getElementById('m-water').innerHTML=tt+'<span class="m-tool-unit">°F</span>';
+    let mstatus, mcolor;
+    if(temp>=82){mstatus='⚠ Upper warm range';mcolor='#e07b2a';}
+    else if(temp>=68){mstatus='✓ Good — speck zone';mcolor='#2ecc71';}
+    else if(temp>=58){mstatus='Cool — slow bite';mcolor='#5dade2';}
+    else{mstatus='Cold — sluggish';mcolor='#5dade2';}
+    document.getElementById('m-water-status').textContent=mstatus;
+    document.getElementById('m-water-status').style.color=mcolor;
+    document.getElementById('m-temp-marker').style.left=Math.max(0,Math.min(100,((temp-55)/40)*100))+'%';
+  }catch(e){
+    document.getElementById('water-tip').innerHTML='Could not reach the NOAA water temp sensor right now (the Pascagoula station occasionally drops out). It refreshes automatically.';
+    document.getElementById('s-water').textContent='—';
+    document.getElementById('m-water-status').textContent='offline';
+  }
+}
+
+function refreshAll(){loadTides();loadWind();loadWaterTemp();}
+refreshAll();
+setInterval(refreshAll, 6*60*1000); // refresh every 6 minutes
+</script>
+</body>
+</html>
