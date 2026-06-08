@@ -57,7 +57,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 #tab-body{flex:1;overflow-y:auto;overflow-x:hidden;}
 .tab-panel{display:none;padding:12px;}
 .tab-panel.active{display:block;}
-.tab-panel.locked{pointer-events:none;opacity:.35;user-select:none;}
+
 
 /* CARDS */
 .card{background:var(--panel);border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden;}
@@ -98,10 +98,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .sp-arrow{font-size:16px;color:var(--muted);}
 
 /* LOCK OVERLAY */
-#fishing-lock{display:none;position:sticky;top:0;left:0;right:0;background:rgba(192,57,43,.15);border:1px solid #c0392b;border-radius:6px;padding:12px 14px;margin-bottom:10px;text-align:center;}
-#fishing-lock.visible{display:block;}
-.lock-text{font-size:13px;font-weight:700;color:#f87171;}
-.lock-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+
+
+
 
 /* SPECIES CARD OVERLAY */
 #species-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;}
@@ -319,7 +319,6 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       <p class="loading-text" style="padding:20px;">Loading conditions...</p>
     </div>
     <div id="tab-fishing" class="tab-panel">
-      <div id="fishing-lock" class=""></div>
       <div id="fishing-content"></div>
     </div>
     <div id="tab-boater" class="tab-panel">
@@ -777,15 +776,7 @@ function renderSafetyGate(verdict, drivers, alerts) {
 
   driversEl.innerHTML = drivers.map(d=>`<span class="sg-chip ${d.cls}">${d.label}</span>`).join('');
 
-  // Lock fishing tab if stop
-  const fishLock = document.getElementById('fishing-lock');
-  if (verdict === 'stop') {
-    fishLock.className = 'visible';
-    fishLock.innerHTML = '<div class="lock-text">🛑 Get off the water first</div><div class="lock-sub">Conditions are unsafe. The fishing info will be here when you\'re ready.</div>';
-  } else {
-    fishLock.className = '';
-    fishLock.innerHTML = '';
-  }
+  // Safety warning shown — user decides (no feature lockdown)
 
   // NWS alerts panel
   if (alerts && alerts.length > 0) {
