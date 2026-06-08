@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phish-N-Boat">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d2137">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Phish-N-Boat</title>
 <style>
@@ -137,6 +144,16 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .sun-time{font-size:16px;font-weight:700;color:var(--white);margin-top:2px;}
 .float-plan-area{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:80px;}
 .copy-btn{width:100%;margin-top:8px;padding:10px;background:var(--blue);color:var(--white);border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* PWA INSTALL */
+#install-card{margin:12px 14px;padding:14px;background:linear-gradient(135deg,#0d2137,#0e3a55);border:1px solid #1e6fa8;border-radius:10px;display:none;}
+#install-card.visible{display:block;}
+.install-title{font-size:14px;font-weight:700;color:#4fc3f7;margin-bottom:4px;}
+.install-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+#install-btn{background:#1976d2;color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;width:100%;}
+#install-btn:active{background:#1565c0;}
+.ios-install-steps{font-size:12px;color:var(--muted);line-height:1.8;}
+.ios-install-steps span{color:#4fc3f7;}
 
 /* SETUP / ONBOARDING */
 #onboarding{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
@@ -327,6 +344,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       <div id="boater-content"></div>
     </div>
     <div id="tab-setup" class="tab-panel">
+      <div id="install-card">
+        <div class="install-title">📲 Add to Home Screen</div>
+        <div class="install-sub" id="install-sub">Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.</div>
+        <button id="install-btn" onclick="triggerInstall()">Install App</button>
+        <div class="ios-install-steps" id="ios-steps" style="display:none">
+          Tap <span>Share ⬆</span> in Safari → <span>Add to Home Screen</span> → <span>Add</span>
+        </div>
+      </div>
       <div id="setup-content"></div>
     </div>
   </div>
@@ -1549,6 +1574,61 @@ function escHtml(str) {
 }
 function fmtYMD(d) {
   return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+}
+
+// ─── PWA INSTALL ─────────────────────────────────────────────────────────────
+let _installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  showInstallCard('native');
+});
+
+window.addEventListener('appinstalled', () => {
+  const card = document.getElementById('install-card');
+  if (card) card.classList.remove('visible');
+  _installPrompt = null;
+});
+
+function showInstallCard(type) {
+  const card = document.getElementById('install-card');
+  if (!card) return;
+  if (type === 'native') {
+    document.getElementById('install-btn').style.display = 'block';
+    document.getElementById('ios-steps').style.display = 'none';
+    document.getElementById('install-sub').textContent = 'Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.';
+    card.classList.add('visible');
+  } else if (type === 'ios') {
+    document.getElementById('install-btn').style.display = 'none';
+    document.getElementById('ios-steps').style.display = 'block';
+    document.getElementById('install-sub').textContent = 'Add Phish-N-Boat to your Home Screen in Safari:';
+    card.classList.add('visible');
+  }
+}
+
+function triggerInstall() {
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(r => {
+      _installPrompt = null;
+      if (r.outcome === 'accepted') {
+        const card = document.getElementById('install-card');
+        if (card) card.classList.remove('visible');
+      }
+    });
+  }
+}
+
+function detectIOSInstallable() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone) showInstallCard('ios');
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
