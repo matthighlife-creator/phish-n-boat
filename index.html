@@ -1084,7 +1084,7 @@ const SALT_SPECIES_LIST = [
   {id:'tripletail', name:'Tripletail', emoji:'🐡', aka:'Tripletail',
    marks:['Three rounded lobes at tail end (dorsal, caudal, anal all rounded) — looks like 3 tails','Mottled brown/black, often seen floating sideways near structure','Drifts on its side near crab trap floats and channel markers','Compressed body'],
    lookalike:'None common', lookalikeTell:'The three-lobe tail silhouette is unmistakable. No other Gulf fish looks like a drifting leaf near a crab trap float.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Lobotes surinamensis',
    regs:{MS:{bag:5,min:18,notes:''},AL:{bag:5,min:18,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}}
 ];
 
@@ -1097,17 +1097,17 @@ const FW_SPECIES_LIST = [
   {id:'smallmouth-bass', name:'Smallmouth Bass', emoji:'🐠', aka:'Bronzeback',
    marks:['Upper jaw ends AT rear of eye (does NOT extend past)','Vertical brown/olive bars on sides','Copper-bronze coloring, never green-striped','Red eye in adults'],
    lookalike:'Largemouth bass', lookalikeTell:'Largemouth jaw extends clearly past the eye. Largemouth has a horizontal dark stripe, not vertical bars.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Micropterus dolomieu',
    regs:{MS:{bag:10,min:12,notes:'Uncommon in MS'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
   {id:'black-crappie', name:'Black Crappie', emoji:'🐟', aka:'Crappie / Speckled Perch',
    marks:['7–8 dorsal spines (count carefully)','Dark irregular spots scattered with no consistent pattern','No vertical bars','Silvery with dark olive-green mottling'],
    lookalike:'White crappie', lookalikeTell:'White crappie has only 5–6 dorsal spines and shows distinct vertical bars. Black crappie has 7–8 spines and random spots.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Pomoxis nigromaculatus',
    regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
   {id:'bluegill', name:'Bluegill / Bream', emoji:'🫐', aka:'Bream, Sunfish',
    marks:['Dark blue/black ear flap (opercle tab)','Olive body with orange-yellow belly in males','Dark spot at rear base of soft dorsal fin','Vertical dusky bars on sides (most visible in juveniles)'],
    lookalike:'Redear sunfish (shellcracker)', lookalikeTell:'Redear has a bright red or orange edge on its ear flap. Bluegill ear flap is solid dark blue-black with NO colored edge.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Lepomis macrochirus',
    regs:{MS:{bag:50,min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
   {id:'channel-catfish', name:'Channel Catfish', emoji:'🐛', aka:'Channel cat',
    marks:['Slender body, deeply forked tail','Scattered black spots on sides (faint in large adults)','Rounded (convex) anal fin with 24–29 rays','Blue-gray coloring'],
@@ -1117,12 +1117,12 @@ const FW_SPECIES_LIST = [
   {id:'blue-catfish', name:'Blue Catfish', emoji:'🔵', aka:'Blue cat, Hump-back',
    marks:['Slate blue-gray body, NO spots at any size','Straight-edged (flat bottom) anal fin, 30–36 rays','Humped back profile','Deeply forked tail, fork depth greater than channel cat'],
    lookalike:'Channel catfish', lookalikeTell:'Channel catfish has spots, a rounded (curved) anal fin, and no hump. Blue catfish anal fin bottom is dead straight.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Ictalurus furcatus',
    regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
   {id:'flathead-catfish', name:'Flathead Catfish', emoji:'🟡', aka:'Mudcat, Yellow cat',
    marks:['Distinctly flat, wide head (like a shovel)','Squarish/slightly notched tail — NOT deeply forked','Lower jaw protrudes beyond upper jaw','Yellow-brown mottled body'],
    lookalike:'Channel/Blue catfish', lookalikeTell:'No other common catfish has that flat, wide head. The squarish tail seals it — channel and blue cats have deeply forked tails.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Pylodictis olivaris',
    regs:{MS:{bag:10,min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
   {id:'striped-bass', name:'Striped Bass', emoji:'🦓', aka:'Stripers, Rockfish',
    marks:['7–8 continuous dark horizontal stripes running full length of body','Silvery body, two separate dorsal fins','Second anal spine shorter than third','Large fish — commonly 5–30 lbs'],
@@ -1132,7 +1132,7 @@ const FW_SPECIES_LIST = [
   {id:'white-bass', name:'White Bass', emoji:'⬜', aka:'Sand bass',
    marks:['Silver body with broken/interrupted horizontal stripes (not clean full-length lines)','Prominent teeth on middle of tongue (run finger down tongue — feel the patch)','Two separate dorsal fins','Usually under 3 lbs'],
    lookalike:'Striped bass (young)', lookalikeTell:'Striped bass stripes run cleanly full length. Striper has no teeth patch on tongue. Stripers usually much larger even as juveniles.',
-   fishwatchId:null,
+   fishwatchId:null, wikiTitle:'Morone chrysops',
    regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10,notes:''},TN:{bag:30,min:9,notes:''}}}
 ];
 
@@ -1231,7 +1231,7 @@ async function openSpeciesCard(speciesId) {
 
   // Image placeholder shown first
   content.innerHTML = `<div class="soc-img-placeholder" id="soc-img-wrap">
-    <span>🔍 Loading illustration from NOAA FishWatch...</span>
+    <span>🔍 Loading illustration...</span>
   </div>` + renderSpeciesCardBody(sp, spRegs, regsUrl);
 
   // Async: load image
@@ -1258,9 +1258,31 @@ async function openSpeciesCard(speciesId) {
       const imgWrap = document.getElementById('soc-img-wrap');
       if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
     }
+  } else if (sp.wikiTitle) {
+    try {
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(sp.wikiTitle)}`);
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.thumbnail && j.thumbnail.source) {
+          const imgWrap = document.getElementById('soc-img-wrap');
+          if (imgWrap) {
+            imgWrap.outerHTML = `<div style="background:var(--panel2);">
+              <img class="soc-img" src="${escHtml(j.thumbnail.source)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Illustration unavailable</div>'">
+              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Image: Wikimedia Commons · Not AI-generated</div>
+            </div>`;
+          }
+        } else {
+          const imgWrap = document.getElementById('soc-img-wrap');
+          if (imgWrap) imgWrap.innerHTML = `<span>No illustration found for this species.</span>`;
+        }
+      }
+    } catch(e) {
+      const imgWrap = document.getElementById('soc-img-wrap');
+      if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
+    }
   } else {
     const imgWrap = document.getElementById('soc-img-wrap');
-    if (imgWrap) imgWrap.innerHTML = `<span>Illustration: Source USFWS Digital Media Library. Image loading not yet configured for this species.</span>`;
+    if (imgWrap) imgWrap.innerHTML = `<span>No illustration available for this species.</span>`;
   }
 }
 
