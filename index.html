@@ -47,6 +47,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 #loc-text{flex:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #loc-change-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;cursor:pointer;}
 #refresh-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 7px;border-radius:3px;cursor:pointer;}
+#water-type-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue-lt);padding:3px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;}
 
 /* TABS */
 #tab-nav{flex-shrink:0;display:flex;background:var(--panel);border-bottom:1px solid var(--border);}
@@ -301,6 +302,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <!-- LOCATION BAR -->
   <div id="loc-bar">
     <span id="loc-text">📍 Locating...</span>
+    <button id="water-type-btn" onclick="openOnboarding()" title="Switch water type">🌊 Salt</button>
     <button id="refresh-btn" onclick="refreshAll()" title="Refresh data">↻</button>
     <button id="loc-change-btn" onclick="openLocModal()">Change</button>
   </div>
@@ -1049,42 +1051,42 @@ const SALT_SPECIES_LIST = [
   {id:'spotted-seatrout', name:'Spotted Seatrout', emoji:'🐟', aka:'Speckled Trout',
    marks:['Body silver with distinct black spots extending onto dorsal fin and tail','Mouth angles upward, lower jaw protrudes slightly','1–2 prominent canine teeth visible at tip of upper jaw','No scales on soft dorsal, anal, or caudal fins'],
    lookalike:'Sand seatrout (white trout)', lookalikeTell:'Sand seatrout is plain silvery with no spots on the tail. Spotted seatrout always has spots on the tail.',
-   fishwatchId:'spotted-seatrout',
+   wikiSlug:'Spotted_seatrout',
    regs:{MS:{bag:15,min:12,notes:'Max 2 over 15" per day'},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'red-drum', name:'Red Drum', emoji:'🎣', aka:'Redfish',
    marks:['Copper-bronze or reddish body','One or more black spots near base of tail (always at least one)','Slightly underslung mouth (feeds head-down)','No spots on dorsal fins'],
    lookalike:'Black drum', lookalikeTell:'Black drum lacks the tail spot(s) and is much darker/greener. Juvenile black drum have vertical bars. Adult red drum stay copper-toned.',
-   fishwatchId:'red-drum',
+   wikiSlug:'Red_drum',
    regs:{MS:{bag:3,min:16,max:23,slot:'16"–23"',notes:'1 over 23" per day'},AL:{bag:3,min:16,max:26,slot:'16"–26"',notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'southern-flounder', name:'Southern Flounder', emoji:'🫓', aka:'Flounder',
    marks:['Both eyes on LEFT side of body (left-eye flounder)','Lies flat on bottom, colored side up','Brown with irregular mottled pattern, no distinct ocellated spots','Wide mouth with teeth on both jaws'],
    lookalike:'Gulf flounder', lookalikeTell:'Gulf flounder has three distinct ocellated (eye-like) spots in a triangle pattern on its body. Southern flounder has none.',
-   fishwatchId:'southern-flounder',
+   wikiSlug:'Southern_flounder',
    regs:{MS:{bag:10,min:12,notes:'Check for seasonal closures — closures occur'},AL:{bag:10,min:12,notes:'Check season'},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'cobia', name:'Cobia', emoji:'🦈', aka:'Ling',
    marks:['Dark brown, flattened shark-like head','White/cream stripes on sides when young, fading with age','8–9 short, sharp free dorsal spines ahead of main dorsal','Broad, slightly forked tail'],
    lookalike:'Remora (shark sucker)', lookalikeTell:'Cobia has those free dorsal spines ahead of the main dorsal fin. Remoras have a sucker disc on top of the flat head — no free spines.',
-   fishwatchId:'cobia',
+   wikiSlug:'Cobia',
    regs:{MS:{bag:2,min:33,notes:''},AL:{bag:2,min:33,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'atlantic-spanish-mackerel', name:'Spanish Mackerel', emoji:'⚡', aka:'Macks',
    marks:['Silver body with brassy/golden oval spots above lateral line','Green or blue-green back','Forked tail, very sharp teeth','Lateral line curves gently downward, does NOT drop sharply mid-body'],
    lookalike:'King mackerel (kingfish)', lookalikeTell:'King mackerel lateral line drops sharply downward at mid-body. Spanish mackerel is much smaller (usually under 4 lbs) and has distinct gold spots. Kings rarely have spots.',
-   fishwatchId:'atlantic-spanish-mackerel',
+   wikiSlug:'Spanish_mackerel',
    regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'sheepshead', name:'Sheepshead', emoji:'🦷', aka:'Convict fish',
    marks:['5–7 bold black vertical bars on silver-gray body','Incisor-like human teeth (used to crush barnacles)','Strong spines on dorsal and anal fins','Blunt snout'],
    lookalike:'Black drum (juvenile)', lookalikeTell:'Juvenile black drum has similar bars but no human-like teeth. Sheepshead teeth are unmistakable — look like small human front teeth.',
-   fishwatchId:'sheepshead',
+   wikiSlug:'Archosargus_probatocephalus',
    regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'black-drum', name:'Black Drum', emoji:'🥁', aka:'Drum',
    marks:['Dark gray to black body, yellowish in juveniles','Vertical bars when young (disappear with age)','Barbels (chin whiskers) under lower jaw','Rounded tail'],
    lookalike:'Red drum', lookalikeTell:'Red drum always has that copper tone and the black spot(s) near the tail. Black drum has chin barbels (red drum does not) and is much darker.',
-   fishwatchId:'black-drum',
+   wikiSlug:'Black_drum',
    regs:{MS:{bag:5,min:14,max:30,slot:'14"–30"',notes:''},AL:{bag:5,min:14,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'tripletail', name:'Tripletail', emoji:'🐡', aka:'Tripletail',
    marks:['Three rounded lobes at tail end (dorsal, caudal, anal all rounded) — looks like 3 tails','Mottled brown/black, often seen floating sideways near structure','Drifts on its side near crab trap floats and channel markers','Compressed body'],
    lookalike:'None common', lookalikeTell:'The three-lobe tail silhouette is unmistakable. No other Gulf fish looks like a drifting leaf near a crab trap float.',
-   fishwatchId:null,
+   wikiSlug:'Tripletail_(fish)',
    regs:{MS:{bag:5,min:18,notes:''},AL:{bag:5,min:18,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}}
 ];
 
@@ -1092,48 +1094,48 @@ const FW_SPECIES_LIST = [
   {id:'largemouth-bass', name:'Largemouth Bass', emoji:'🐟', aka:'Largemouth',
    marks:['Upper jaw extends well past rear of eye (key field mark)','Dark horizontal stripe along mid-body','Dorsal fin deeply notched, nearly divided into two separate fins','Greenish-olive body with white belly'],
    lookalike:'Smallmouth bass', lookalikeTell:'Smallmouth jaw stops at the rear of the eye — it does NOT extend past it. Smallmouth has vertical brown bars, not a horizontal stripe.',
-   fishwatchId:'largemouth-bass',
+   wikiSlug:'Largemouth_bass',
    regs:{MS:{bag:10,min:12,notes:'Check individual waters — reservoirs vary'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
   {id:'smallmouth-bass', name:'Smallmouth Bass', emoji:'🐠', aka:'Bronzeback',
    marks:['Upper jaw ends AT rear of eye (does NOT extend past)','Vertical brown/olive bars on sides','Copper-bronze coloring, never green-striped','Red eye in adults'],
    lookalike:'Largemouth bass', lookalikeTell:'Largemouth jaw extends clearly past the eye. Largemouth has a horizontal dark stripe, not vertical bars.',
-   fishwatchId:null,
+   wikiSlug:'Smallmouth_bass',
    regs:{MS:{bag:10,min:12,notes:'Uncommon in MS'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
   {id:'black-crappie', name:'Black Crappie', emoji:'🐟', aka:'Crappie / Speckled Perch',
    marks:['7–8 dorsal spines (count carefully)','Dark irregular spots scattered with no consistent pattern','No vertical bars','Silvery with dark olive-green mottling'],
    lookalike:'White crappie', lookalikeTell:'White crappie has only 5–6 dorsal spines and shows distinct vertical bars. Black crappie has 7–8 spines and random spots.',
-   fishwatchId:null,
-   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
+   wikiSlug:'Black_crappie',
+   regs:{MS:{bag:30,min:9},notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
   {id:'bluegill', name:'Bluegill / Bream', emoji:'🫐', aka:'Bream, Sunfish',
    marks:['Dark blue/black ear flap (opercle tab)','Olive body with orange-yellow belly in males','Dark spot at rear base of soft dorsal fin','Vertical dusky bars on sides (most visible in juveniles)'],
    lookalike:'Redear sunfish (shellcracker)', lookalikeTell:'Redear has a bright red or orange edge on its ear flap. Bluegill ear flap is solid dark blue-black with NO colored edge.',
-   fishwatchId:null,
-   regs:{MS:{bag:50,min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
+   wikiSlug:'Bluegill',
+   regs:{MS:{bag:50},min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
   {id:'channel-catfish', name:'Channel Catfish', emoji:'🐛', aka:'Channel cat',
    marks:['Slender body, deeply forked tail','Scattered black spots on sides (faint in large adults)','Rounded (convex) anal fin with 24–29 rays','Blue-gray coloring'],
    lookalike:'Blue catfish', lookalikeTell:'Blue catfish has a straight-edged (flat) anal fin with 30–36 rays and NO spots at any size. Blue catfish also has a hump behind the head.',
-   fishwatchId:'channel-catfish',
+   wikiSlug:'Channel_catfish',
    regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
   {id:'blue-catfish', name:'Blue Catfish', emoji:'🔵', aka:'Blue cat, Hump-back',
    marks:['Slate blue-gray body, NO spots at any size','Straight-edged (flat bottom) anal fin, 30–36 rays','Humped back profile','Deeply forked tail, fork depth greater than channel cat'],
    lookalike:'Channel catfish', lookalikeTell:'Channel catfish has spots, a rounded (curved) anal fin, and no hump. Blue catfish anal fin bottom is dead straight.',
-   fishwatchId:null,
-   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
+   wikiSlug:'Blue_catfish',
+   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25},min:null,notes:''}}},
   {id:'flathead-catfish', name:'Flathead Catfish', emoji:'🟡', aka:'Mudcat, Yellow cat',
    marks:['Distinctly flat, wide head (like a shovel)','Squarish/slightly notched tail — NOT deeply forked','Lower jaw protrudes beyond upper jaw','Yellow-brown mottled body'],
    lookalike:'Channel/Blue catfish', lookalikeTell:'No other common catfish has that flat, wide head. The squarish tail seals it — channel and blue cats have deeply forked tails.',
-   fishwatchId:null,
-   regs:{MS:{bag:10,min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
+   wikiSlug:'Flathead_catfish',
+   regs:{MS:{bag:10},min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
   {id:'striped-bass', name:'Striped Bass', emoji:'🦓', aka:'Stripers, Rockfish',
    marks:['7–8 continuous dark horizontal stripes running full length of body','Silvery body, two separate dorsal fins','Second anal spine shorter than third','Large fish — commonly 5–30 lbs'],
    lookalike:'White bass', lookalikeTell:'White bass is much smaller (usually under 3 lbs), stripes are broken/interrupted and do not run cleanly to the tail, and the second anal spine is nearly as long as the third.',
-   fishwatchId:'striped-bass',
+   wikiSlug:'Striped_bass',
    regs:{MS:{bag:5,min:18,notes:'Check for size/creel variation on specific waters'},AL:{bag:10,min:15,notes:''},TN:{bag:5,min:15,notes:''}}},
   {id:'white-bass', name:'White Bass', emoji:'⬜', aka:'Sand bass',
    marks:['Silver body with broken/interrupted horizontal stripes (not clean full-length lines)','Prominent teeth on middle of tongue (run finger down tongue — feel the patch)','Two separate dorsal fins','Usually under 3 lbs'],
    lookalike:'Striped bass (young)', lookalikeTell:'Striped bass stripes run cleanly full length. Striper has no teeth patch on tongue. Stripers usually much larger even as juveniles.',
-   fishwatchId:null,
-   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10,notes:''},TN:{bag:30,min:9,notes:''}}}
+   wikiSlug:'White_bass',
+   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10},notes:''},TN:{bag:30,min:9,notes:''}}}
 ];
 
 // All 50 state agency URLs
@@ -1231,32 +1233,32 @@ async function openSpeciesCard(speciesId) {
 
   // Image placeholder shown first
   content.innerHTML = `<div class="soc-img-placeholder" id="soc-img-wrap">
-    <span>🔍 Loading illustration from NOAA FishWatch...</span>
+    <span>🔍 Loading photo...</span>
   </div>` + renderSpeciesCardBody(sp, spRegs, regsUrl);
 
   // Async: load image
-  if (sp.fishwatchId) {
+  if (sp.wikiSlug) {
     try {
-      const r = await fetch(`https://www.fishwatch.gov/api/species/${sp.fishwatchId}`);
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${sp.wikiSlug}`);
       if (r.ok) {
         const j = await r.json();
-        if (j && j[0] && j[0]['Species Illustration Photo'] && j[0]['Species Illustration Photo'].src) {
-          const imgSrc = j[0]['Species Illustration Photo'].src;
+        if (j && j.thumbnail && j.thumbnail.source) {
+          const imgSrc = j.thumbnail.source;
           const imgWrap = document.getElementById('soc-img-wrap');
           if (imgWrap) {
             imgWrap.outerHTML = `<div style="background:var(--panel2);">
-              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Illustration unavailable — NOAA FishWatch could not load image</div>'">
-              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Illustration: NOAA FishWatch · Public domain · Not AI-generated</div>
+              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Photo unavailable</div>'">
+              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Photo: Wikipedia · CC license · Tap species name for full article</div>
             </div>`;
           }
         } else {
           const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) imgWrap.innerHTML = `<span>No illustration available on NOAA FishWatch for this species.</span>`;
+          if (imgWrap) imgWrap.innerHTML = `<span>No photo available for this species.</span>`;
         }
       }
     } catch(e) {
       const imgWrap = document.getElementById('soc-img-wrap');
-      if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
+      if (imgWrap) imgWrap.innerHTML = `<span>Could not load photo — check connection.</span>`;
     }
   } else {
     const imgWrap = document.getElementById('soc-img-wrap');
@@ -1434,7 +1436,7 @@ function renderSetupTab() {
   html += `<div class="data-row"><span class="dr-label">USGS Gauge</span><span class="dr-val text-muted" style="font-size:11px">waterservices.usgs.gov</span></div>`;
   html += `<div class="data-row"><span class="dr-label">NOAA CO-OPS</span><span class="dr-val text-muted" style="font-size:11px">tidesandcurrents.noaa.gov</span></div>`;
   html += `<div class="data-row"><span class="dr-label">Wave forecast</span><span class="dr-val text-muted" style="font-size:11px">open-meteo.com (marine)</span></div>`;
-  html += `<div class="data-row"><span class="dr-label">Fish illustrations</span><span class="dr-val text-muted" style="font-size:11px">NOAA FishWatch (public domain)</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">Fish photos</span><span class="dr-val text-muted" style="font-size:11px">Wikipedia (CC licensed)</span></div>`;
   html += `<div class="source-note">All sources: keyless, free, government or open-source. $0 to run. No accounts. No tracking. All user data stored only on this device.</div>`;
   html += `</div></div>`;
 
@@ -1443,6 +1445,13 @@ function renderSetupTab() {
   html += `</div></div>`;
 
   document.getElementById('setup-content').innerHTML = html;
+}
+
+function updateWaterTypeBtn() {
+  const wt = state.profile ? state.profile.waterType : null;
+  const labels = {river:'🎣 River',lake:'🎣 Lake',salt_inshore:'🌊 Salt Inshore',salt_offshore:'🌊 Salt Offshore'};
+  const btn = document.getElementById('water-type-btn');
+  if (btn) btn.textContent = (wt && labels[wt]) ? labels[wt] + ' ⇄' : '⇄ Water type';
 }
 
 function openOnboarding() {
