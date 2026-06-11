@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phish-N-Boat">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d2137">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Phish-N-Boat</title>
 <style>
@@ -47,6 +54,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 #loc-text{flex:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 #loc-change-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;cursor:pointer;}
 #refresh-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 7px;border-radius:3px;cursor:pointer;}
+#water-type-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue-lt);padding:3px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;}
 
 /* TABS */
 #tab-nav{flex-shrink:0;display:flex;background:var(--panel);border-bottom:1px solid var(--border);}
@@ -136,6 +144,16 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .sun-time{font-size:16px;font-weight:700;color:var(--white);margin-top:2px;}
 .float-plan-area{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:80px;}
 .copy-btn{width:100%;margin-top:8px;padding:10px;background:var(--blue);color:var(--white);border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* PWA INSTALL */
+#install-card{margin:12px 14px;padding:14px;background:linear-gradient(135deg,#0d2137,#0e3a55);border:1px solid #1e6fa8;border-radius:10px;display:none;}
+#install-card.visible{display:block;}
+.install-title{font-size:14px;font-weight:700;color:#4fc3f7;margin-bottom:4px;}
+.install-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+#install-btn{background:#1976d2;color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;width:100%;}
+#install-btn:active{background:#1565c0;}
+.ios-install-steps{font-size:12px;color:var(--muted);line-height:1.8;}
+.ios-install-steps span{color:#4fc3f7;}
 
 /* SETUP / ONBOARDING */
 #onboarding{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
@@ -301,6 +319,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <!-- LOCATION BAR -->
   <div id="loc-bar">
     <span id="loc-text">📍 Locating...</span>
+    <button id="water-type-btn" onclick="openOnboarding()" title="Switch water type">🌊 Salt</button>
     <button id="refresh-btn" onclick="refreshAll()" title="Refresh data">↻</button>
     <button id="loc-change-btn" onclick="openLocModal()">Change</button>
   </div>
@@ -325,6 +344,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
       <div id="boater-content"></div>
     </div>
     <div id="tab-setup" class="tab-panel">
+      <div id="install-card">
+        <div class="install-title">📲 Add to Home Screen</div>
+        <div class="install-sub" id="install-sub">Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.</div>
+        <button id="install-btn" onclick="triggerInstall()">Install App</button>
+        <div class="ios-install-steps" id="ios-steps" style="display:none">
+          Tap <span>Share ⬆</span> in Safari → <span>Add to Home Screen</span> → <span>Add</span>
+        </div>
+      </div>
       <div id="setup-content"></div>
     </div>
   </div>
@@ -1049,49 +1076,49 @@ const SALT_SPECIES_LIST = [
   {id:'spotted-seatrout', name:'Spotted Seatrout', emoji:'🐟', aka:'Speckled Trout',
    marks:['Body silver with distinct black spots extending onto dorsal fin and tail','Mouth angles upward, lower jaw protrudes slightly','1–2 prominent canine teeth visible at tip of upper jaw','No scales on soft dorsal, anal, or caudal fins'],
    lookalike:'Sand seatrout (white trout)', lookalikeTell:'Sand seatrout is plain silvery with no spots on the tail. Spotted seatrout always has spots on the tail.',
-   fishwatchId:'spotted-seatrout',
+   wikiSlug:'Spotted_seatrout',
    tips:['Work a live shrimp or soft-plastic under a popping cork over grass flats — pause between pops and let it drop','Fish grass bed edges at dawn and dusk; specks ambush bait during low-light transitions','Cold water? Dead-drift a soft-plastic just above the bottom instead of working the surface'],
    regs:{MS:{bag:15,min:12,notes:'Max 2 over 15" per day'},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'red-drum', name:'Red Drum', emoji:'🎣', aka:'Redfish',
    marks:['Copper-bronze or reddish body','One or more black spots near base of tail (always at least one)','Slightly underslung mouth (feeds head-down)','No spots on dorsal fins'],
    lookalike:'Black drum', lookalikeTell:'Black drum lacks the tail spot(s) and is much darker/greener. Juvenile black drum have vertical bars. Adult red drum stay copper-toned.',
-   fishwatchId:'red-drum',
+   wikiSlug:'Red_drum',
    tips:['Sight-fish tailing reds in skinny water — cast 2 feet ahead of the tail, never on top of it','Cut crab or live finger mullet on a fish-finder rig near oyster bars on incoming tide','Copper-gold spoons outperform in stained water where redfish hunt as much by lateral line as by sight'],
    regs:{MS:{bag:3,min:16,max:23,slot:'16"–23"',notes:'1 over 23" per day'},AL:{bag:3,min:16,max:26,slot:'16"–26"',notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'southern-flounder', name:'Southern Flounder', emoji:'🫓', aka:'Flounder',
    marks:['Both eyes on LEFT side of body (left-eye flounder)','Lies flat on bottom, colored side up','Brown with irregular mottled pattern, no distinct ocellated spots','Wide mouth with teeth on both jaws'],
    lookalike:'Gulf flounder', lookalikeTell:'Gulf flounder has three distinct ocellated (eye-like) spots in a triangle pattern on its body. Southern flounder has none.',
-   fishwatchId:'southern-flounder',
-   tips:['Dead-slow drag a live mud minnow or finger mullet across sandy bottom near structure','Target channel edges, dock pilings, and depth drops — flounder ambush from a stationary position','The bite feels like dead weight on the line, not a strike. Wait a beat before setting the hook'],
+   wikiSlug:'Southern_flounder',
+   tips:['Dead-slow drag a live mud minnow or finger mullet across sandy bottom near structure','Target channel edges, dock pilings, and depth drops — flounder ambush from a stationary position','The bite feels like dead weight on the line, not a strike — wait a beat before setting the hook'],
    regs:{MS:{bag:10,min:12,notes:'Check for seasonal closures — closures occur'},AL:{bag:10,min:12,notes:'Check season'},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'cobia', name:'Cobia', emoji:'🦈', aka:'Ling',
    marks:['Dark brown, flattened shark-like head','White/cream stripes on sides when young, fading with age','8–9 short, sharp free dorsal spines ahead of main dorsal','Broad, slightly forked tail'],
    lookalike:'Remora (shark sucker)', lookalikeTell:'Cobia has those free dorsal spines ahead of the main dorsal fin. Remoras have a sucker disc on top of the flat head — no free spines.',
-   fishwatchId:'cobia',
+   wikiSlug:'Cobia',
    tips:['Sight-fish from a T-top or leaning post — cobia shadow rays, sharks, and sea turtles','Pitch a large bucktail jig (3–6 oz) just ahead of the fish and let it sink; no retrieve until it reacts','Once you hook one near a school, immediately drop a second bait in — they often bunch up'],
    regs:{MS:{bag:2,min:33,notes:''},AL:{bag:2,min:33,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'atlantic-spanish-mackerel', name:'Spanish Mackerel', emoji:'⚡', aka:'Macks',
    marks:['Silver body with brassy/golden oval spots above lateral line','Green or blue-green back','Forked tail, very sharp teeth','Lateral line curves gently downward, does NOT drop sharply mid-body'],
    lookalike:'King mackerel (kingfish)', lookalikeTell:'King mackerel lateral line drops sharply downward at mid-body. Spanish mackerel is much smaller (usually under 4 lbs) and has distinct gold spots. Kings rarely have spots.',
-   fishwatchId:'atlantic-spanish-mackerel',
+   wikiSlug:'Spanish_mackerel',
    tips:['Fast-troll Clark spoons or Gotcha plugs at 6–8 mph just behind the boat over working birds','Spanish bleed fast — ice them immediately for the best table fare','Use a 12–18" fluorocarbon or light wire leader to prevent bite-offs without spooking fish'],
    regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'sheepshead', name:'Sheepshead', emoji:'🦷', aka:'Convict fish',
    marks:['5–7 bold black vertical bars on silver-gray body','Incisor-like human teeth (used to crush barnacles)','Strong spines on dorsal and anal fins','Blunt snout'],
    lookalike:'Black drum (juvenile)', lookalikeTell:'Juvenile black drum has similar bars but no human-like teeth. Sheepshead teeth are unmistakable — look like small human front teeth.',
-   fishwatchId:'sheepshead',
+   wikiSlug:'Archosargus_probatocephalus',
    tips:['Fiddler crabs or sand fleas on a small hook (1/0 or less) pinned tight against barnacled pilings','The bite is subtle: tap-tap-tap then a slight pull — set on the pull, not the tap','Fresh bait beats frozen every time; sheepshead are picky eaters at structure'],
    regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'black-drum', name:'Black Drum', emoji:'🥁', aka:'Drum',
    marks:['Dark gray to black body, yellowish in juveniles','Vertical bars when young (disappear with age)','Barbels (chin whiskers) under lower jaw','Rounded tail'],
    lookalike:'Red drum', lookalikeTell:'Red drum always has that copper tone and the black spot(s) near the tail. Black drum has chin barbels (red drum does not) and is much darker.',
-   fishwatchId:'black-drum',
+   wikiSlug:'Black_drum',
    tips:['Cut blue crab halves or fresh shrimp on a fish-finder rig hard on the bottom near oyster bars','Big drum (over 25") fight hard but eat poorly — slot fish (14"–20") are the table fish','Night fishing around lighted docks in summer consistently outproduces daytime'],
    regs:{MS:{bag:5,min:14,max:30,slot:'14"–30"',notes:''},AL:{bag:5,min:14,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
   {id:'tripletail', name:'Tripletail', emoji:'🐡', aka:'Tripletail',
    marks:['Three rounded lobes at tail end (dorsal, caudal, anal all rounded) — looks like 3 tails','Mottled brown/black, often seen floating sideways near structure','Drifts on its side near crab trap floats and channel markers','Compressed body'],
    lookalike:'None common', lookalikeTell:'The three-lobe tail silhouette is unmistakable. No other Gulf fish looks like a drifting leaf near a crab trap float.',
-   fishwatchId:null, wikiTitle:'Lobotes surinamensis',
+   wikiSlug:'Tripletail_(fish)',
    tips:['Kill the motor when you spot one drifting near a crab trap float — approach on pure drift','A live shrimp or white 1/4 oz jig dropped just beneath the float almost always draws a strike','Tripletail fight hard and eat exceptionally well — most anglers walk right past them thinking they\'re debris'],
    regs:{MS:{bag:5,min:18,notes:''},AL:{bag:5,min:18,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}}
 ];
@@ -1100,57 +1127,57 @@ const FW_SPECIES_LIST = [
   {id:'largemouth-bass', name:'Largemouth Bass', emoji:'🐟', aka:'Largemouth',
    marks:['Upper jaw extends well past rear of eye (key field mark)','Dark horizontal stripe along mid-body','Dorsal fin deeply notched, nearly divided into two separate fins','Greenish-olive body with white belly'],
    lookalike:'Smallmouth bass', lookalikeTell:'Smallmouth jaw stops at the rear of the eye — it does NOT extend past it. Smallmouth has vertical brown bars, not a horizontal stripe.',
-   fishwatchId:'largemouth-bass',
+   wikiSlug:'Largemouth_bass',
    tips:['Fish topwater (frogs, poppers) over matted grass at first light — retrieve slowly with long pauses','Punch a heavy jig through floating hydrilla mats in summer heat to reach suspended fish underneath','Cold fronts shut bass down — downsize to a shaky head or Ned rig and work it painfully slowly near bottom'],
    regs:{MS:{bag:10,min:12,notes:'Check individual waters — reservoirs vary'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
   {id:'smallmouth-bass', name:'Smallmouth Bass', emoji:'🐠', aka:'Bronzeback',
    marks:['Upper jaw ends AT rear of eye (does NOT extend past)','Vertical brown/olive bars on sides','Copper-bronze coloring, never green-striped','Red eye in adults'],
    lookalike:'Largemouth bass', lookalikeTell:'Largemouth jaw extends clearly past the eye. Largemouth has a horizontal dark stripe, not vertical bars.',
-   fishwatchId:null, wikiTitle:'Micropterus dolomieu',
+   wikiSlug:'Smallmouth_bass',
    tips:['Tube jigs in brown/green on rocky points and gravel bars — crawfish color is year-round money','In rivers, cast upstream and let the bait drift naturally through current seams rather than working it back','Clear water demands longer fluorocarbon leaders (12–18"), smaller hooks, and natural presentations'],
    regs:{MS:{bag:10,min:12,notes:'Uncommon in MS'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
   {id:'black-crappie', name:'Black Crappie', emoji:'🐟', aka:'Crappie / Speckled Perch',
    marks:['7–8 dorsal spines (count carefully)','Dark irregular spots scattered with no consistent pattern','No vertical bars','Silvery with dark olive-green mottling'],
    lookalike:'White crappie', lookalikeTell:'White crappie has only 5–6 dorsal spines and shows distinct vertical bars. Black crappie has 7–8 spines and random spots.',
-   fishwatchId:null, wikiTitle:'Pomoxis nigromaculatus',
+   wikiSlug:'Black_crappie',
    tips:['Vertical jig a 1/16 oz tube or live minnow tight to submerged timber — count it down layer by layer','Spawn fish (late spring) are shallow (2–4 ft) near wood; a tiny chartreuse jig on 4 lb line is deadly','Crappie have paper-thin mouths — light wire hooks and no horsing to the boat'],
-   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
+   regs:{MS:{bag:30,min:9},notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
   {id:'bluegill', name:'Bluegill / Bream', emoji:'🫐', aka:'Bream, Sunfish',
    marks:['Dark blue/black ear flap (opercle tab)','Olive body with orange-yellow belly in males','Dark spot at rear base of soft dorsal fin','Vertical dusky bars on sides (most visible in juveniles)'],
    lookalike:'Redear sunfish (shellcracker)', lookalikeTell:'Redear has a bright red or orange edge on its ear flap. Bluegill ear flap is solid dark blue-black with NO colored edge.',
-   fishwatchId:null, wikiTitle:'Lepomis macrochirus',
+   wikiSlug:'Bluegill',
    tips:['Live crickets or small red worms under a foam bobber near any submerged wood or dock post','During spawn (May–June) bluegill are on visible sandy beds in 1–4 ft — a tiny dry fly or popper works','Ultralight tackle (2–4 lb line, size 8–10 hook) is all you need and the fight-per-pound ratio is excellent'],
-   regs:{MS:{bag:50,min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
+   regs:{MS:{bag:50},min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
   {id:'channel-catfish', name:'Channel Catfish', emoji:'🐛', aka:'Channel cat',
    marks:['Slender body, deeply forked tail','Scattered black spots on sides (faint in large adults)','Rounded (convex) anal fin with 24–29 rays','Blue-gray coloring'],
    lookalike:'Blue catfish', lookalikeTell:'Blue catfish has a straight-edged (flat) anal fin with 30–36 rays and NO spots at any size. Blue catfish also has a hump behind the head.',
-   fishwatchId:'channel-catfish',
+   wikiSlug:'Channel_catfish',
    tips:['Fresh chicken liver, cut shad, or commercial stink bait on a slip-sinker rig flat on the bottom','Tailwaters below dams are catfish magnets — fish the calmer water just off the main current','Hot summer nights outperform daytime by a wide margin; set multiple rods and wait them out'],
    regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
   {id:'blue-catfish', name:'Blue Catfish', emoji:'🔵', aka:'Blue cat, Hump-back',
    marks:['Slate blue-gray body, NO spots at any size','Straight-edged (flat bottom) anal fin, 30–36 rays','Humped back profile','Deeply forked tail, fork depth greater than channel cat'],
    lookalike:'Channel catfish', lookalikeTell:'Channel catfish has spots, a rounded (curved) anal fin, and no hump. Blue catfish anal fin bottom is dead straight.',
-   fishwatchId:null, wikiTitle:'Ictalurus furcatus',
+   wikiSlug:'Blue_catfish',
    tips:['Fresh-cut skipjack herring is the top bait — bigger fish want bigger pieces (4–6" cuts)','Main river channel ledges, humps, and wing dams hold blue cats; use 30–50 lb braid and drift rigs','Blues school by size in summer — if you catch small ones, move; the big fish are nearby but separate'],
-   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
+   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25},min:null,notes:''}}},
   {id:'flathead-catfish', name:'Flathead Catfish', emoji:'🟡', aka:'Mudcat, Yellow cat',
    marks:['Distinctly flat, wide head (like a shovel)','Squarish/slightly notched tail — NOT deeply forked','Lower jaw protrudes beyond upper jaw','Yellow-brown mottled body'],
    lookalike:'Channel/Blue catfish', lookalikeTell:'No other common catfish has that flat, wide head. The squarish tail seals it — channel and blue cats have deeply forked tails.',
-   fishwatchId:null, wikiTitle:'Pylodictis olivaris',
+   wikiSlug:'Flathead_catfish',
    tips:['Live bait only for big flatheads — large bluegill, creek chubs, or goldfish on an 8/0 circle hook','Target logjams, deep undercut banks, and dark river bends after sunset','Flatheads charge cover on the hookset — 50–80 lb braid and a stout rod are not optional'],
-   regs:{MS:{bag:10,min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
+   regs:{MS:{bag:10},min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
   {id:'striped-bass', name:'Striped Bass', emoji:'🦓', aka:'Stripers, Rockfish',
    marks:['7–8 continuous dark horizontal stripes running full length of body','Silvery body, two separate dorsal fins','Second anal spine shorter than third','Large fish — commonly 5–30 lbs'],
    lookalike:'White bass', lookalikeTell:'White bass is much smaller (usually under 3 lbs), stripes are broken/interrupted and do not run cleanly to the tail, and the second anal spine is nearly as long as the third.',
-   fishwatchId:'striped-bass',
+   wikiSlug:'Striped_bass',
    tips:['Troll umbrella rigs or large swimbaits at 4–6 mph over main lake humps and channel ledges to locate schools','Tailrace fishing below dams: drift live shad in current or bounce heavy jigs on the bottom in the churn','At dawn during surface blitzes, match the baitfish size exactly — stripers can be selective schoolers'],
    regs:{MS:{bag:5,min:18,notes:'Check for size/creel variation on specific waters'},AL:{bag:10,min:15,notes:''},TN:{bag:5,min:15,notes:''}}},
   {id:'white-bass', name:'White Bass', emoji:'⬜', aka:'Sand bass',
    marks:['Silver body with broken/interrupted horizontal stripes (not clean full-length lines)','Prominent teeth on middle of tongue (run finger down tongue — feel the patch)','Two separate dorsal fins','Usually under 3 lbs'],
    lookalike:'Striped bass (young)', lookalikeTell:'Striped bass stripes run cleanly full length. Striper has no teeth patch on tongue. Stripers usually much larger even as juveniles.',
-   fishwatchId:null, wikiTitle:'Morone chrysops',
+   wikiSlug:'White_bass',
    tips:['Follow the diving birds — gulls and terns pinpoint surface blitzes; get a white 1/4 oz jig in the school fast','Spring spawning runs up river tributaries are the best action of the year — small spinners in current seams','White bass school tightly by size; when you find them, work fast and keep casting until the school moves'],
-   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10,notes:''},TN:{bag:30,min:9,notes:''}}}
+   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10},notes:''},TN:{bag:30,min:9,notes:''}}}
 ];
 
 // All 50 state agency URLs
@@ -1207,7 +1234,6 @@ const STATE_REGS_URLS = {
   WY:'https://wgfd.wyo.gov/Fishing/Fishing-Regulations'
 };
 
-// Official state wildlife magazines — null = no active publication
 const STATE_MAG_URLS = {
   AK:'https://www.adfg.alaska.gov/index.cfm?adfg=wildlifenews.main',
   AZ:'https://www.azgfd.com/about-arizona-game-fish/azgfd-press-room-and-media/publications-and-videos/wildlife-views-magazine/',
@@ -1293,58 +1319,36 @@ async function openSpeciesCard(speciesId) {
 
   // Image placeholder shown first
   content.innerHTML = `<div class="soc-img-placeholder" id="soc-img-wrap">
-    <span>🔍 Loading illustration...</span>
+    <span>🔍 Loading photo...</span>
   </div>` + renderSpeciesCardBody(sp, spRegs, regsUrl);
 
   // Async: load image
-  if (sp.fishwatchId) {
+  if (sp.wikiSlug) {
     try {
-      const r = await fetch(`https://www.fishwatch.gov/api/species/${sp.fishwatchId}`);
-      if (r.ok) {
-        const j = await r.json();
-        if (j && j[0] && j[0]['Species Illustration Photo'] && j[0]['Species Illustration Photo'].src) {
-          const imgSrc = j[0]['Species Illustration Photo'].src;
-          const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) {
-            imgWrap.outerHTML = `<div style="background:var(--panel2);">
-              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Illustration unavailable — NOAA FishWatch could not load image</div>'">
-              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Illustration: NOAA FishWatch · Public domain · Not AI-generated</div>
-            </div>`;
-          }
-        } else {
-          const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) imgWrap.innerHTML = `<span>No illustration available on NOAA FishWatch for this species.</span>`;
-        }
-      }
-    } catch(e) {
-      const imgWrap = document.getElementById('soc-img-wrap');
-      if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
-    }
-  } else if (sp.wikiTitle) {
-    try {
-      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(sp.wikiTitle)}`);
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${sp.wikiSlug}`);
       if (r.ok) {
         const j = await r.json();
         if (j && j.thumbnail && j.thumbnail.source) {
+          const imgSrc = j.thumbnail.source;
           const imgWrap = document.getElementById('soc-img-wrap');
           if (imgWrap) {
             imgWrap.outerHTML = `<div style="background:var(--panel2);">
-              <img class="soc-img" src="${escHtml(j.thumbnail.source)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Illustration unavailable</div>'">
-              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Image: Wikimedia Commons · Not AI-generated</div>
+              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Photo unavailable</div>'">
+              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Photo: Wikipedia · CC license · Tap species name for full article</div>
             </div>`;
           }
         } else {
           const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) imgWrap.innerHTML = `<span>No illustration found for this species.</span>`;
+          if (imgWrap) imgWrap.innerHTML = `<span>No photo available for this species.</span>`;
         }
       }
     } catch(e) {
       const imgWrap = document.getElementById('soc-img-wrap');
-      if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
+      if (imgWrap) imgWrap.innerHTML = `<span>Could not load photo — check connection.</span>`;
     }
   } else {
     const imgWrap = document.getElementById('soc-img-wrap');
-    if (imgWrap) imgWrap.innerHTML = `<span>No illustration available for this species.</span>`;
+    if (imgWrap) imgWrap.innerHTML = `<span>Illustration: Source USFWS Digital Media Library. Image loading not yet configured for this species.</span>`;
   }
 }
 
@@ -1398,12 +1402,12 @@ function renderSpeciesCardBody(sp, spRegs, regsUrl) {
 
   html += `</div>`;
 
-  // Law bar + magazine link
+  // Law bar + state magazine link
   const magUrl = STATE_MAG_URLS[state_code];
   html += `<div class="law-bar">
     <div class="law-bar-text">⚖️ <strong>Field guide, not the law</strong> — Confirm limits before you keep a fish. Regulations change.<br>
     <a href="${escHtml(regsUrl)}" target="_blank">Official ${state_code} fishing regulations →</a>
-    ${magUrl ? `<br><a href="${escHtml(magUrl)}" target="_blank" style="color:var(--accent,#4db8ff);">📰 ${state_code} wildlife magazine →</a>` : ''}</div>
+    ${magUrl ? `<br><a href="${escHtml(magUrl)}" target="_blank" style="color:#7dd3fc;">📰 ${state_code} wildlife magazine →</a>` : ''}</div>
   </div>`;
 
   html += `</div>`;
@@ -1530,7 +1534,7 @@ function renderSetupTab() {
   html += `<div class="data-row"><span class="dr-label">USGS Gauge</span><span class="dr-val text-muted" style="font-size:11px">waterservices.usgs.gov</span></div>`;
   html += `<div class="data-row"><span class="dr-label">NOAA CO-OPS</span><span class="dr-val text-muted" style="font-size:11px">tidesandcurrents.noaa.gov</span></div>`;
   html += `<div class="data-row"><span class="dr-label">Wave forecast</span><span class="dr-val text-muted" style="font-size:11px">open-meteo.com (marine)</span></div>`;
-  html += `<div class="data-row"><span class="dr-label">Fish illustrations</span><span class="dr-val text-muted" style="font-size:11px">NOAA FishWatch (public domain)</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">Fish photos</span><span class="dr-val text-muted" style="font-size:11px">Wikipedia (CC licensed)</span></div>`;
   html += `<div class="source-note">All sources: keyless, free, government or open-source. $0 to run. No accounts. No tracking. All user data stored only on this device.</div>`;
   html += `</div></div>`;
 
@@ -1539,6 +1543,13 @@ function renderSetupTab() {
   html += `</div></div>`;
 
   document.getElementById('setup-content').innerHTML = html;
+}
+
+function updateWaterTypeBtn() {
+  const wt = state.profile ? state.profile.waterType : null;
+  const labels = {river:'🎣 River',lake:'🎣 Lake',salt_inshore:'🌊 Salt Inshore',salt_offshore:'🌊 Salt Offshore'};
+  const btn = document.getElementById('water-type-btn');
+  if (btn) btn.textContent = (wt && labels[wt]) ? labels[wt] + ' ⇄' : '⇄ Water type';
 }
 
 function openOnboarding() {
@@ -1636,6 +1647,61 @@ function escHtml(str) {
 }
 function fmtYMD(d) {
   return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+}
+
+// ─── PWA INSTALL ─────────────────────────────────────────────────────────────
+let _installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  showInstallCard('native');
+});
+
+window.addEventListener('appinstalled', () => {
+  const card = document.getElementById('install-card');
+  if (card) card.classList.remove('visible');
+  _installPrompt = null;
+});
+
+function showInstallCard(type) {
+  const card = document.getElementById('install-card');
+  if (!card) return;
+  if (type === 'native') {
+    document.getElementById('install-btn').style.display = 'block';
+    document.getElementById('ios-steps').style.display = 'none';
+    document.getElementById('install-sub').textContent = 'Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.';
+    card.classList.add('visible');
+  } else if (type === 'ios') {
+    document.getElementById('install-btn').style.display = 'none';
+    document.getElementById('ios-steps').style.display = 'block';
+    document.getElementById('install-sub').textContent = 'Add Phish-N-Boat to your Home Screen in Safari:';
+    card.classList.add('visible');
+  }
+}
+
+function triggerInstall() {
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(r => {
+      _installPrompt = null;
+      if (r.outcome === 'accepted') {
+        const card = document.getElementById('install-card');
+        if (card) card.classList.remove('visible');
+      }
+    });
+  }
+}
+
+function detectIOSInstallable() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone) showInstallCard('ios');
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
