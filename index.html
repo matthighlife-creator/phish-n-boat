@@ -55,6 +55,9 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 #loc-change-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;cursor:pointer;}
 #refresh-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 7px;border-radius:3px;cursor:pointer;}
 #water-type-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue-lt);padding:3px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;}
+#nearby-banner{display:none;padding:8px 14px;background:var(--panel2);border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;line-height:1.5;}
+#nearby-banner .nb-pick{color:var(--blue-lt);font-weight:700;}
+#nearby-banner .nb-clear{float:right;color:var(--muted);text-decoration:underline;font-size:11px;cursor:pointer;}
 
 /* TABS */
 #tab-nav{flex-shrink:0;display:flex;background:var(--panel);border-bottom:1px solid var(--border);}
@@ -319,10 +322,13 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <!-- LOCATION BAR -->
   <div id="loc-bar">
     <span id="loc-text">📍 Locating...</span>
-    <button id="water-type-btn" onclick="openOnboarding()" title="Switch water type">🌊 Salt</button>
+    <button id="water-type-btn" onclick="cycleWaterType()" title="Tap to switch water type">🌊 Salt</button>
     <button id="refresh-btn" onclick="refreshAll()" title="Refresh data">↻</button>
-    <button id="loc-change-btn" onclick="openLocModal()">Change</button>
+    <button id="loc-change-btn" onclick="openLocModal()">📍 Location</button>
   </div>
+
+  <!-- NEARBY WATERS BANNER -->
+  <div id="nearby-banner"></div>
 
   <!-- TABS -->
   <div id="tab-nav">
@@ -375,7 +381,8 @@ let state = {
   openMeteoWave: null,
   lastFetch: null, fetchError: false,
   verdict: 'loading',
-  sunTimes: null
+  sunTimes: null,
+  destination: null, nearby: [], nearbyIdx: 0
 };
 
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
@@ -396,6 +403,130 @@ function loadCache(key) {
 }
 function saveCache(key, data) {
   try { localStorage.setItem('pnb_cache_'+key, JSON.stringify({data, ts: Date.now()})); } catch(e) {}
+}
+
+// ─── DESTINATION (the body of water the user picked) ─────────────────────────
+function loadDestination() {
+  try { return JSON.parse(localStorage.getItem('pnb_dest')||'null'); } catch(e) { return null; }
+}
+function saveDestination(d) {
+  try { localStorage.setItem('pnb_dest', JSON.stringify(d)); } catch(e) {}
+}
+function clearDestination(refresh) {
+  state.destination = null;
+  try { localStorage.removeItem('pnb_dest'); } catch(e) {}
+  if (refresh !== false) refreshAll();
+}
+function haversineMi(lat1, lon1, lat2, lon2) {
+  const R = 3958.8, toR = Math.PI/180;
+  const dLat = (lat2-lat1)*toR, dLon = (lon2-lon1)*toR;
+  const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ─── NEARBY WATERS (rotating picker) ─────────────────────────────────────────
+let nearbyTimer = null;
+
+async function fetchNearbyCOOPS(lat, lon) {
+  // NOAA station list, trimmed + cached for 30 days
+  let cached = loadCache('coops_station_list');
+  let list = (cached && cached.data && (Date.now()-cached.ts) < 30*24*3600*1000) ? cached.data : null;
+  if (!list) {
+    try {
+      const r = await fetch('https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions');
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      list = (j.stations||[]).map(s=>({id:s.id, name:s.name, lat:s.lat, lon:s.lng}));
+      saveCache('coops_station_list', list);
+    } catch(e) { list = cached ? cached.data : null; }
+  }
+  if (!list || !list.length) return [];
+  return list
+    .map(s=>({...s, dist: haversineMi(lat,lon,s.lat,s.lon)}))
+    .sort((a,b)=>a.dist-b.dist).slice(0,3);
+}
+
+async function summarizeNearbySalt(stns) {
+  return Promise.all(stns.map(async s => {
+    const [tempR, tideR] = await Promise.all([
+      fetchCOOPS(s.id, 'water_temperature'),
+      fetchTidePredictions(s.id)
+    ]);
+    let temp = null;
+    if (tempR.data && tempR.data.data && tempR.data.data.length) {
+      temp = parseFloat(tempR.data.data[tempR.data.data.length-1].v);
+    }
+    let nextTide = null;
+    if (tideR.data && tideR.data.predictions) {
+      const now = Date.now();
+      const p = tideR.data.predictions.find(p=>new Date(p.t).getTime()>now);
+      if (p) nextTide = (p.type==='H'?'High ':'Low ')+new Date(p.t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    }
+    return {...s, temp, nextTide};
+  }));
+}
+
+function startNearbyCycle() {
+  stopNearbyCycle();
+  renderNearbyBanner();
+  if (state.nearby.length > 1 && !state.destination) {
+    nearbyTimer = setInterval(()=>{
+      state.nearbyIdx = (state.nearbyIdx+1) % state.nearby.length;
+      renderNearbyBanner();
+    }, 3000);
+  }
+}
+function stopNearbyCycle() {
+  if (nearbyTimer) { clearInterval(nearbyTimer); nearbyTimer = null; }
+}
+
+function renderNearbyBanner() {
+  const el = document.getElementById('nearby-banner');
+  if (!el) return;
+  if (state.destination) {
+    el.style.display = 'block';
+    el.innerHTML = `🎯 Your spot: <span class="nb-pick">${escHtml(state.destination.name)}</span>
+      <span class="nb-clear" onclick="event.stopPropagation();clearDestination()">change spot</span>`;
+    el.onclick = null;
+    return;
+  }
+  if (!state.nearby.length) { el.style.display = 'none'; return; }
+  const i = state.nearbyIdx % state.nearby.length;
+  const s = state.nearby[i];
+  const bits = [];
+  if (s.dist != null) bits.push(s.dist.toFixed(1)+' mi');
+  if (s.temp != null) bits.push(s.temp.toFixed(0)+'°F water');
+  if (s.nextTide) bits.push('next: '+s.nextTide);
+  if (s.gaugeTxt) bits.push(s.gaugeTxt);
+  el.style.display = 'block';
+  el.innerHTML = `🌊 Nearest waters (${i+1}/${state.nearby.length}): <span class="nb-pick">${escHtml(s.name)}</span>${bits.length ? ' · '+bits.join(' · ') : ''} — <u>tap to make this your spot</u>`;
+  el.onclick = ()=>pickDestination(i);
+}
+
+function pickDestination(idx) {
+  const s = state.nearby[idx];
+  if (!s) return;
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  state.destination = {type: (!wt || wt.startsWith('salt')) ? 'coops' : 'usgs', id: s.id, name: s.name, lat: s.lat, lon: s.lon};
+  saveDestination(state.destination);
+  stopNearbyCycle();
+  renderNearbyBanner();
+  refreshAll();
+}
+
+function cycleWaterType() {
+  const order = ['salt_inshore','salt_offshore','river','lake'];
+  const p = state.profile || {name:'',homeWater:'',state:'MS',targetSpecies:[],license:null,setupDone:true,waterType:'salt_inshore'};
+  const idx = order.indexOf(p.waterType);
+  p.waterType = order[(idx+1) % order.length];
+  state.profile = p;
+  saveProfile(p);
+  clearDestination(false); // different water type = different spot, no auto-refresh (we refresh below)
+  updateWaterTypeBtn();
+  populateSpeciesChips(p.waterType);
+  renderFishingTab();
+  renderSetupTab();
+  refreshAll();
 }
 
 // ─── ONBOARDING ──────────────────────────────────────────────────────────────
@@ -603,7 +734,12 @@ async function fetchNearestUSGS(lat, lon, siteType) {
         };
       }
     });
-    const nearest = Object.values(siteMap).sort((a,b)=>a.dist-b.dist)[0];
+    const sorted = Object.values(siteMap).sort((a,b)=>a.dist-b.dist);
+    let nearest = sorted[0];
+    if (state.destination && state.destination.type === 'usgs') {
+      const m = sorted.find(s=>s.sid===state.destination.id);
+      if (m) nearest = m;
+    }
     // Try to get flood stage from NWS AHPS
     let floodStage = null;
     try {
@@ -631,7 +767,12 @@ async function fetchNearestUSGS(lat, lon, siteType) {
         }
       }
     } catch(e2) { /* flood stage unavailable */ }
-    const result = { ...nearest, floodStage };
+    const result = { ...nearest, floodStage, nearby3: sorted.slice(0,3).map(s=>({
+      id: s.sid, name: s.name, lat: s.lat, lon: s.lon,
+      dist: haversineMi(lat, lon, s.lat, s.lon),
+      gaugeTxt: s.values['00065'] ? ('stage '+s.values['00065'].value+' ft')
+              : (s.values['00060'] ? ('flow '+s.values['00060'].value+' cfs') : null)
+    })) };
     saveCache(cacheKey, result);
     return {data:result, stale:false};
   } catch(e) {
@@ -660,6 +801,21 @@ async function fetchCOOPS(station, product, extras={}) {
     const cached = loadCache(cacheKey);
     return {data: cached ? cached.data : null, stale:true, ts: cached ? cached.ts : null};
   }
+}
+
+// Try the user's picked station first; fall back to the default sensor station if it has no data
+async function fetchCOOPSWithFallback(destStn, product) {
+  if (destStn) {
+    const r = await fetchCOOPS(destStn, product);
+    if (r.data && r.data.data && r.data.data.length) {
+      r.stnId = destStn;
+      r.stnName = state.destination ? state.destination.name : destStn;
+      return r;
+    }
+  }
+  const fb = await fetchCOOPS(NOAA_WIND_STN, product);
+  fb.stnId = NOAA_WIND_STN; fb.stnName = 'Ship Island, MS Sound';
+  return fb;
 }
 
 async function fetchTidePredictions(station) {
@@ -896,7 +1052,9 @@ function renderSaltConditions(el) {
     html += `<div class="data-row"><span class="dr-label">Wind speed</span><span class="dr-val">${spd.toFixed(1)} kt (${dir})</span></div>`;
     html += `<div class="data-row"><span class="dr-label">Gust</span><span class="dr-val ${gst>=25?'text-red':gst>=18?'text-yellow':'text-green'}">${gst.toFixed(1)} kt</span></div>`;
     html += `<div class="data-row"><span class="dr-label">Updated</span><span class="dr-val text-muted" style="font-size:11px">${w.t||'—'}</span></div>`;
-    html += `<div class="source-note">Station ${NOAA_WIND_STN} (Ship Island, MS Sound) · NOAA CO-OPS · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=${NOAA_WIND_STN}" target="_blank">Station page</a></div>`;
+    const windStnId = wind.stnId || NOAA_WIND_STN;
+    const windStnName = wind.stnName || 'Ship Island, MS Sound';
+    html += `<div class="source-note">Station ${windStnId} (${escHtml(windStnName)}) · NOAA CO-OPS · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=${windStnId}" target="_blank">Station page</a></div>`;
     if (wind.stale) html += staleNote(wind.ts);
   } else {
     html += `<p class="loading-text">Wind data unavailable${wind&&wind.stale?' — showing cached':''}.</p>`;
@@ -949,7 +1107,10 @@ function renderSaltConditions(el) {
       html += `<tr><td>${timeStr}</td><td class="tide-type-${p.type}">${p.type==='H'?'HIGH':'LOW'}</td><td>${parseFloat(p.v).toFixed(2)}</td></tr>`;
     });
     html += `</tbody></table>`;
-    html += `<div class="source-note" style="padding:8px 12px">Station ${NOAA_TIDE_STN} (Horn Island Pass) · NOAA CO-OPS · Datum: MLLW</div>`;
+    const tideStnNote = (state.destination && state.destination.type==='coops')
+      ? `${state.destination.id} (${escHtml(state.destination.name)})`
+      : `${NOAA_TIDE_STN} (Horn Island Pass)`;
+    html += `<div class="source-note" style="padding:8px 12px">Station ${tideStnNote} · NOAA CO-OPS · Datum: MLLW</div>`;
     if (tide.stale) html += staleNote(tide.ts);
   } else {
     html += `<p class="loading-text" style="padding:12px">Tide predictions unavailable.</p>`;
@@ -1493,6 +1654,7 @@ function openOnboarding() {
 }
 
 // ─── MAIN REFRESH ─────────────────────────────────────────────────────────────
+let _refreshTimer = null;
 async function refreshAll() {
   const btn = document.getElementById('refresh-btn');
   if (btn) { btn.textContent = '↻'; btn.style.opacity='.5'; }
@@ -1515,10 +1677,11 @@ async function refreshAll() {
     fetchNWSForecast(state.lat, state.lon)
   ];
 
+  const destStn = (state.destination && state.destination.type === 'coops') ? state.destination.id : null;
   if (isSalt) {
-    promises.push(fetchCOOPS(NOAA_WIND_STN, 'wind'));
-    promises.push(fetchCOOPS(NOAA_WIND_STN, 'water_temperature'));
-    promises.push(fetchTidePredictions(NOAA_TIDE_STN));
+    promises.push(fetchCOOPSWithFallback(destStn, 'wind'));
+    promises.push(fetchCOOPSWithFallback(destStn, 'water_temperature'));
+    promises.push(fetchTidePredictions(destStn || NOAA_TIDE_STN));
     promises.push(fetchOpenMeteoMarine(state.lat, state.lon));
     promises.push(Promise.resolve(null)); // placeholder for gauge
   } else if (isRiver) {
@@ -1563,8 +1726,26 @@ async function refreshAll() {
 
   if (btn) { btn.textContent = '↻'; btn.style.opacity='1'; }
 
-  // Schedule next refresh
-  setTimeout(refreshAll, REFRESH_INTERVAL_MS);
+  // Friendlier location label once a spot is picked
+  if (state.destination) {
+    document.getElementById('loc-text').textContent = '📍 Near ' + state.destination.name;
+  }
+
+  // Discover the nearest 3 bodies of water for the rotating picker
+  try {
+    if (isSalt) {
+      const near = await fetchNearbyCOOPS(state.lat, state.lon);
+      state.nearby = await summarizeNearbySalt(near);
+    } else {
+      state.nearby = (gaugeR && gaugeR.data && gaugeR.data.nearby3) ? gaugeR.data.nearby3 : [];
+    }
+  } catch(e) { state.nearby = []; }
+  state.nearbyIdx = 0;
+  startNearbyCycle();
+
+  // Schedule next refresh (replace any pending one so they don't stack up)
+  clearTimeout(_refreshTimer);
+  _refreshTimer = setTimeout(refreshAll, REFRESH_INTERVAL_MS);
 }
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
@@ -1635,6 +1816,8 @@ if ('serviceWorker' in navigator) {
 function init() {
   populateStateSelects();
   state.profile = loadProfile();
+  state.destination = loadDestination();
+  updateWaterTypeBtn();
   if (!state.profile || !state.profile.setupDone) {
     document.getElementById('onboarding').classList.add('open');
     populateSpeciesChips('salt_inshore');
