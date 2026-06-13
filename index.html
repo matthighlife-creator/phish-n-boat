@@ -229,7 +229,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     <label class="ob-label">Your name (optional)</label>
     <input class="ob-input" id="ob-name" placeholder="e.g. Matt" maxlength="40">
     <label class="ob-label">Home water (free text)</label>
-    <input class="ob-input" id="ob-homewater" placeholder="e.g. Horn Island / Pascagoula Sound" maxlength="80">
+    <input class="ob-input" id="ob-homewater" placeholder="e.g. your home bay, lake, or river" maxlength="80">
     <label class="ob-label">State</label>
     <select class="ob-select" id="ob-state"></select>
     <button class="ob-next" onclick="obNext(2)">Next →</button>
@@ -803,13 +803,13 @@ async function fetchCOOPS(station, product, extras={}) {
   }
 }
 
-// Try the user's picked station first; fall back to the default sensor station if it has no data
-async function fetchCOOPSWithFallback(destStn, product) {
-  if (destStn) {
-    const r = await fetchCOOPS(destStn, product);
+// Try the preferred station first; fall back to the default sensor station if it has no data
+async function fetchCOOPSWithFallback(stn, stnName, product) {
+  if (stn) {
+    const r = await fetchCOOPS(stn, product);
     if (r.data && r.data.data && r.data.data.length) {
-      r.stnId = destStn;
-      r.stnName = state.destination ? state.destination.name : destStn;
+      r.stnId = stn;
+      r.stnName = stnName || stn;
       return r;
     }
   }
@@ -1107,8 +1107,8 @@ function renderSaltConditions(el) {
       html += `<tr><td>${timeStr}</td><td class="tide-type-${p.type}">${p.type==='H'?'HIGH':'LOW'}</td><td>${parseFloat(p.v).toFixed(2)}</td></tr>`;
     });
     html += `</tbody></table>`;
-    const tideStnNote = (state.destination && state.destination.type==='coops')
-      ? `${state.destination.id} (${escHtml(state.destination.name)})`
+    const tideStnNote = state.activeTide
+      ? `${state.activeTide.id} (${escHtml(state.activeTide.name)})`
       : `${NOAA_TIDE_STN} (Horn Island Pass)`;
     html += `<div class="source-note" style="padding:8px 12px">Station ${tideStnNote} · NOAA CO-OPS · Datum: MLLW</div>`;
     if (tide.stale) html += staleNote(tide.ts);
@@ -1677,11 +1677,21 @@ async function refreshAll() {
     fetchNWSForecast(state.lat, state.lon)
   ];
 
-  const destStn = (state.destination && state.destination.type === 'coops') ? state.destination.id : null;
+  // Pick the station: user's chosen spot first, otherwise the closest station to the GPS fix
+  let mainStn = (state.destination && state.destination.type === 'coops') ? state.destination.id : null;
+  let mainStnName = state.destination ? state.destination.name : null;
+  if (isSalt && !mainStn) {
+    try {
+      const near = await fetchNearbyCOOPS(state.lat, state.lon);
+      state.nearby = near;
+      if (near.length) { mainStn = near[0].id; mainStnName = near[0].name; }
+    } catch(e) {}
+  }
+  state.activeTide = {id: mainStn || NOAA_TIDE_STN, name: mainStnName || 'Horn Island Pass'};
   if (isSalt) {
-    promises.push(fetchCOOPSWithFallback(destStn, 'wind'));
-    promises.push(fetchCOOPSWithFallback(destStn, 'water_temperature'));
-    promises.push(fetchTidePredictions(destStn || NOAA_TIDE_STN));
+    promises.push(fetchCOOPSWithFallback(mainStn, mainStnName, 'wind'));
+    promises.push(fetchCOOPSWithFallback(mainStn, mainStnName, 'water_temperature'));
+    promises.push(fetchTidePredictions(mainStn || NOAA_TIDE_STN));
     promises.push(fetchOpenMeteoMarine(state.lat, state.lon));
     promises.push(Promise.resolve(null)); // placeholder for gauge
   } else if (isRiver) {
@@ -1734,7 +1744,7 @@ async function refreshAll() {
   // Discover the nearest 3 bodies of water for the rotating picker
   try {
     if (isSalt) {
-      const near = await fetchNearbyCOOPS(state.lat, state.lon);
+      const near = (state.nearby && state.nearby.length) ? state.nearby : await fetchNearbyCOOPS(state.lat, state.lon);
       state.nearby = await summarizeNearbySalt(near);
     } else {
       state.nearby = (gaugeR && gaugeR.data && gaugeR.data.nearby3) ? gaugeR.data.nearby3 : [];
