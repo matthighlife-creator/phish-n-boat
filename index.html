@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
   <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/leaflet/leaflet.css">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Phish-N-Boat">
@@ -51,8 +52,11 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 /* LOC BAR */
 #loc-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--panel);border-bottom:1px solid var(--border);}
-#loc-text{flex:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-#loc-change-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;cursor:pointer;}
+#loc-text{flex:1;font-size:12px;display:flex;align-items:center;cursor:pointer;min-width:0;overflow:hidden;gap:0;}
+#loc-arrow{display:inline-block;width:9px;height:9px;border-right:2px solid var(--blue-lt);border-top:2px solid var(--blue-lt);transform:rotate(45deg);flex-shrink:0;position:relative;top:-1px;margin-right:6px;}
+#loc-arrow.dream{border-color:var(--muted);}
+#loc-label{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#loc-mode-btn{font-size:15px;background:none;border:none;padding:2px 4px;cursor:pointer;flex-shrink:0;line-height:1;}
 #refresh-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 7px;border-radius:3px;cursor:pointer;}
 #water-type-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue-lt);padding:3px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;}
 #nearby-banner{display:none;padding:8px 14px;background:var(--panel2);border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;line-height:1.5;}
@@ -190,9 +194,30 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .setup-sub{font-size:11px;color:var(--muted);margin-top:2px;}
 .setup-btn{font-size:12px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:5px 10px;border-radius:4px;cursor:pointer;}
 
-/* MANUAL LOC MODAL */
-#loc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;align-items:center;justify-content:center;padding:16px;}
-#loc-modal.open{display:flex;}
+/* DAYDREAM PICKER */
+#daydream-modal{display:none;position:fixed;inset:0;background:var(--bg);z-index:150;flex-direction:column;}
+#daydream-modal.open{display:flex;}
+#dream-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0;}
+#dream-title{font-size:15px;font-weight:700;color:var(--white);flex:1;}
+#dream-close-btn{font-size:20px;background:none;border:none;color:var(--muted);cursor:pointer;padding:2px 8px;border-radius:4px;}
+#dream-search-row{display:flex;gap:8px;padding:10px 14px;background:var(--panel2);flex-shrink:0;border-bottom:1px solid var(--border);}
+#dream-search{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--white);font-size:14px;font-family:inherit;}
+#dream-search:focus{outline:none;border-color:var(--blue);}
+#dream-search-btn{padding:8px 14px;background:var(--blue);color:var(--white);border:none;border-radius:4px;font-size:13px;font-weight:700;cursor:pointer;}
+#dream-results{flex-shrink:0;max-height:180px;overflow-y:auto;background:var(--panel);border-bottom:1px solid var(--border);display:none;}
+#dream-results.open{display:block;}
+.dream-result{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.dream-result:last-child{border-bottom:none;}
+.dream-result:active{background:var(--panel2);}
+.dream-result-name{font-size:13px;font-weight:600;color:var(--white);}
+.dream-result-type{font-size:11px;color:var(--muted);margin-top:2px;}
+#dream-map{flex:1;min-height:0;}
+#dream-footer{flex-shrink:0;padding:10px 14px;background:var(--panel);border-top:1px solid var(--border);}
+#dream-pin-label{font-size:12px;color:var(--muted);text-align:center;margin-bottom:8px;min-height:18px;}
+#dream-confirm-btn{width:100%;padding:13px;background:var(--blue);color:var(--white);border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;opacity:.4;pointer-events:none;}
+#dream-confirm-btn.ready{opacity:1;pointer-events:auto;}
+
+/* SHARED MODAL STYLES */
 .modal-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:20px;width:100%;max-width:360px;}
 .modal-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:12px;}
 .modal-note{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;}
@@ -282,20 +307,22 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 </div>
 </div>
 
-<!-- MANUAL LOCATION MODAL -->
-<div id="loc-modal">
-<div class="modal-box">
-  <div class="modal-title">Set Location</div>
-  <div class="modal-note">Enter coordinates or a city name. This app uses GPS automatically — set this only if GPS isn't working.</div>
-  <label class="ob-label">Latitude</label>
-  <input class="ob-input" id="manual-lat" placeholder="e.g. 30.37" type="number" step="0.0001">
-  <label class="ob-label">Longitude</label>
-  <input class="ob-input" id="manual-lon" placeholder="e.g. -88.60" type="number" step="0.0001">
-  <div class="modal-row">
-    <button class="modal-btn modal-btn-cancel" onclick="closeLocModal()">Cancel</button>
-    <button class="modal-btn modal-btn-primary" onclick="setManualLoc()">Set Location</button>
+<!-- DAYDREAM LOCATION PICKER -->
+<div id="daydream-modal">
+  <div id="dream-header">
+    <div id="dream-title">📌 Pick a Fishing Spot</div>
+    <button id="dream-close-btn" onclick="closeDaydreamPicker()">✕</button>
   </div>
-</div>
+  <div id="dream-search-row">
+    <input id="dream-search" placeholder="Search lakes, rivers, bays…" onkeydown="onDreamSearchKey(event)">
+    <button id="dream-search-btn" onclick="runDreamSearch()">Search</button>
+  </div>
+  <div id="dream-results"></div>
+  <div id="dream-map"></div>
+  <div id="dream-footer">
+    <div id="dream-pin-label"></div>
+    <button id="dream-confirm-btn" onclick="confirmDaydream()">Set This Spot ✓</button>
+  </div>
 </div>
 
 <!-- SPECIES CARD OVERLAY -->
@@ -321,10 +348,10 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
   <!-- LOCATION BAR -->
   <div id="loc-bar">
-    <span id="loc-text">📍 Locating...</span>
+    <span id="loc-text" onclick="openDaydreamPicker()"><span id="loc-arrow"></span><span id="loc-label">Locating…</span></span>
+    <button id="loc-mode-btn" onclick="toggleLocationMode()" title="Switch location mode">📍</button>
     <button id="water-type-btn" onclick="cycleWaterType()" title="Tap to switch water type">🌊 Salt</button>
     <button id="refresh-btn" onclick="refreshAll()" title="Refresh data">↻</button>
-    <button id="loc-change-btn" onclick="openLocModal()">📍 Location</button>
   </div>
 
   <!-- NEARBY WATERS BANNER -->
@@ -363,6 +390,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   </div>
 </div>
 
+<script src="/leaflet/leaflet.js"></script>
 <script>
 // ─── CONSTANTS ───────────────────────────────────────────────────────────────
 const NWS_UA = '(PhishNBoat/2.0, matthighlife@gmail.com)';
@@ -382,7 +410,9 @@ let state = {
   lastFetch: null, fetchError: false,
   verdict: 'loading',
   sunTimes: null,
-  destination: null, nearby: [], nearbyIdx: 0
+  destination: null, nearby: [], nearbyIdx: 0,
+  daydreamSpot: null,
+  locationMode: 'gps'
 };
 
 // ─── STORAGE ─────────────────────────────────────────────────────────────────
@@ -411,6 +441,12 @@ function loadDestination() {
 }
 function saveDestination(d) {
   try { localStorage.setItem('pnb_dest', JSON.stringify(d)); } catch(e) {}
+}
+function loadDaydream() {
+  try { return JSON.parse(localStorage.getItem('pnb_daydream')||'null'); } catch(e) { return null; }
+}
+function saveDaydream(d) {
+  try { localStorage.setItem('pnb_daydream', JSON.stringify(d)); } catch(e) {}
 }
 function clearDestination(refresh) {
   state.destination = null;
@@ -648,16 +684,185 @@ function getLocation() {
   });
 }
 
-function openLocModal() { document.getElementById('loc-modal').classList.add('open'); }
-function closeLocModal() { document.getElementById('loc-modal').classList.remove('open'); }
-function setManualLoc() {
-  const lat = parseFloat(document.getElementById('manual-lat').value);
-  const lon = parseFloat(document.getElementById('manual-lon').value);
-  if (isNaN(lat)||isNaN(lon)) { alert('Enter valid coordinates.'); return; }
-  state.lat = lat; state.lon = lon;
-  state.locLabel = `Manual: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-  document.getElementById('loc-text').textContent = '📍 ' + state.locLabel;
-  closeLocModal();
+// ─── DAYDREAM LOCATION PICKER ─────────────────────────────────────────────────
+let _daydreamMap = null, _daydreamMarker = null, _pendingPin = null, _dreamResults = [];
+
+function updateLocDisplay() {
+  const arrow = document.getElementById('loc-arrow');
+  const label = document.getElementById('loc-label');
+  const modeBtn = document.getElementById('loc-mode-btn');
+  if (!label) return;
+  if (state.locationMode === 'daydream' && state.daydreamSpot) {
+    if (arrow) arrow.classList.add('dream');
+    label.textContent = state.daydreamSpot.name;
+    if (modeBtn) modeBtn.textContent = '📌';
+  } else {
+    if (arrow) arrow.classList.remove('dream');
+    label.textContent = state.locLabel || 'Locating…';
+    if (modeBtn) modeBtn.textContent = '📍';
+  }
+}
+
+function toggleLocationMode() {
+  if (state.locationMode === 'gps') {
+    if (state.daydreamSpot) {
+      state.locationMode = 'daydream';
+      state.lat = state.daydreamSpot.lat;
+      state.lon = state.daydreamSpot.lon;
+      updateLocDisplay();
+      refreshAll();
+    } else {
+      openDaydreamPicker();
+    }
+  } else {
+    state.locationMode = 'gps';
+    state.lat = null;
+    updateLocDisplay();
+    refreshAll();
+  }
+}
+
+function openDaydreamPicker() {
+  document.getElementById('daydream-modal').classList.add('open');
+  setTimeout(() => {
+    if (!_daydreamMap) {
+      _daydreamMap = L.map('dream-map').setView([38, -96], 4);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(_daydreamMap);
+      _daydreamMap.on('click', onDreamMapClick);
+    } else {
+      _daydreamMap.invalidateSize();
+    }
+    // Pre-load existing spot if any
+    if (state.daydreamSpot) {
+      _pendingPin = {...state.daydreamSpot};
+      if (_daydreamMarker) { _daydreamMap.removeLayer(_daydreamMarker); _daydreamMarker = null; }
+      _daydreamMarker = L.marker([state.daydreamSpot.lat, state.daydreamSpot.lon], {icon: dreamIcon()}).addTo(_daydreamMap);
+      _daydreamMap.setView([state.daydreamSpot.lat, state.daydreamSpot.lon], 10);
+      setPinLabel(state.daydreamSpot.name);
+      document.getElementById('dream-confirm-btn').classList.add('ready');
+    } else {
+      _pendingPin = null;
+      document.getElementById('dream-confirm-btn').classList.remove('ready');
+      setPinLabel('');
+    }
+    document.getElementById('dream-results').classList.remove('open');
+    document.getElementById('dream-search').value = '';
+  }, 50);
+}
+
+function closeDaydreamPicker() {
+  document.getElementById('daydream-modal').classList.remove('open');
+}
+
+function dreamIcon() {
+  return L.divIcon({
+    className: '',
+    html: '<div style="font-size:26px;line-height:1;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));margin-top:-26px;margin-left:-9px">📌</div>',
+    iconSize: [20, 26],
+    iconAnchor: [9, 26]
+  });
+}
+
+function setPinLabel(name) {
+  const el = document.getElementById('dream-pin-label');
+  if (el) el.textContent = name ? name : '';
+}
+
+async function onDreamMapClick(e) {
+  const {lat, lng} = e.latlng;
+  if (_daydreamMarker) { _daydreamMap.removeLayer(_daydreamMarker); _daydreamMarker = null; }
+  _daydreamMarker = L.marker([lat, lng], {icon: dreamIcon()}).addTo(_daydreamMap);
+  _pendingPin = {lat, lon: lng, name: `${lat.toFixed(4)}, ${lng.toFixed(4)}`};
+  document.getElementById('dream-confirm-btn').classList.add('ready');
+  setPinLabel('Looking up location…');
+  try {
+    const r = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat.toFixed(6)}&lon=${lng.toFixed(6)}&format=json`,
+      {headers: {'User-Agent': 'phish-n-boat/1.0 (matthighlife@gmail.com)'}}
+    );
+    const j = await r.json();
+    const name = j.name ||
+      j.address?.water || j.address?.river || j.address?.lake ||
+      j.address?.bay || j.address?.reservoir || j.address?.waterway ||
+      j.address?.city || j.address?.town || j.address?.village ||
+      `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    _pendingPin.name = name;
+    setPinLabel(name);
+  } catch(_) {
+    setPinLabel(_pendingPin.name);
+  }
+}
+
+function onDreamSearchKey(e) {
+  if (e.key === 'Enter') runDreamSearch();
+}
+
+async function runDreamSearch() {
+  const q = document.getElementById('dream-search').value.trim();
+  if (!q) return;
+  const resultsEl = document.getElementById('dream-results');
+  resultsEl.classList.add('open');
+  resultsEl.innerHTML = '<div class="dream-result"><div class="dream-result-name" style="color:var(--muted)">Searching…</div></div>';
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=10&countrycodes=us`;
+    const all = await fetch(url, {headers: {'User-Agent': 'phish-n-boat/1.0 (matthighlife@gmail.com)'}}).then(r => r.json());
+    _dreamResults = all;
+    const water = all.filter(r =>
+      ['waterway','natural','water'].includes(r.category) ||
+      ['waterway','natural','water','bay','lake','river','reservoir','spring'].includes(r.type)
+    );
+    showDreamResults(water.length ? water : all);
+  } catch(_) {
+    resultsEl.innerHTML = '<div class="dream-result"><div class="dream-result-name" style="color:var(--muted)">Search failed — check connection</div></div>';
+  }
+}
+
+function showDreamResults(results) {
+  _dreamResults = results;
+  const el = document.getElementById('dream-results');
+  el.classList.add('open');
+  if (!results.length) {
+    el.innerHTML = '<div class="dream-result"><div class="dream-result-name" style="color:var(--muted)">No results found</div></div>';
+    return;
+  }
+  el.innerHTML = results.slice(0, 8).map((r, i) => {
+    const parts = r.display_name.split(',');
+    const name = parts[0].trim();
+    const detail = parts.slice(1, 3).join(',').trim();
+    return `<div class="dream-result" onclick="selectDreamResult(${i})">
+      <div class="dream-result-name">${escHtml(name)}</div>
+      ${detail ? `<div class="dream-result-type">${escHtml(detail)}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function selectDreamResult(idx) {
+  const r = _dreamResults[idx];
+  if (!r) return;
+  const lat = parseFloat(r.lat), lon = parseFloat(r.lon);
+  const name = r.display_name.split(',')[0].trim();
+  if (_daydreamMarker) { _daydreamMap.removeLayer(_daydreamMarker); _daydreamMarker = null; }
+  _daydreamMarker = L.marker([lat, lon], {icon: dreamIcon()}).addTo(_daydreamMap);
+  _daydreamMap.setView([lat, lon], 10);
+  _pendingPin = {lat, lon, name};
+  setPinLabel(name);
+  document.getElementById('dream-confirm-btn').classList.add('ready');
+  document.getElementById('dream-results').classList.remove('open');
+  document.getElementById('dream-search').value = name;
+}
+
+function confirmDaydream() {
+  if (!_pendingPin) return;
+  state.daydreamSpot = {..._pendingPin};
+  state.locationMode = 'daydream';
+  state.lat = _pendingPin.lat;
+  state.lon = _pendingPin.lon;
+  saveDaydream(state.daydreamSpot);
+  closeDaydreamPicker();
+  updateLocDisplay();
   refreshAll();
 }
 function toggleAlerts() {
@@ -1660,11 +1865,18 @@ async function refreshAll() {
   if (btn) { btn.textContent = '↻'; btn.style.opacity='.5'; }
 
   // Get location
-  if (!state.lat) {
-    const loc = await getLocation();
-    state.lat = loc.lat; state.lon = loc.lon; state.locLabel = loc.label;
+  if (state.locationMode === 'daydream' && state.daydreamSpot) {
+    state.lat = state.daydreamSpot.lat;
+    state.lon = state.daydreamSpot.lon;
+    state.locLabel = state.daydreamSpot.name;
+  } else {
+    state.locationMode = 'gps';
+    if (!state.lat) {
+      const loc = await getLocation();
+      state.lat = loc.lat; state.lon = loc.lon; state.locLabel = loc.label;
+    }
   }
-  document.getElementById('loc-text').textContent = '📍 ' + state.locLabel;
+  updateLocDisplay();
 
   // Fetch in parallel
   const wt = state.profile ? state.profile.waterType : 'salt_inshore';
@@ -1684,7 +1896,10 @@ async function refreshAll() {
     try {
       const near = await fetchNearbyCOOPS(state.lat, state.lon);
       state.nearby = near;
-      if (near.length) { mainStn = near[0].id; mainStnName = near[0].name; }
+      if (near.length) {
+        mainStn = near[0].id; mainStnName = near[0].name;
+        if (state.locationMode === 'gps') { state.locLabel = near[0].name; updateLocDisplay(); }
+      }
     } catch(e) {}
   }
   state.activeTide = {id: mainStn || NOAA_TIDE_STN, name: mainStnName || 'Horn Island Pass'};
@@ -1737,10 +1952,6 @@ async function refreshAll() {
   if (btn) { btn.textContent = '↻'; btn.style.opacity='1'; }
 
   // Friendlier location label once a spot is picked
-  if (state.destination) {
-    document.getElementById('loc-text').textContent = '📍 Near ' + state.destination.name;
-  }
-
   // Discover the nearest 3 bodies of water for the rotating picker
   try {
     if (isSalt) {
@@ -1748,6 +1959,10 @@ async function refreshAll() {
       state.nearby = await summarizeNearbySalt(near);
     } else {
       state.nearby = (gaugeR && gaugeR.data && gaugeR.data.nearby3) ? gaugeR.data.nearby3 : [];
+      if (state.locationMode === 'gps' && state.nearby.length) {
+        state.locLabel = state.nearby[0].name;
+        updateLocDisplay();
+      }
     }
   } catch(e) { state.nearby = []; }
   state.nearbyIdx = 0;
@@ -1827,6 +2042,15 @@ function init() {
   populateStateSelects();
   state.profile = loadProfile();
   state.destination = loadDestination();
+  const savedDream = loadDaydream();
+  if (savedDream) {
+    state.daydreamSpot = savedDream;
+    state.locationMode = 'daydream';
+    state.lat = savedDream.lat;
+    state.lon = savedDream.lon;
+    state.locLabel = savedDream.name;
+  }
+  updateLocDisplay();
   updateWaterTypeBtn();
   if (!state.profile || !state.profile.setupDone) {
     document.getElementById('onboarding').classList.add('open');
