@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- slate blue elongated body with hump behind head -->
+  <path d="M 75,112 C 75,80 120,48 210,46 C 300,46 388,72 400,110 C 388,148 300,172 210,172 C 120,172 75,140 75,112 Z" fill="#6878a8" stroke="#303860" stroke-width="2"/>
+  <!-- HUMPED BACK profile (KEY MARK) - highlight the hump -->
+  <path d="M 110,80 Q 148,38 198,46" fill="none" stroke="#485898" stroke-width="6" stroke-linecap="round" opacity="0.6"/>
+  <!-- NO SPOTS (clean body) - blue catfish has NO spots -->
+  <!-- belly lighter -->
+  <ellipse cx="238" cy="152" rx="130" ry="18" fill="#c0c8e0" opacity="0.3"/>
+  <!-- tail DEEPLY FORKED -->
+  <path d="M 388,85 Q 420,50 450,70 L 432,110 L 450,150 Q 420,168 388,135 Z" fill="#5060a0" stroke="#303860" stroke-width="2"/>
+  <line x1="420" y1="110" x2="395" y2="110" stroke="#303860" stroke-width="4"/>
+  <!-- dorsal fin -->
+  <path d="M 148,54 L 158,16 L 195,12 L 215,20 L 216,54 Z" fill="#5060a0" stroke="#303860" stroke-width="1.5"/>
+  <!-- adipose fin -->
+  <path d="M 328,64 Q 352,56 368,64 L 362,76 Q 345,70 330,76 Z" fill="#5060a0" stroke="#303860" stroke-width="1.5"/>
+  <!-- pectoral fin -->
+  <ellipse cx="98" cy="122" rx="25" ry="10" fill="#5060a0" stroke="#303860" stroke-width="1.5" transform="rotate(-22 98 122)"/>
+  <!-- STRAIGHT-BOTTOM anal fin (KEY MARK vs channel cat) -->
+  <path d="M 265,166 L 265,195 L 365,192 L 365,166 Z" fill="#5060a0" stroke="#303860" stroke-width="1.5"/>
+  <!-- flat bottom line of anal fin is STRAIGHT -->
+  <line x1="265" y1="195" x2="365" y2="192" stroke="#303860" stroke-width="2"/>
+  <!-- head and barbels -->
+  <path d="M 68,100 Q 52,110 68,120 Q 80,130 92,128 L 92,114 Q 80,113 72,110 Q 80,107 92,106 L 92,92 Q 80,90 68,100 Z" fill="#7888b8" stroke="#303860" stroke-width="1.5"/>
+  <!-- barbels -->
+  <path d="M 56,104 Q 28,96 14,88" fill="none" stroke="#303860" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 56,108 Q 24,108 6,105" fill="none" stroke="#303860" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 56,112 Q 28,122 14,132" fill="none" stroke="#303860" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 62,120 Q 48,134 40,148" fill="none" stroke="#303860" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 70,124 Q 62,140 58,155" fill="none" stroke="#303860" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- eye -->
+  <circle cx="78" cy="106" r="7" fill="white" stroke="#303860" stroke-width="1.5"/>
+  <circle cx="78" cy="106" r="4.5" fill="#0a0a0a"/>
+  <circle cx="76" cy="104" r="1.5" fill="white"/>
+
+</svg>

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- nearly circular deep body, olive-green -->
+  <ellipse cx="235" cy="110" rx="145" ry="88" fill="#5a7040" stroke="#2a4018" stroke-width="2"/>
+  <!-- orange-yellow belly (KEY MARK - breeding males) -->
+  <ellipse cx="250" cy="145" rx="110" ry="45" fill="#e07828" opacity="0.55"/>
+  <!-- olive top fade -->
+  <ellipse cx="228" cy="82" rx="125" ry="45" fill="#3a5828" opacity="0.4"/>
+  <!-- dusky vertical bars -->
+  <path d="M 170,50 L 165,168" stroke="#2a3818" stroke-width="6" opacity="0.3"/>
+  <path d="M 210,42 L 205,178" stroke="#2a3818" stroke-width="6" opacity="0.3"/>
+  <path d="M 252,40 L 248,178" stroke="#2a3818" stroke-width="6" opacity="0.3"/>
+  <path d="M 295,44 L 292,172" stroke="#2a3818" stroke-width="6" opacity="0.25"/>
+  <path d="M 334,52 L 332,168" stroke="#2a3818" stroke-width="6" opacity="0.2"/>
+  <!-- DARK EAR FLAP (KEY MARK - solid dark blue-black, no colored edge) -->
+  <path d="M 96,92 Q 76,95 70,110 Q 76,125 96,128 Q 105,125 106,110 Q 106,95 96,92 Z" fill="#0a1828" stroke="#0a1828" stroke-width="1"/>
+  <!-- ear flap dark circle highlight -->
+  <ellipse cx="82" cy="110" rx="10" ry="14" fill="#0a0818" opacity="0.9"/>
+  <!-- DARK SPOT at rear base of soft dorsal (KEY MARK) -->
+  <circle cx="328" cy="40" r="10" fill="#0a1010" opacity="0.85"/>
+  <!-- dorsal fin (single with notch) -->
+  <path d="M 112,40 L 128,4 L 158,2 L 185,5 L 205,8 L 218,16 L 225,28 L 235,32 Q 265,28 290,32 L 315,36 L 328,40 Z" fill="#4a6030" stroke="#2a4018" stroke-width="1.5"/>
+  <!-- tail fin (slightly forked) -->
+  <path d="M 375,72 Q 410,44 432,65 Q 418,110 432,155 Q 410,176 375,148 Z" fill="#4a6030" stroke="#2a4018" stroke-width="2"/>
+  <!-- anal fin -->
+  <path d="M 230,196 L 222,215 L 305,213 L 310,196 Z" fill="#4a6030" stroke="#2a4018" stroke-width="1.5"/>
+  <!-- pectoral fin -->
+  <ellipse cx="105" cy="122" rx="22" ry="10" fill="#4a6030" stroke="#2a4018" stroke-width="1.5" transform="rotate(-18 105 122)"/>
+  <!-- mouth (small) -->
+  <path d="M 85,103 Q 75,110 85,117 Q 92,122 100,120 L 100,113 Q 92,112 86,110 Q 92,108 100,107 L 100,100 Q 92,98 85,103 Z" fill="#7a9058" stroke="#2a4018" stroke-width="1.5"/>
+  <!-- eye -->
+  <circle cx="96" cy="106" r="9" fill="white" stroke="#2a4018" stroke-width="1.5"/>
+  <circle cx="96" cy="106" r="6" fill="#0a0a0a"/>
+  <circle cx="94" cy="104" r="2" fill="white"/>
+
+</svg>

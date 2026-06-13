@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- dark gray/black deep body -->
+  <ellipse cx="238" cy="110" rx="150" ry="80" fill="#383838" stroke="#181818" stroke-width="2.5"/>
+  <!-- darker belly -->
+  <ellipse cx="245" cy="148" rx="120" ry="28" fill="#202020" opacity="0.5"/>
+  <!-- slight sheen on sides -->
+  <ellipse cx="238" cy="92" rx="130" ry="30" fill="#585858" opacity="0.25"/>
+  <!-- CHIN BARBELS (KEY MARK - multiple) -->
+  <path d="M 72,120 Q 55,130 42,145" fill="none" stroke="#181818" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 78,122 Q 62,136 52,152" fill="none" stroke="#181818" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 84,124 Q 72,140 65,156" fill="none" stroke="#181818" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 68,118 Q 50,124 35,132" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 65,115 Q 48,118 32,122" fill="none" stroke="#181818" stroke-width="2" stroke-linecap="round"/>
+  <!-- rounded tail (KEY MARK - not forked) -->
+  <ellipse cx="408" cy="110" rx="38" ry="48" fill="#282828" stroke="#181818" stroke-width="2"/>
+  <!-- spiny dorsal -->
+  <path d="M 110,42 L 120,6 L 145,3 L 168,6 L 185,10 L 198,18 L 205,30 L 208,42 Z" fill="#282828" stroke="#181818" stroke-width="1.5"/>
+  <!-- soft dorsal (long) -->
+  <path d="M 218,42 Q 250,14 285,12 L 320,14 L 335,42 Z" fill="#282828" stroke="#181818" stroke-width="1.5"/>
+  <!-- pectoral fin -->
+  <ellipse cx="102" cy="120" rx="26" ry="10" fill="#282828" stroke="#181818" stroke-width="1.5" transform="rotate(-18 102 120)"/>
+  <!-- anal fin -->
+  <path d="M 245,186 L 235,210 L 312,208 L 318,186 Z" fill="#282828" stroke="#181818" stroke-width="1.5"/>
+  <!-- blunt snout with underslung mouth (feeds head-down on bottom) -->
+  <path d="M 78,108 Q 62,115 78,122 Q 86,126 96,124 L 96,116 Q 86,115 78,113 Q 86,111 96,110 L 96,104 Q 86,102 78,108 Z" fill="#484848" stroke="#181818" stroke-width="1.5"/>
+  <!-- eye -->
+  <circle cx="88" cy="106" r="9" fill="#505050" stroke="#181818" stroke-width="1.5"/>
+  <circle cx="88" cy="106" r="6" fill="#0a0a0a"/>
+  <circle cx="86" cy="104" r="2" fill="#787878"/>
+  <!-- gill plate -->
+  <path d="M 98,78 Q 107,110 98,142" fill="none" stroke="#181818" stroke-width="2"/>
+
+</svg>

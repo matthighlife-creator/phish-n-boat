@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- mottled brown deep oval body (like a drifting leaf) -->
+  <ellipse cx="228" cy="112" rx="148" ry="80" fill="#6a5030" stroke="#3a2810" stroke-width="2.5"/>
+  <!-- dark mottled pattern -->
+  <ellipse cx="185" cy="95" rx="38" ry="25" fill="#3a2010" opacity="0.5"/>
+  <ellipse cx="258" cy="82" rx="32" ry="20" fill="#8a6840" opacity="0.4"/>
+  <ellipse cx="295" cy="112" rx="28" ry="22" fill="#3a2010" opacity="0.45"/>
+  <ellipse cx="210" cy="140" rx="30" ry="18" fill="#8a6840" opacity="0.35"/>
+  <ellipse cx="265" cy="148" rx="26" ry="16" fill="#3a2010" opacity="0.4"/>
+  <ellipse cx="155" cy="120" rx="22" ry="16" fill="#8a6840" opacity="0.35"/>
+  <ellipse cx="320" cy="128" rx="24" ry="18" fill="#3a2010" opacity="0.35"/>
+  <!-- THREE-LOBE TAIL (KEY MARK - looks like 3 tails) -->
+  <!-- Upper lobe: soft dorsal extends back and rounds -->
+  <path d="M 340,52 Q 390,30 420,50 Q 430,75 415,95 Q 390,80 358,88" fill="#5a3820" stroke="#3a2810" stroke-width="2"/>
+  <!-- Middle lobe: caudal fin (true tail) -->
+  <path d="M 366,90 Q 430,92 450,112 Q 430,132 366,132 Z" fill="#5a3820" stroke="#3a2810" stroke-width="2"/>
+  <!-- Lower lobe: anal fin extends back and rounds -->
+  <path d="M 340,168 Q 390,188 420,172 Q 432,150 416,132 Q 390,145 358,132" fill="#5a3820" stroke="#3a2810" stroke-width="2"/>
+  <!-- The three lobes together look like 3 tails -->
+  <!-- dorsal fin (long, meeting the upper tail lobe) -->
+  <path d="M 110,42 Q 155,20 200,16 Q 248,14 295,18 L 340,52" fill="#5a3820" stroke="#3a2810" stroke-width="1.5"/>
+  <!-- anal fin (long, meeting the lower tail lobe) -->
+  <path d="M 115,182 Q 160,200 210,200 Q 262,200 310,192 L 340,168" fill="#5a3820" stroke="#3a2810" stroke-width="1.5"/>
+  <!-- compressed body look -->
+  <!-- pectoral fin -->
+  <ellipse cx="100" cy="118" rx="26" ry="10" fill="#5a3820" stroke="#3a2810" stroke-width="1.5" transform="rotate(-15 100 118)"/>
+  <!-- pelvic fins small -->
+  <ellipse cx="148" cy="178" rx="15" ry="7" fill="#5a3820" stroke="#3a2810" stroke-width="1.5"/>
+  <!-- mouth -->
+  <path d="M 74,106 Q 60,112 74,118 Q 82,122 92,120 L 92,114 Q 82,113 76,112 Q 82,111 92,110 L 92,104 Q 82,102 74,106 Z" fill="#8a6840" stroke="#3a2810" stroke-width="1.5"/>
+  <!-- eye -->
+  <circle cx="84" cy="108" r="9" fill="white" stroke="#3a2810" stroke-width="1.5"/>
+  <circle cx="84" cy="108" r="6" fill="#0a0808"/>
+  <circle cx="82" cy="106" r="2" fill="white"/>
+  <!-- gill plate -->
+  <path d="M 94,80 Q 103,112 94,144" fill="none" stroke="#3a2810" stroke-width="2"/>
+
+</svg>

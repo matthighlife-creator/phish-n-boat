@@ -1213,7 +1213,7 @@ function renderFishingTab() {
 }
 
 // ─── SPECIES CARD ─────────────────────────────────────────────────────────────
-async function openSpeciesCard(speciesId) {
+function openSpeciesCard(speciesId) {
   const wt = state.profile ? state.profile.waterType : 'salt_inshore';
   const list = (wt && !wt.startsWith('salt')) ? FW_SPECIES_LIST : SALT_SPECIES_LIST;
   const sp = list.find(s=>s.id===speciesId);
@@ -1229,39 +1229,12 @@ async function openSpeciesCard(speciesId) {
   const regsUrl = STATE_REGS_URLS[state_code] || STATE_REGS_URLS['MS'];
   const spRegs = sp.regs || {};
 
-  // Image placeholder shown first
-  content.innerHTML = `<div class="soc-img-placeholder" id="soc-img-wrap">
-    <span>🔍 Loading illustration from NOAA FishWatch...</span>
-  </div>` + renderSpeciesCardBody(sp, spRegs, regsUrl);
-
-  // Async: load image
-  if (sp.fishwatchId) {
-    try {
-      const r = await fetch(`https://www.fishwatch.gov/api/species/${sp.fishwatchId}`);
-      if (r.ok) {
-        const j = await r.json();
-        if (j && j[0] && j[0]['Species Illustration Photo'] && j[0]['Species Illustration Photo'].src) {
-          const imgSrc = j[0]['Species Illustration Photo'].src;
-          const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) {
-            imgWrap.outerHTML = `<div style="background:var(--panel2);">
-              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Illustration unavailable — NOAA FishWatch could not load image</div>'">
-              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Illustration: NOAA FishWatch · Public domain · Not AI-generated</div>
-            </div>`;
-          }
-        } else {
-          const imgWrap = document.getElementById('soc-img-wrap');
-          if (imgWrap) imgWrap.innerHTML = `<span>No illustration available on NOAA FishWatch for this species.</span>`;
-        }
-      }
-    } catch(e) {
-      const imgWrap = document.getElementById('soc-img-wrap');
-      if (imgWrap) imgWrap.innerHTML = `<span>Could not load illustration — check connection.</span>`;
-    }
-  } else {
-    const imgWrap = document.getElementById('soc-img-wrap');
-    if (imgWrap) imgWrap.innerHTML = `<span>Illustration: Source USFWS Digital Media Library. Image loading not yet configured for this species.</span>`;
-  }
+  // Local bundled illustration — always available, no network required
+  const imgHtml = `<div style="background:var(--panel2);">
+    <img class="soc-img" src="images/${escHtml(sp.id)}.svg" alt="${escHtml(sp.name)} identification illustration" onerror="this.parentElement.style.display='none'">
+    <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Field guide illustration · Not AI-generated</div>
+  </div>`;
+  content.innerHTML = imgHtml + renderSpeciesCardBody(sp, spRegs, regsUrl);
 }
 
 function renderSpeciesCardBody(sp, spRegs, regsUrl) {

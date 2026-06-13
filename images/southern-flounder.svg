@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- flat oval body, oriented sideways (flounder lies flat) -->
+  <!-- Main body - very flat oval -->
+  <ellipse cx="240" cy="118" rx="200" ry="78" fill="#7a6840" stroke="#3a3020" stroke-width="2.5"/>
+  <!-- mottled brown pattern (no distinct spots) -->
+  <ellipse cx="180" cy="102" rx="40" ry="28" fill="#5a5030" opacity="0.45"/>
+  <ellipse cx="260" cy="88" rx="35" ry="22" fill="#9a8858" opacity="0.35"/>
+  <ellipse cx="310" cy="112" rx="30" ry="22" fill="#5a5030" opacity="0.4"/>
+  <ellipse cx="205" cy="138" rx="32" ry="20" fill="#9a8858" opacity="0.3"/>
+  <ellipse cx="270" cy="148" rx="28" ry="18" fill="#5a5030" opacity="0.35"/>
+  <ellipse cx="155" cy="130" rx="25" ry="18" fill="#9a8858" opacity="0.3"/>
+  <!-- BOTH EYES ON LEFT SIDE (KEY MARK) - top of fish -->
+  <circle cx="82" cy="88" r="11" fill="white" stroke="#3a3020" stroke-width="2"/>
+  <circle cx="82" cy="88" r="7" fill="#0a0808"/>
+  <circle cx="80" cy="86" r="2" fill="white"/>
+  <circle cx="105" cy="78" r="11" fill="white" stroke="#3a3020" stroke-width="2"/>
+  <circle cx="105" cy="78" r="7" fill="#0a0808"/>
+  <circle cx="103" cy="76" r="2" fill="white"/>
+  <!-- "LEFT EYE FLOUNDER" label area - subtle indicator -->
+  <path d="M 70,70 Q 80,58 108,62" fill="none" stroke="#6a9ab0" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.6"/>
+  <!-- Wide mouth with teeth visible -->
+  <path d="M 40,112 Q 28,120 40,128 Q 55,135 68,130 L 70,122 Q 58,120 50,118 Q 58,116 70,115 L 68,107 Q 54,104 40,112 Z" fill="#8a7848" stroke="#3a3020" stroke-width="1.5"/>
+  <!-- long dorsal fin running almost full length -->
+  <path d="M 65,60 Q 200,32 430,60" fill="none" stroke="#5a4828" stroke-width="18" stroke-linecap="round" opacity="0.8"/>
+  <path d="M 65,60 Q 200,32 430,60" fill="none" stroke="#6a5838" stroke-width="12" stroke-linecap="round" opacity="0.6"/>
+  <!-- long anal fin on bottom -->
+  <path d="M 65,176 Q 200,198 430,176" fill="none" stroke="#5a4828" stroke-width="15" stroke-linecap="round" opacity="0.8"/>
+  <!-- rounded tail -->
+  <ellipse cx="435" cy="118" rx="22" ry="40" fill="#5a4828" stroke="#3a3020" stroke-width="2"/>
+  <!-- pectoral fin (the one visible, on colored side) -->
+  <ellipse cx="92" cy="108" rx="30" ry="12" fill="#6a5838" stroke="#3a3020" stroke-width="1.5" transform="rotate(10 92 108)"/>
+
+</svg>

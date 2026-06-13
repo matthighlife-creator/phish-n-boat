@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- silver body, streamlined, blue-green back -->
+  <path d="M 80,110 C 80,72 135,52 242,50 C 348,50 408,75 418,110 C 408,145 348,170 242,170 C 135,170 80,148 80,110 Z" fill="#a8b8b0" stroke="#485858" stroke-width="2"/>
+  <!-- blue-green back (KEY MARK) -->
+  <ellipse cx="255" cy="82" rx="155" ry="32" fill="#386870" opacity="0.65"/>
+  <!-- silver sides sheen -->
+  <ellipse cx="255" cy="110" rx="150" ry="40" fill="#e0e8e4" opacity="0.2"/>
+  <!-- GOLD/BRASSY OVAL SPOTS above lateral line (KEY MARK) -->
+  <ellipse cx="158" cy="86" rx="7" ry="5" fill="#c8a030" opacity="0.9"/>
+  <ellipse cx="190" cy="78" rx="8" ry="5" fill="#c8a030" opacity="0.9"/>
+  <ellipse cx="225" cy="73" rx="8" ry="5" fill="#c8a030" opacity="0.9"/>
+  <ellipse cx="262" cy="70" rx="8" ry="5" fill="#c8a030" opacity="0.9"/>
+  <ellipse cx="298" cy="72" rx="8" ry="5" fill="#c8a030" opacity="0.9"/>
+  <ellipse cx="332" cy="76" rx="8" ry="5" fill="#c8a030" opacity="0.85"/>
+  <ellipse cx="364" cy="82" rx="7" ry="5" fill="#c8a030" opacity="0.8"/>
+  <ellipse cx="175" cy="96" rx="7" ry="5" fill="#c8a030" opacity="0.85"/>
+  <ellipse cx="210" cy="90" rx="8" ry="5" fill="#c8a030" opacity="0.85"/>
+  <ellipse cx="248" cy="87" rx="8" ry="5" fill="#c8a030" opacity="0.85"/>
+  <ellipse cx="285" cy="87" rx="7" ry="5" fill="#c8a030" opacity="0.8"/>
+  <ellipse cx="318" cy="90" rx="7" ry="5" fill="#c8a030" opacity="0.8"/>
+  <ellipse cx="350" cy="96" rx="7" ry="5" fill="#c8a030" opacity="0.75"/>
+  <ellipse cx="380" cy="104" rx="6" ry="4" fill="#c8a030" opacity="0.7"/>
+  <ellipse cx="193" cy="108" rx="6" ry="4" fill="#c8a030" opacity="0.75"/>
+  <ellipse cx="228" cy="105" rx="7" ry="4" fill="#c8a030" opacity="0.75"/>
+  <ellipse cx="265" cy="103" rx="7" ry="4" fill="#c8a030" opacity="0.7"/>
+  <!-- lateral line gently curving down (KEY MARK - not sharp drop) -->
+  <path d="M 115,102 Q 255,110 405,118" fill="none" stroke="#485858" stroke-width="1.5" opacity="0.6"/>
+  <!-- DEEPLY FORKED tail (KEY MARK - very forked like a mackerel) -->
+  <path d="M 405,82 Q 438,45 462,60 L 448,110 L 462,160 Q 438,175 405,138 Z" fill="#386870" stroke="#485858" stroke-width="2"/>
+  <line x1="448" y1="110" x2="412" y2="110" stroke="#485858" stroke-width="5"/>
+  <!-- first dorsal (tall) -->
+  <path d="M 120,60 L 130,18 L 158,14 L 185,18 L 200,28 L 210,60 Z" fill="#386870" stroke="#485858" stroke-width="1.5"/>
+  <!-- small second dorsal -->
+  <path d="M 258,60 Q 275,44 298,42 L 318,44 L 325,60 Z" fill="#386870" stroke="#485858" stroke-width="1.5"/>
+  <!-- finlets between dorsal and tail -->
+  <path d="M 340,62 L 345,55 L 352,62" fill="#386870" stroke="#485858" stroke-width="1"/>
+  <path d="M 358,64 L 363,57 L 368,64" fill="#386870" stroke="#485858" stroke-width="1"/>
+  <path d="M 374,66 L 379,60 L 384,66" fill="#386870" stroke="#485858" stroke-width="1"/>
+  <!-- anal fin -->
+  <path d="M 258,158 Q 278,178 308,175 L 326,165 L 326,158 Z" fill="#386870" stroke="#485858" stroke-width="1.5"/>
+  <!-- pectoral fin (long, pointed) -->
+  <ellipse cx="108" cy="118" rx="30" ry="10" fill="#606e70" stroke="#485858" stroke-width="1.5" transform="rotate(-25 108 118)"/>
+  <!-- pointed snout -->
+  <path d="M 64,104 Q 50,110 64,116 Q 72,120 82,118 L 82,114 Q 74,112 68,110 Q 74,108 82,106 L 82,102 Q 72,100 64,104 Z" fill="#c0c8c8" stroke="#485858" stroke-width="1.5"/>
+  <!-- eye -->
+  <circle cx="78" cy="108" r="7" fill="white" stroke="#485858" stroke-width="1.5"/>
+  <circle cx="78" cy="108" r="5" fill="#0a0a0a"/>
+  <circle cx="76" cy="106" r="1.5" fill="white"/>
+
+</svg>

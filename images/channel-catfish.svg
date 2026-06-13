@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- elongated blue-gray body -->
+  <path d="M 75,110 C 75,75 130,55 230,52 C 330,50 390,72 400,110 C 390,148 330,168 230,168 C 130,170 75,145 75,110 Z" fill="#7890a0" stroke="#384858" stroke-width="2"/>
+  <!-- belly lighter -->
+  <ellipse cx="235" cy="148" rx="130" ry="18" fill="#c8d8e0" opacity="0.35"/>
+  <!-- scattered black spots (KEY MARK) -->
+  <circle cx="165" cy="88" r="5" fill="#1a2838" opacity="0.7"/>
+  <circle cx="210" cy="78" r="4" fill="#1a2838" opacity="0.7"/>
+  <circle cx="255" cy="82" r="6" fill="#1a2838" opacity="0.7"/>
+  <circle cx="195" cy="105" r="4" fill="#1a2838" opacity="0.65"/>
+  <circle cx="248" cy="70" r="5" fill="#1a2838" opacity="0.65"/>
+  <circle cx="295" cy="90" r="5" fill="#1a2838" opacity="0.65"/>
+  <circle cx="305" cy="108" r="4" fill="#1a2838" opacity="0.6"/>
+  <circle cx="170" cy="120" r="4" fill="#1a2838" opacity="0.6"/>
+  <circle cx="330" cy="100" r="4" fill="#1a2838" opacity="0.55"/>
+  <circle cx="220" cy="125" r="3" fill="#1a2838" opacity="0.55"/>
+  <!-- tail fin DEEPLY FORKED (KEY MARK) -->
+  <path d="M 388,85 Q 420,52 448,70 L 432,110 L 448,150 Q 420,168 388,135 Z" fill="#6080a0" stroke="#384858" stroke-width="2"/>
+  <line x1="418" y1="110" x2="395" y2="110" stroke="#384858" stroke-width="4"/>
+  <!-- dorsal fin -->
+  <path d="M 155,60 L 162,20 L 200,16 L 218,24 L 220,60 Z" fill="#6080a0" stroke="#384858" stroke-width="1.5"/>
+  <!-- adipose fin (small, between dorsal and tail) -->
+  <path d="M 330,65 Q 355,58 370,65 L 365,78 Q 348,72 332,78 Z" fill="#6080a0" stroke="#384858" stroke-width="1.5"/>
+  <!-- pectoral fin with spine -->
+  <ellipse cx="100" cy="120" rx="25" ry="10" fill="#6080a0" stroke="#384858" stroke-width="1.5" transform="rotate(-20 100 120)"/>
+  <!-- ROUNDED (convex) anal fin (KEY MARK vs blue cat) -->
+  <path d="M 268,162 Q 295,195 330,192 Q 358,185 368,162 Z" fill="#6080a0" stroke="#384858" stroke-width="1.5"/>
+  <!-- Flat head (not wide) and barbels (KEY MARK) -->
+  <path d="M 70,100 Q 55,110 70,120 Q 80,128 90,126 L 90,114 Q 80,112 72,110 Q 80,108 90,106 L 90,94 Q 80,92 70,100 Z" fill="#8aA0b0" stroke="#384858" stroke-width="1.5"/>
+  <!-- barbels (whiskers) -->
+  <path d="M 60,104 Q 32,96 18,88" fill="none" stroke="#284050" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 60,108 Q 28,108 10,105" fill="none" stroke="#284050" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 60,112 Q 32,120 18,128" fill="none" stroke="#284050" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 65,118 Q 50,132 42,145" fill="none" stroke="#284050" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M 72,122 Q 65,138 62,152" fill="none" stroke="#284050" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- eye -->
+  <circle cx="80" cy="106" r="7" fill="white" stroke="#384858" stroke-width="1.5"/>
+  <circle cx="80" cy="106" r="4.5" fill="#0a0a0a"/>
+  <circle cx="78" cy="104" r="1.5" fill="white"/>
+
+</svg>

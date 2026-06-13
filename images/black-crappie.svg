@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+
+  <rect width="480" height="220" fill="#0d1b2a" rx="6"/>
+  <!-- deep oval silvery body with olive-green overlay -->
+  <ellipse cx="238" cy="110" rx="148" ry="78" fill="#8898a0" stroke="#404850" stroke-width="2"/>
+  <!-- olive-green mottling top -->
+  <ellipse cx="238" cy="88" rx="140" ry="45" fill="#405848" opacity="0.45"/>
+  <!-- scattered IRREGULAR spots (KEY MARK - no consistent pattern) -->
+  <circle cx="155" cy="85" r="7" fill="#202828" opacity="0.75"/>
+  <circle cx="192" cy="72" r="8" fill="#202828" opacity="0.75"/>
+  <circle cx="235" cy="68" r="6" fill="#202828" opacity="0.75"/>
+  <circle cx="275" cy="74" r="9" fill="#202828" opacity="0.75"/>
+  <circle cx="315" cy="82" r="7" fill="#202828" opacity="0.75"/>
+  <circle cx="170" cy="102" r="6" fill="#202828" opacity="0.7"/>
+  <circle cx="218" cy="96" r="8" fill="#202828" opacity="0.7"/>
+  <circle cx="260" cy="92" r="6" fill="#202828" opacity="0.7"/>
+  <circle cx="302" cy="98" r="7" fill="#202828" opacity="0.7"/>
+  <circle cx="345" cy="92" r="8" fill="#202828" opacity="0.65"/>
+  <circle cx="148" cy="118" r="6" fill="#202828" opacity="0.6"/>
+  <circle cx="192" cy="112" r="7" fill="#202828" opacity="0.65"/>
+  <circle cx="240" cy="118" r="6" fill="#202828" opacity="0.65"/>
+  <circle cx="280" cy="112" r="8" fill="#202828" opacity="0.65"/>
+  <circle cx="322" cy="116" r="6" fill="#202828" opacity="0.6"/>
+  <circle cx="355" cy="108" r="5" fill="#202828" opacity="0.55"/>
+  <!-- silvery belly -->
+  <ellipse cx="238" cy="145" rx="120" ry="28" fill="#d0d8dc" opacity="0.35"/>
+  <!-- tail fin (slightly forked) -->
+  <path d="M 374,80 Q 412,50 435,72 Q 422,110 435,148 Q 412,170 374,140 Z" fill="#607080" stroke="#404850" stroke-width="2"/>
+  <!-- long dorsal fin with 7-8 spines (KEY MARK) -->
+  <path d="M 108,42 L 120,8 L 148,5 L 175,8 L 198,12 L 215,18 L 225,28 L 240,32 L 260,30 L 285,32 L 305,36 L 318,42" fill="#607080" stroke="#404850" stroke-width="1.5"/>
+  <line x1="108" y1="42" x2="318" y2="42" stroke="none"/>
+  <path d="M 108,42 Q 215,45 318,42 Q 308,36 285,32 Q 260,30 240,32 Q 225,28 215,18 Q 205,12 198,12 L 175,8 L 148,5 L 120,8 L 108,42 Z" fill="#607080" stroke="#404850" stroke-width="1.5"/>
+  <!-- anal fin -->
+  <path d="M 218,185 L 208,210 L 290,208 L 298,185 Z" fill="#607080" stroke="#404850" stroke-width="1.5"/>
+  <!-- pectoral fin -->
+  <ellipse cx="102" cy="118" rx="22" ry="10" fill="#607080" stroke="#404850" stroke-width="1.5" transform="rotate(-18 102 118)"/>
+  <!-- mouth (upturned slightly) -->
+  <path d="M 82,102 Q 68,110 82,118 Q 92,124 104,122 L 104,112 Q 92,111 84,110 Q 92,109 104,108 L 104,98 Q 92,96 82,102 Z" fill="#a0a8b0" stroke="#404850" stroke-width="1.5"/>
+  <!-- eye -->
+  <circle cx="95" cy="108" r="9" fill="white" stroke="#404850" stroke-width="1.5"/>
+  <circle cx="95" cy="108" r="6" fill="#0a0a0a"/>
+  <circle cx="93" cy="106" r="2" fill="white"/>
+
+</svg>
