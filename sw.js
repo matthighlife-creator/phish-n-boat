@@ -1,5 +1,5 @@
-const CACHE = 'phish-n-boat-v4';
-const ASSETS = ['/', '/index.html', '/icon-192.png', '/icon-512.png'];
+const CACHE = 'phish-n-boat-v5';
+const ASSETS = ['/', '/index.html', '/icon-192.png', '/icon-512.png', '/leaflet/leaflet.js', '/leaflet/leaflet.css'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
