@@ -1829,8 +1829,12 @@ function init() {
   state.destination = loadDestination();
   updateWaterTypeBtn();
   if (!state.profile || !state.profile.setupDone) {
-    document.getElementById('onboarding').classList.add('open');
-    populateSpeciesChips('salt_inshore');
+    state.profile = {
+      name: '', homeWater: 'Horn Island / MS Gulf Coast',
+      state: 'MS', waterType: 'salt_inshore',
+      targetSpecies: [], license: null, setupDone: true
+    };
+    saveProfile(state.profile);
   }
   renderSetupTab();
   renderFishingTab();

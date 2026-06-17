@@ -1,4 +1,4 @@
-const CACHE = 'phish-n-boat-v4';
+const CACHE = 'phish-n-boat-v5';
 const ASSETS = ['/', '/index.html', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
