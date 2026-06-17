@@ -2,670 +2,1842 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DanFinder — Horn Island (Live)</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Phish-N-Boat">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d2137">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Phish-N-Boat</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500;600&family=Bebas+Neue&display=swap');
-  :root {
-    --red:#D0021B;--dark:#0f1923;--darker:#080e14;--panel:#141f2b;--panel2:#1a2a38;
-    --border:#1e2f3f;--blue:#1a8cb8;--blue-light:#2ab5e8;--text:#c8dae8;--muted:#6a8fa8;
-    --white:#f0f8ff;--green:#2ecc71;--green-dark:#1a7a42;--orange:#e67e22;--yellow:#f1c40f;
-    --matt-bg:#0d1a12;--matt-panel:#122018;--matt-panel2:#1a2e22;--matt-border:#1f3828;
-    --matt-green:#2ecc71;--matt-gold:#d4a017;--matt-teal:#1abc9c;--matt-text:#c8dfc8;--matt-muted:#5a8a6a;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--darker);color:var(--text);font-family:'Barlow',sans-serif;font-size:14px;min-height:100vh;}
-  .app-switcher{display:flex;background:#050c12;border-bottom:2px solid #1a2f40;position:sticky;top:0;z-index:200;}
-  .app-btn{flex:1;padding:10px 8px;text-align:center;cursor:pointer;transition:all .25s;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border-bottom:3px solid transparent;color:#3a5a70;}
-  .app-btn.active-dan{color:#fff;border-bottom-color:var(--red);background:rgba(208,2,27,.08);}
-  .app-btn.active-matt{color:var(--matt-green);border-bottom-color:var(--matt-green);background:rgba(46,204,113,.06);}
-  .app-btn .btn-icon{font-size:18px;display:block;margin-bottom:1px;}
-  .app-btn .btn-label{font-size:11px;}
-  #matt-app{display:none;}
-  .topnav{background:var(--red);padding:0 16px;height:48px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.4);}
-  .logo{display:flex;align-items:center;gap:10px;}
-  .logo-icon{width:28px;height:28px;}
-  .logo-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#fff;}
-  .logo-text span{font-weight:400;opacity:.85;}
-  .dan-tag{background:rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:.5px;font-family:'Barlow Condensed',sans-serif;}
-  .location-banner{background:var(--dark);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;}
-  .location-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
-  .location-sub{font-size:12px;color:var(--muted);margin-top:2px;}
-  .go-fish-badge{background:var(--green);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
-  .loc-toggle{display:flex;gap:8px;padding:8px 16px;background:var(--dark);border-bottom:1px solid var(--border);}
-  .loc-btn{flex:1;text-align:center;padding:8px;border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:1px solid var(--border);color:var(--muted);transition:all .2s;}
-  .loc-btn.active{background:rgba(42,181,232,.15);border-color:var(--blue-light);color:var(--blue-light);}
-  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#2ecc71;margin-right:5px;animation:blink 1.6s ease-in-out infinite;vertical-align:middle;}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-  .summary-strip{background:var(--panel);border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);}
-  .strip-item{padding:12px 14px;border-right:1px solid var(--border);text-align:center;}
-  .strip-item:last-child{border-right:none;}
-  .strip-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;}
-  .strip-value{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:700;color:var(--white);line-height:1;}
-  .strip-unit{font-size:11px;color:var(--muted);margin-top:2px;}
-  .dan-tabs{display:flex;background:var(--dark);border-bottom:1px solid var(--border);}
-  .dan-tab{flex:1;padding:11px 8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;}
-  .dan-tab.active{color:var(--white);border-bottom-color:var(--blue-light);}
-  .dan-tab-content{display:none;}
-  .dan-tab-content.active{display:block;}
-  .forecast-table{width:100%;border-collapse:collapse;}
-  .forecast-table th{background:var(--dark);color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);}
-  .forecast-table td{padding:9px 10px;text-align:center;border-bottom:1px solid rgba(30,47,63,.6);border-right:1px solid rgba(30,47,63,.4);font-size:13px;}
-  .forecast-table tr:last-child td{border-bottom:none;}
-  .forecast-table tr:nth-child(even) td{background:rgba(20,31,43,.4);}
-  .time-cell{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:600;color:var(--white);text-align:left!important;padding-left:14px!important;}
-  .wind-speed-cell{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
-  .tip-card{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--blue-light);border-radius:4px;padding:14px 16px;margin:10px;}
-  .tip-card.good{border-left-color:var(--green);}
-  .tip-card.warn{border-left-color:var(--orange);}
-  .tip-card.info{border-left-color:var(--blue-light);}
-  .tip-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-  .tip-icon{font-size:18px;}
-  .tip-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
-  .tip-body{font-size:13px;color:var(--text);line-height:1.5;}
-  .tip-body strong{color:var(--white);}
-  .temp-section{margin:10px;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px 16px;}
-  .temp-header{font-family:'Barlow Condensed',sans-serif;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;}
-  .temp-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
-  .temp-big{font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:700;color:var(--orange);line-height:1;}
-  .temp-deg{font-size:24px;color:var(--muted);}
-  .temp-gauge{flex:1;height:10px;background:var(--dark);border-radius:5px;overflow:hidden;border:1px solid var(--border);}
-  .temp-fill{height:100%;width:75%;background:linear-gradient(to right,#1a8cb8,#e67e22);border-radius:5px;}
-  .species-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px;}
-  .species-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
-  .species-emoji{font-size:22px;}
-  .species-info{flex:1;}
-  .species-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--white);}
-  .species-status{font-size:11px;margin-top:2px;}
-  .hot{color:var(--green);}.warm{color:var(--yellow);}.slow{color:var(--muted);}
-  .dan-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:12px 14px 4px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-  .tide-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(30,47,63,.5);}
-  .tide-time{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--white);font-weight:600;}
-  .tide-type{font-size:12px;color:var(--muted);text-transform:uppercase;}
-  .tide-height{font-family:'Barlow Condensed',sans-serif;font-size:17px;color:var(--blue-light);font-weight:600;}
-  .loading{padding:20px 14px;text-align:center;color:var(--muted);font-size:13px;}
-  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--blue-light);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .data-source{font-size:10px;color:var(--muted);padding:8px 14px 14px;text-align:center;line-height:1.5;}
-  .data-source strong{color:var(--blue-light);}
-  .matts-tips-btn{display:flex;align-items:center;gap:12px;margin:10px;padding:14px 16px;background:linear-gradient(135deg,#0d1a12,#122018);border:1px solid var(--matt-border);border-left:4px solid var(--matt-green);border-radius:4px;cursor:pointer;transition:all .2s;}
-  .matts-tips-btn:hover{border-color:var(--matt-green);background:rgba(46,204,113,.08);}
-  .matts-tips-icon{font-size:28px;}
-  .matts-tips-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--matt-green);}
-  .matts-tips-sub{font-size:12px;color:var(--matt-muted);margin-top:2px;}
-  .matts-tips-arrow{margin-left:auto;font-size:20px;color:var(--matt-green);}
-  /* MATT APP */
-  #matt-app{background:var(--matt-bg);min-height:100vh;}
-  .matt-header{background:linear-gradient(135deg,#0a1a0d,#122018,#0f2a18);border-bottom:2px solid #1a7a42;padding:14px 16px 10px;}
-  .matt-guide-label{font-size:10px;color:var(--matt-green);text-transform:uppercase;letter-spacing:2px;font-weight:600;}
-  .matt-guide-title{font-family:'Bebas Neue',sans-serif;font-size:34px;color:#f0fff4;line-height:1;}
-  .matt-guide-subtitle{font-size:12px;color:var(--matt-muted);margin-top:3px;font-style:italic;}
-  .matt-header-top{display:flex;align-items:flex-start;justify-content:space-between;}
-  .matt-badges{display:flex;flex-direction:column;gap:6px;}
-  .matt-flir-badge{background:rgba(46,204,113,.12);border:1px solid #1a7a42;border-radius:6px;padding:6px 10px;text-align:center;}
-  .matt-flir-badge .icon{font-size:20px;}
-  .matt-flir-badge .label{font-size:9px;color:var(--matt-green);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
-  .matt-tabs{display:flex;background:var(--matt-panel);border-bottom:1px solid var(--matt-border);overflow-x:auto;}
-  .matt-tab{flex:1;min-width:70px;padding:10px 6px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;color:var(--matt-muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;white-space:nowrap;}
-  .matt-tab.active{color:var(--matt-green);border-bottom-color:var(--matt-green);background:rgba(46,204,113,.05);}
-  .matt-tab-content{display:none;}
-  .matt-tab-content.active{display:block;}
-  .m-section-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--matt-muted);text-transform:uppercase;letter-spacing:1.2px;padding:12px 14px 6px;border-bottom:1px solid var(--matt-border);}
-  .m-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-radius:4px;margin:10px;overflow:hidden;}
-  .m-card-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--matt-border);background:var(--matt-panel2);}
-  .m-card-icon{font-size:20px;}
-  .m-card-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#f0fff4;}
-  .m-card-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;}
-  .mbadge-green{background:rgba(46,204,113,.2);color:var(--matt-green);border:1px solid #1a7a42;}
-  .mbadge-gold{background:rgba(212,160,23,.2);color:var(--matt-gold);border:1px solid rgba(212,160,23,.4);}
-  .mbadge-blue{background:rgba(41,128,185,.2);color:#5dade2;border:1px solid rgba(41,128,185,.4);}
-  .m-card-body{padding:12px 14px;line-height:1.6;color:var(--matt-text);}
-  .m-card-body strong{color:#f0fff4;}
-  .m-card-body em{color:var(--matt-teal);font-style:normal;}
-  .m-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px;}
-  .m-tool-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-radius:4px;padding:12px;}
-  .m-tool-label{font-size:9px;color:var(--matt-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:4px;font-weight:600;}
-  .m-tool-value{font-family:'Bebas Neue',sans-serif;font-size:36px;line-height:1;color:#f0fff4;}
-  .m-tool-unit{font-size:14px;color:var(--matt-muted);}
-  .m-tool-status{font-size:12px;margin-top:5px;font-weight:600;}
-  .m-range-bar-wrap{margin:10px 14px;}
-  .m-range-label-row{display:flex;justify-content:space-between;font-size:10px;color:var(--matt-muted);margin-bottom:4px;}
-  .m-range-bar{height:8px;border-radius:4px;background:linear-gradient(to right,#2980b9,#2ecc71,#d4a017,#e07b2a,#c0392b);position:relative;}
-  .m-range-marker{position:absolute;top:-4px;width:16px;height:16px;border-radius:50%;background:#fff;border:2px solid var(--matt-bg);transform:translateX(-50%);box-shadow:0 0 6px rgba(255,255,255,.5);transition:left .6s ease;}
-  .m-sal-table{width:100%;border-collapse:collapse;}
-  .m-sal-table th{background:var(--matt-panel2);color:var(--matt-muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;padding:7px 12px;text-align:left;border-bottom:1px solid var(--matt-border);}
-  .m-sal-table td{padding:9px 12px;border-bottom:1px solid rgba(31,56,40,.5);font-size:13px;color:var(--matt-text);vertical-align:top;}
-  .m-sal-table tr:last-child td{border-bottom:none;}
-  .m-sal-table tr:nth-child(even) td{background:rgba(18,32,24,.4);}
-  .ppt{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;}
-  .m-species-item{border-bottom:1px solid var(--matt-border);padding:12px 14px;}
-  .m-species-item:last-child{border-bottom:none;}
-  .m-species-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
-  .m-species-emoji{font-size:22px;}
-  .m-species-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:#f0fff4;}
-  .m-species-hot{margin-left:auto;font-size:10px;font-weight:700;text-transform:uppercase;}
-  .m-species-detail{font-size:12px;color:var(--matt-text);line-height:1.5;}
-  .m-species-detail strong{color:#f0fff4;}
-  .m-species-detail em{color:var(--matt-teal);font-style:normal;}
-  .m-rig-card{background:var(--matt-panel);border:1px solid var(--matt-border);border-left:4px solid var(--matt-gold);border-radius:4px;margin:10px;padding:12px 14px;}
-  .m-rig-card.blue-left{border-left-color:var(--matt-teal);}
-  .m-rig-card.green-left{border-left-color:var(--matt-green);}
-  .m-rig-card.orange-left{border-left-color:#e07b2a;}
-  .m-rig-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#f0fff4;margin-bottom:5px;}
-  .m-rig-body{font-size:13px;line-height:1.6;color:var(--matt-text);}
-  .m-rig-body strong{color:#f0fff4;}
-  .m-highlight-box{background:rgba(46,204,113,.07);border:1px solid #1a7a42;border-radius:4px;padding:10px 13px;margin:10px;font-size:13px;line-height:1.6;color:var(--matt-text);}
-  .m-hb-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--matt-green);margin-bottom:4px;}
-  .back-to-dan{display:flex;align-items:center;gap:10px;margin:10px;padding:12px 16px;background:rgba(208,2,27,.08);border:1px solid rgba(208,2,27,.25);border-radius:4px;cursor:pointer;}
-  .back-to-dan:hover{background:rgba(208,2,27,.15);}
-  .back-label{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:#e88;font-weight:700;}
-  .back-sub{font-size:11px;color:var(--matt-muted);}
-  .bottom-pad{height:24px;}
+:root{
+  --bg:#0a1520;--panel:#0f1e2e;--panel2:#152336;--border:#1a3048;
+  --blue:#1a8cb8;--blue-lt:#2ab5e8;--text:#c8dae8;--muted:#5a7a90;
+  --white:#f0f8ff;--green:#27ae60;--green-dk:#1a6b3c;
+  --yellow:#f39c12;--red:#c0392b;--orange:#e67e22;
+  --go:#27ae60;--caution:#f39c12;--stop:#c0392b;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* SAFETY GATE */
+#safety-gate{flex-shrink:0;padding:10px 14px;border-bottom:2px solid var(--border);position:relative;z-index:10;}
+.sg-row{display:flex;align-items:center;gap:10px;}
+#sg-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:4px;font-weight:700;font-size:15px;letter-spacing:.4px;text-transform:uppercase;}
+.sg-go{background:rgba(39,174,96,.18);color:#4ade80;border:1px solid #27ae60;}
+.sg-caution{background:rgba(243,156,18,.18);color:#fbbf24;border:1px solid #f39c12;}
+.sg-stop{background:rgba(192,57,43,.22);color:#f87171;border:1px solid #c0392b;}
+.sg-loading{background:rgba(42,181,232,.12);color:#60a5fa;border:1px solid #1a8cb8;}
+#sg-drivers{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;}
+.sg-chip{font-size:11px;padding:3px 8px;border-radius:3px;border:1px solid;}
+.sg-chip-ok{border-color:#27ae60;color:#4ade80;background:rgba(39,174,96,.08);}
+.sg-chip-warn{border-color:#f39c12;color:#fbbf24;background:rgba(243,156,18,.08);}
+.sg-chip-stop{border-color:#c0392b;color:#f87171;background:rgba(192,57,43,.08);}
+#sg-alerts-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue);padding:3px 8px;border-radius:3px;cursor:pointer;margin-top:4px;}
+
+/* ALERT PANEL */
+#alerts-panel{display:none;background:rgba(192,57,43,.08);border:1px solid #c0392b;border-radius:4px;margin-top:8px;max-height:160px;overflow-y:auto;}
+#alerts-panel.open{display:block;}
+.alert-item{padding:10px 12px;border-bottom:1px solid rgba(192,57,43,.2);}
+.alert-item:last-child{border-bottom:none;}
+.alert-headline{font-weight:700;font-size:13px;color:#f87171;margin-bottom:4px;}
+.alert-meta{font-size:10px;color:var(--muted);margin-bottom:6px;}
+.alert-body{font-size:12px;color:var(--text);line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+.alert-attribution{font-size:10px;color:var(--muted);margin-top:6px;font-style:italic;border-top:1px solid rgba(255,255,255,.08);padding-top:4px;}
+
+/* LOC BAR */
+#loc-bar{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--panel);border-bottom:1px solid var(--border);}
+#loc-text{flex:1;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#loc-change-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:3px 8px;border-radius:3px;cursor:pointer;}
+#refresh-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);padding:3px 7px;border-radius:3px;cursor:pointer;}
+#water-type-btn{font-size:11px;color:var(--blue-lt);background:none;border:1px solid var(--blue-lt);padding:3px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;}
+#nearby-banner{display:none;padding:8px 14px;background:var(--panel2);border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;line-height:1.5;}
+#nearby-banner .nb-pick{color:var(--blue-lt);font-weight:700;}
+#nearby-banner .nb-clear{float:right;color:var(--muted);text-decoration:underline;font-size:11px;cursor:pointer;}
+
+/* TABS */
+#tab-nav{flex-shrink:0;display:flex;background:var(--panel);border-bottom:1px solid var(--border);}
+.tab-btn{flex:1;padding:10px 4px;text-align:center;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;}
+.tab-btn.active{color:var(--blue-lt);border-bottom-color:var(--blue-lt);}
+
+/* TAB PANELS */
+#tab-body{flex:1;overflow-y:auto;overflow-x:hidden;}
+.tab-panel{display:none;padding:12px;}
+.tab-panel.active{display:block;}
+
+
+/* CARDS */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden;}
+.card-hdr{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--border);}
+.card-title{font-size:13px;font-weight:700;color:var(--white);flex:1;}
+.card-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:3px;}
+.badge-blue{background:rgba(26,140,184,.2);color:var(--blue-lt);border:1px solid var(--blue);}
+.badge-green{background:rgba(39,174,96,.2);color:#4ade80;border:1px solid #27ae60;}
+.badge-yellow{background:rgba(243,156,18,.2);color:#fbbf24;border:1px solid #f39c12;}
+.badge-red{background:rgba(192,57,43,.2);color:#f87171;border:1px solid #c0392b;}
+.card-body{padding:12px;}
+.data-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(26,48,72,.5);}
+.data-row:last-child{border-bottom:none;}
+.dr-label{font-size:12px;color:var(--muted);}
+.dr-val{font-size:14px;font-weight:600;color:var(--white);}
+.dr-val.stale{color:var(--muted);font-style:italic;}
+.stale-note{font-size:10px;color:var(--yellow);margin-top:6px;}
+.source-note{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.4;}
+
+/* FORECAST */
+.forecast-scroll{overflow-x:auto;padding-bottom:4px;}
+.forecast-row{display:flex;gap:8px;min-width:max-content;padding:10px 12px;}
+.fc-cell{min-width:64px;text-align:center;}
+.fc-period{font-size:10px;color:var(--muted);margin-bottom:4px;}
+.fc-icon{font-size:22px;margin-bottom:2px;}
+.fc-temp{font-size:12px;font-weight:700;color:var(--white);}
+.fc-short{font-size:10px;color:var(--text);margin-top:2px;line-height:1.3;}
+
+/* SPECIES LIST */
+.species-list{display:flex;flex-direction:column;gap:1px;}
+.sp-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--panel);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.sp-item:active{background:var(--panel2);}
+.sp-emoji{font-size:24px;flex-shrink:0;}
+.sp-info{flex:1;}
+.sp-name{font-size:15px;font-weight:700;color:var(--white);}
+.sp-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.sp-star{font-size:11px;font-weight:700;color:#f59e0b;margin-left:4px;}
+.sp-arrow{font-size:16px;color:var(--muted);}
+
+/* LOCK OVERLAY */
+
+
+
+
+
+/* SPECIES CARD OVERLAY */
+#species-overlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;}
+#species-overlay.open{display:flex;}
+.soc-header{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:12px 14px;z-index:101;}
+.soc-back{font-size:22px;background:none;border:none;color:var(--white);cursor:pointer;padding:0 4px;}
+.soc-title{font-size:16px;font-weight:700;color:var(--white);flex:1;}
+.soc-img{width:100%;max-height:200px;object-fit:cover;background:var(--panel2);}
+.soc-img-placeholder{width:100%;height:160px;display:flex;align-items:center;justify-content:center;background:var(--panel2);color:var(--muted);font-size:12px;text-align:center;padding:16px;}
+.soc-body{padding:14px;}
+.soc-section{margin-bottom:16px;}
+.soc-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--blue-lt);margin-bottom:8px;}
+.soc-marks{display:flex;flex-direction:column;gap:6px;}
+.soc-mark{font-size:13px;color:var(--text);padding-left:12px;position:relative;line-height:1.4;}
+.soc-mark::before{content:"•";position:absolute;left:0;color:var(--blue-lt);}
+.lookalike-box{background:rgba(243,156,18,.08);border:1px solid rgba(243,156,18,.3);border-radius:4px;padding:10px 12px;}
+.lookalike-species{font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:4px;}
+.lookalike-tell{font-size:12px;color:var(--text);line-height:1.4;}
+.regs-table{width:100%;border-collapse:collapse;}
+.regs-table th{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);}
+.regs-table td{font-size:13px;color:var(--text);padding:7px 8px;border-bottom:1px solid rgba(26,48,72,.4);}
+.regs-table td:first-child{color:var(--muted);font-size:12px;}
+.law-bar{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.3);border-radius:4px;padding:10px 12px;margin-top:12px;}
+.law-bar-text{font-size:12px;color:#fca5a5;line-height:1.4;}
+.law-bar a{color:var(--blue-lt);}
+
+/* BOATER */
+.sun-row{display:flex;gap:8px;margin-bottom:10px;}
+.sun-cell{flex:1;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center;}
+.sun-icon{font-size:24px;display:block;margin-bottom:4px;}
+.sun-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.sun-time{font-size:16px;font-weight:700;color:var(--white);margin-top:2px;}
+.float-plan-area{width:100%;background:var(--panel2);border:1px solid var(--border);border-radius:4px;padding:10px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:80px;}
+.copy-btn{width:100%;margin-top:8px;padding:10px;background:var(--blue);color:var(--white);border:none;border-radius:4px;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* PWA INSTALL */
+#install-card{margin:12px 14px;padding:14px;background:linear-gradient(135deg,#0d2137,#0e3a55);border:1px solid #1e6fa8;border-radius:10px;display:none;}
+#install-card.visible{display:block;}
+.install-title{font-size:14px;font-weight:700;color:#4fc3f7;margin-bottom:4px;}
+.install-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.4;}
+#install-btn{background:#1976d2;color:#fff;border:none;padding:10px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;width:100%;}
+#install-btn:active{background:#1565c0;}
+.ios-install-steps{font-size:12px;color:var(--muted);line-height:1.8;}
+.ios-install-steps span{color:#4fc3f7;}
+
+/* SETUP / ONBOARDING */
+#onboarding{display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;}
+#onboarding.open{display:block;}
+.ob-wrap{max-width:480px;margin:0 auto;padding:24px 16px;}
+.ob-step{display:none;}
+.ob-step.active{display:block;}
+.ob-title{font-size:22px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.ob-sub{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;}
+.ob-label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;margin-top:14px;}
+.ob-input{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px 12px;color:var(--white);font-size:14px;font-family:inherit;}
+.ob-input:focus{outline:none;border-color:var(--blue);}
+.ob-select{width:100%;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px 12px;color:var(--white);font-size:14px;font-family:inherit;appearance:none;}
+.wt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;}
+.wt-btn{padding:12px 8px;background:var(--panel);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .2s;}
+.wt-btn.selected{background:rgba(26,140,184,.2);border-color:var(--blue);color:var(--blue-lt);}
+.species-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.sp-chip{padding:7px 12px;background:var(--panel);border:1px solid var(--border);border-radius:20px;font-size:13px;color:var(--text);cursor:pointer;transition:all .2s;}
+.sp-chip.selected{background:rgba(26,140,184,.2);border-color:var(--blue);color:var(--blue-lt);}
+.ob-next{width:100%;margin-top:20px;padding:13px;background:var(--blue);color:var(--white);border:none;border-radius:6px;font-size:15px;font-weight:700;cursor:pointer;}
+.ob-skip{display:block;text-align:center;margin-top:12px;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;}
+.license-toggle{font-size:12px;color:var(--blue-lt);cursor:pointer;text-decoration:underline;margin-top:14px;display:block;}
+#license-fields{display:none;}
+#license-fields.open{display:block;}
+.priv-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.priv-chip{padding:6px 12px;background:var(--panel);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text);cursor:pointer;}
+.priv-chip.selected{background:rgba(39,174,96,.2);border-color:#27ae60;color:#4ade80;}
+.setup-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);}
+.setup-row:last-child{border-bottom:none;}
+.setup-label{font-size:13px;color:var(--white);}
+.setup-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.setup-btn{font-size:12px;color:var(--blue-lt);background:none;border:1px solid var(--border);padding:5px 10px;border-radius:4px;cursor:pointer;}
+
+/* MANUAL LOC MODAL */
+#loc-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;align-items:center;justify-content:center;padding:16px;}
+#loc-modal.open{display:flex;}
+.modal-box{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:20px;width:100%;max-width:360px;}
+.modal-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:12px;}
+.modal-note{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;}
+.modal-row{display:flex;gap:8px;margin-top:10px;}
+.modal-btn{flex:1;padding:10px;border:1px solid var(--border);border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;}
+.modal-btn-primary{background:var(--blue);color:var(--white);border-color:var(--blue);}
+.modal-btn-cancel{background:transparent;color:var(--muted);}
+
+/* UTILS */
+.text-green{color:#4ade80;}
+.text-yellow{color:#fbbf24;}
+.text-red{color:#f87171;}
+.text-muted{color:var(--muted);}
+.mt-4{margin-top:4px;}
+.mt-8{margin-top:8px;}
+.loading-text{color:var(--muted);font-style:italic;font-size:12px;}
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px;margin-top:14px;}
+.tide-table{width:100%;border-collapse:collapse;}
+.tide-table th{font-size:10px;color:var(--muted);text-transform:uppercase;padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;}
+.tide-table td{font-size:13px;color:var(--text);padding:7px 10px;border-bottom:1px solid rgba(26,48,72,.4);}
+.tide-table td:first-child{color:var(--muted);font-size:11px;}
+.tide-type-H{color:#2ab5e8;font-weight:700;}
+.tide-type-L{color:#f39c12;font-weight:700;}
 </style>
 </head>
 <body>
 
-<div class="app-switcher">
-  <div class="app-btn active-dan" id="switcher-dan" onclick="showApp('dan')"><span class="btn-icon">🎣</span><span class="btn-label">DanFinder</span></div>
-  <div class="app-btn" id="switcher-matt" onclick="showApp('matt')"><span class="btn-icon">🔬</span><span class="btn-label">Matt's Guide</span></div>
-</div>
+<!-- ONBOARDING OVERLAY -->
+<div id="onboarding">
+<div class="ob-wrap">
+  <div id="ob-step-1" class="ob-step active">
+    <div class="ob-title">🚤 Set Up Your Boat Base</div>
+    <div class="ob-sub">Quick setup so the app shows what's relevant to YOU. No account. No tracking. Stored only on this device.</div>
+    <label class="ob-label">Your name (optional)</label>
+    <input class="ob-input" id="ob-name" placeholder="e.g. Matt" maxlength="40">
+    <label class="ob-label">Home water (free text)</label>
+    <input class="ob-input" id="ob-homewater" placeholder="e.g. your home bay, lake, or river" maxlength="80">
+    <label class="ob-label">State</label>
+    <select class="ob-select" id="ob-state"></select>
+    <button class="ob-next" onclick="obNext(2)">Next →</button>
+    <span class="ob-skip" onclick="obSkip()">Skip setup — use defaults</span>
+  </div>
 
-<!-- DAN APP -->
-<div id="dan-app">
-  <div class="topnav">
-    <div class="logo">
-      <svg class="logo-icon" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/><path d="M14 4 L17 13 L26 13 L19 18 L22 27 L14 22 L6 27 L9 18 L2 13 L11 13 Z" fill="white" opacity="0.9"/></svg>
-      <div class="logo-text">Dan<span>Finder</span></div>
+  <div id="ob-step-2" class="ob-step">
+    <div class="ob-title">🌊 Water Type</div>
+    <div class="ob-sub">What kind of water do you fish most?</div>
+    <div class="wt-grid">
+      <div class="wt-btn" onclick="selectWT(this,'river')">🏞️<br>River</div>
+      <div class="wt-btn" onclick="selectWT(this,'lake')">🏔️<br>Lake / Reservoir</div>
+      <div class="wt-btn" onclick="selectWT(this,'salt_inshore')">⚓<br>Salt — Inshore</div>
+      <div class="wt-btn" onclick="selectWT(this,'salt_offshore')">🌊<br>Salt — Offshore</div>
     </div>
-    <div class="dan-tag">DAN BRYAN</div>
-  </div>
-  <div class="location-banner">
-    <div>
-      <div class="location-name" id="loc-name">📍 Horn Island, MS</div>
-      <div class="location-sub" id="loc-sub">Home base: 800 Roys Rd, Gautier · ~18 mi · est. 45 min run</div>
-    </div>
-    <div class="go-fish-badge"><span class="live-dot"></span>LIVE</div>
-  </div>
-  <div class="loc-toggle">
-    <div class="loc-btn active" id="loc-home" onclick="setHome()">🏠 Dan's Spot</div>
-    <div class="loc-btn" id="loc-near" onclick="setNearMe()">🌊 Salt / Near Me</div>
-    <div class="loc-btn" id="loc-fresh" onclick="setFreshwater()">🏞️ Freshwater</div>
-  </div>
-  <div class="summary-strip">
-    <div class="strip-item"><div class="strip-label">Wind</div><div class="strip-value" id="s-wind" style="color:#2ab5e8;">—</div><div class="strip-unit" id="s-wind-dir">loading</div></div>
-    <div class="strip-item"><div class="strip-label">Gusts</div><div class="strip-value" id="s-gust" style="color:#e67e22;">—</div><div class="strip-unit">knots</div></div>
-    <div class="strip-item"><div class="strip-label">Water</div><div class="strip-value" id="s-water" style="color:#e67e22;">—</div><div class="strip-unit">Fahrenheit</div></div>
-    <div class="strip-item"><div class="strip-label">Tide</div><div class="strip-value" id="s-tide" style="color:#2ab5e8;">—</div><div class="strip-unit" id="s-tide-dir">loading</div></div>
-  </div>
-  <div class="dan-tabs">
-    <div class="dan-tab active" onclick="danTab('wind')">💨 Wind</div>
-    <div class="dan-tab" onclick="danTab('fishing')">🎣 Fishing</div>
-    <div class="dan-tab" onclick="danTab('tides')">🌊 Tides</div>
+    <button class="ob-next" onclick="obNext(3)">Next →</button>
+    <span class="ob-skip" onclick="obSkip()">Skip</span>
   </div>
 
-  <div id="dan-wind" class="dan-tab-content active">
-    <div class="dan-section-title"><span>LIVE WIND · PASCAGOULA NOAA</span><span id="wind-updated" style="color:var(--blue-light);font-size:11px;"></span></div>
-    <div id="wind-content"><div class="loading"><span class="spinner"></span>Pulling live wind from NOAA…</div></div>
-    <div class="dan-section-title" style="margin-top:4px;">MATT'S FIELD GUIDE</div>
-    <div class="matts-tips-btn" onclick="showApp('matt')"><div class="matts-tips-icon">🔬</div><div><div class="matts-tips-title">Matt's Horn Island Playbook</div><div class="matts-tips-sub">FLIR thermal · Salinity guide · Rigs · Species · Regs</div></div><div class="matts-tips-arrow">›</div></div>
-    <div class="data-source">Wind data from <strong id="wind-src-station">NOAA CO-OPS Station 8741533</strong> (live met sensor). Refreshes automatically.</div>
-    <div class="bottom-pad"></div>
+  <div id="ob-step-3" class="ob-step">
+    <div class="ob-title">🎣 Target Species</div>
+    <div class="ob-sub">Tap all you fish for. These get a ★ in the fish list.</div>
+    <div class="species-chips" id="ob-species-chips"></div>
+    <button class="ob-next" onclick="obNext(4)">Next →</button>
+    <span class="ob-skip" onclick="obSkip()">Skip</span>
   </div>
 
-  <div id="dan-fishing" class="dan-tab-content">
-    <div class="temp-section">
-      <div class="temp-header">🌡 Live Water Temperature · Pascagoula NOAA</div>
-      <div class="temp-row">
-        <div class="temp-big" id="water-big">—<span class="temp-deg">°F</span></div>
-        <div style="flex:1;"><div class="temp-gauge"><div class="temp-fill" id="water-fill"></div></div><div style="font-size:11px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between;"><span>60°</span><span>Ideal</span><span>90°</span></div></div>
+  <div id="ob-step-4" class="ob-step">
+    <div class="ob-title">📋 License Locker</div>
+    <div class="ob-sub">Optional. Your license info stays on-device — never sent anywhere.</div>
+    <span class="license-toggle" onclick="toggleLicense()">+ Add license info</span>
+    <div id="license-fields">
+      <label class="ob-label">License number</label>
+      <input class="ob-input" id="ob-lic-num" placeholder="License #" maxlength="30">
+      <label class="ob-label">Issuing state</label>
+      <select class="ob-select" id="ob-lic-state"></select>
+      <label class="ob-label">Expiry date</label>
+      <input class="ob-input" id="ob-lic-exp" type="date">
+      <label class="ob-label">Privileges</label>
+      <div class="priv-chips" id="priv-chips">
+        <div class="priv-chip" onclick="togglePriv(this,'freshwater')">Freshwater</div>
+        <div class="priv-chip" onclick="togglePriv(this,'saltwater')">Saltwater</div>
+        <div class="priv-chip" onclick="togglePriv(this,'trout_stamp')">Trout Stamp</div>
+        <div class="priv-chip" onclick="togglePriv(this,'reef')">Reef Fish</div>
+        <div class="priv-chip" onclick="togglePriv(this,'other')">Other</div>
       </div>
-      <div id="water-tip" style="font-size:13px;color:var(--text);line-height:1.5;margin-top:6px;">Loading live water temperature…</div>
     </div>
-    <div class="dan-section-title">WHAT'S BITING RIGHT NOW</div>
-    <div class="species-grid" id="species-grid"></div>
-    <div class="dan-section-title" style="margin-top:4px;">DAN'S FISHING TIPS</div>
-    <div id="dan-fishing-tips"></div>
-    <div class="dan-section-title" style="margin-top:4px;">MATT'S FIELD GUIDE</div>
-    <div class="matts-tips-btn" onclick="showApp('matt')"><div class="matts-tips-icon">🔬</div><div><div class="matts-tips-title">Matt's Horn Island Playbook</div><div class="matts-tips-sub">FLIR thermal readings · Salinity chart · Full rig guide</div></div><div class="matts-tips-arrow">›</div></div>
-    <div class="bottom-pad"></div>
-  </div>
-
-  <div id="dan-tides" class="dan-tab-content">
-    <div class="dan-section-title"><span>LIVE TIDES · HORN ISLAND NOAA</span><span id="tide-updated" style="color:var(--blue-light);font-size:11px;"></span></div>
-    <div id="tide-content"><div class="loading"><span class="spinner"></span>Pulling today's tides from NOAA…</div></div>
-    <div class="dan-section-title" style="margin-top:4px;">BEST FISHING WINDOWS</div>
-    <div class="tip-card info"><div class="tip-header"><span class="tip-icon">🕐</span><span class="tip-title">Fish the Moving Water</span></div><div class="tip-body">Best bite is <strong>1–2 hours before and after a tide change.</strong> Incoming tide pushes bait onto the east end flats — that's where reds and specks stack up.</div></div>
-    <div class="tip-card good"><div class="tip-header"><span class="tip-icon">🌅</span><span class="tip-title" id="best-window">Top Window: calculating…</span></div><div class="tip-body">Incoming tide + low light + calm wind = <strong>prime time.</strong> Popping cork and live shrimp over the east end grass flats.</div></div>
-    <div class="data-source">Tide predictions from <strong id="tide-src-station">NOAA CO-OPS Station 8742221</strong> (official MLLW datum).</div>
-    <div class="bottom-pad"></div>
+    <button class="ob-next" onclick="obFinish()">Done — Let's Fish 🎣</button>
   </div>
 </div>
+</div>
 
-<!-- MATT APP -->
-<div id="matt-app">
-  <div class="matt-header">
-    <div class="matt-header-top">
-      <div><div class="matt-guide-label">🎣 Personal Field Guide</div><div class="matt-guide-title">Matt's Horn Island<br>Fishing Playbook</div><div class="matt-guide-subtitle">Gautier, MS · Mississippi Sound · Gulf Coast</div></div>
-      <div class="matt-badges"><div class="matt-flir-badge"><div class="icon">🌡️</div><div class="label">FLIR Thermal</div></div><div class="matt-flir-badge"><div class="icon">🧪</div><div class="label">Salinity</div></div></div>
+<!-- MANUAL LOCATION MODAL -->
+<div id="loc-modal">
+<div class="modal-box">
+  <div class="modal-title">Set Location</div>
+  <div class="modal-note">Enter coordinates or a city name. This app uses GPS automatically — set this only if GPS isn't working.</div>
+  <label class="ob-label">Latitude</label>
+  <input class="ob-input" id="manual-lat" placeholder="e.g. 30.37" type="number" step="0.0001">
+  <label class="ob-label">Longitude</label>
+  <input class="ob-input" id="manual-lon" placeholder="e.g. -88.60" type="number" step="0.0001">
+  <div class="modal-row">
+    <button class="modal-btn modal-btn-cancel" onclick="closeLocModal()">Cancel</button>
+    <button class="modal-btn modal-btn-primary" onclick="setManualLoc()">Set Location</button>
+  </div>
+</div>
+</div>
+
+<!-- SPECIES CARD OVERLAY -->
+<div id="species-overlay">
+  <div class="soc-header">
+    <button class="soc-back" onclick="closeSpeciesCard()">←</button>
+    <span class="soc-title" id="soc-title">Species</span>
+  </div>
+  <div id="soc-content"></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- SAFETY GATE -->
+  <div id="safety-gate">
+    <div class="sg-row">
+      <div id="sg-badge" class="sg-loading">⏳ Checking safety...</div>
+      <button id="sg-alerts-btn" onclick="toggleAlerts()" style="display:none">▼ NWS Alerts</button>
     </div>
-  </div>
-  <div class="matt-tabs">
-    <div class="matt-tab active" onclick="mattTab('tools')">🔬 My Tools</div>
-    <div class="matt-tab" onclick="mattTab('species')">🐟 Species</div>
-    <div class="matt-tab" onclick="mattTab('rigs')">🪝 Rigs</div>
-    <div class="matt-tab" onclick="mattTab('spots')">📍 Spots</div>
-    <div class="matt-tab" onclick="mattTab('rules')">📋 Rules</div>
+    <div id="sg-drivers"></div>
+    <div id="alerts-panel"></div>
   </div>
 
-  <div id="matt-tools" class="matt-tab-content active">
-    <div class="m-highlight-box"><div class="m-hb-title">🌡️ Why FLIR + Hydrometer = Unfair Advantage</div>Most fishermen guess at conditions. You'll <strong>measure them.</strong> Water temp tells you where the fish are. Salinity tells you <em>which</em> fish are there and how active. Read a flat in 60 seconds.</div>
-    <div class="m-section-title">🌡️ FLIR THERMAL — vs LIVE NOAA WATER TEMP</div>
-    <div class="m-tool-grid">
-      <div class="m-tool-card"><div class="m-tool-label">Live NOAA Water</div><div class="m-tool-value" id="m-water">—<span class="m-tool-unit">°F</span></div><div class="m-tool-status" id="m-water-status" style="color:#e07b2a;">loading…</div></div>
-      <div class="m-tool-card"><div class="m-tool-label">Ideal Speck Temp</div><div class="m-tool-value">68<span class="m-tool-unit">-76°</span></div><div class="m-tool-status" style="color:var(--matt-green);">✓ Target zone</div></div>
+  <!-- LOCATION BAR -->
+  <div id="loc-bar">
+    <span id="loc-text">📍 Locating...</span>
+    <button id="water-type-btn" onclick="cycleWaterType()" title="Tap to switch water type">🌊 Salt</button>
+    <button id="refresh-btn" onclick="refreshAll()" title="Refresh data">↻</button>
+    <button id="loc-change-btn" onclick="openLocModal()">📍 Location</button>
+  </div>
+
+  <!-- NEARBY WATERS BANNER -->
+  <div id="nearby-banner"></div>
+
+  <!-- TABS -->
+  <div id="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('conditions',this)">CONDITIONS</button>
+    <button class="tab-btn" onclick="switchTab('fishing',this)">FISHING</button>
+    <button class="tab-btn" onclick="switchTab('boater',this)">BOATER</button>
+    <button class="tab-btn" onclick="switchTab('setup',this)">SETUP</button>
+  </div>
+
+  <!-- TAB BODY -->
+  <div id="tab-body">
+    <div id="tab-conditions" class="tab-panel active">
+      <p class="loading-text" style="padding:20px;">Loading conditions...</p>
     </div>
-    <div class="m-range-bar-wrap">
-      <div class="m-range-label-row"><span>55° Cold</span><span>68–76° Speck Zone</span><span>90°+ Dead</span></div>
-      <div class="m-range-bar"><div class="m-range-marker" id="m-temp-marker" style="left:73%;"></div></div>
-      <div class="m-range-label-row" style="margin-top:4px;"><span>55°</span><span>65°</span><span>75°</span><span>85°</span><span>95°</span></div>
+    <div id="tab-fishing" class="tab-panel">
+      <div id="fishing-content"></div>
     </div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">📸</span><span class="m-card-title">How to Use the FLIR Here</span></div><div class="m-card-body">Scan slowly for <strong>temperature breaks</strong> — edges where warm meets cool. Fish stack on those lines.<br><br><strong>Best targets:</strong><br>• <em>Channel edges</em> — deeper water stays cooler, fish the drop<br>• <em>Grass flat margins</em> — shaded patches run 2–4° cooler<br>• <em>Inlet mouths</em> — tidal water often a different temp<br>• <em>Shaded cuts</em> — north side of Horn Island in summer<br><br><strong>Rule:</strong> The live NOAA reading above is your baseline. Your FLIR finds the cooler pockets within it — that's where the fish are.</div></div>
-    <div class="m-section-title" style="margin-top:6px;">🧪 HYDROMETER — SALINITY FOR TROUT</div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🧪</span><span class="m-card-title">Salinity & What It Means</span><span class="m-card-badge mbadge-blue">PPT Scale</span></div><div class="m-card-body" style="padding:0;"><table class="m-sal-table"><thead><tr><th>Salinity (PPT)</th><th>Conditions</th><th>Speck Bite?</th></tr></thead><tbody>
-      <tr><td><span class="ppt" style="color:#5dade2;">0–5</span></td><td>Fresh — rain runoff</td><td style="color:#c0392b;">❌ Avoid — specks gone</td></tr>
-      <tr><td><span class="ppt" style="color:#2ecc71;">5–15</span></td><td>Low / brackish</td><td style="color:#d4a017;">⚡ Fair — find higher spots</td></tr>
-      <tr><td><span class="ppt" style="color:#2ecc71;">15–25</span></td><td>Ideal inshore mix</td><td style="color:var(--matt-green);">✅ Prime speck zone</td></tr>
-      <tr><td><span class="ppt" style="color:#d4a017;">25–32</span></td><td>High / Gulf influence</td><td style="color:#d4a017;">⚡ Good for reds</td></tr>
-      <tr><td><span class="ppt" style="color:#e07b2a;">32+</span></td><td>Full ocean</td><td style="color:#e07b2a;">🐠 Mackerel / cobia</td></tr>
-    </tbody></table></div></div>
-    <div class="m-highlight-box" style="margin-top:4px;"><div class="m-hb-title">💡 After Heavy Rain — Critical Rule</div>Pascagoula River dumps freshwater into the Sound after rain — salinity near the river mouth can crash to near-zero. <strong>Always check before committing.</strong> Under 10 PPT? Run east toward Horn Island. Specks return in 2–3 days once it stabilizes.</div>
-    <div class="back-to-dan" onclick="showApp('dan')"><span style="font-size:22px;">🎣</span><div><div class="back-label">← Back to DanFinder</div><div class="back-sub">Live wind · tides · Dan's tips</div></div></div>
-    <div class="bottom-pad"></div>
-  </div>
-
-  <div id="matt-species" class="matt-tab-content">
-    <div class="m-section-title">HORN ISLAND · SPECIES & HOW TO READ THEM</div>
-    <div class="m-card"><div style="padding:0;">
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Speckled Trout</span><span class="m-species-hot" style="color:var(--matt-green);">● HOT</span></div><div class="m-species-detail"><strong>FLIR target:</strong> 68–76°F. Above 80°, push to channel drop-offs.<br><strong>Salinity:</strong> 15–25 PPT.<br><strong>Best:</strong> First 90 min of daylight, again at last light.<br><em>Bait: Live shrimp under popping cork, 1/4 oz gold spoon, Gulp! on jig head.</em></div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐠</span><span class="m-species-name">Redfish</span><span class="m-species-hot" style="color:var(--matt-green);">● HOT</span></div><div class="m-species-detail"><strong>FLIR trick:</strong> Reds tolerate 80–86°F — if specks went deep, switch to reds.<br><strong>East end surf</strong> at first light. Reds up to 40–50 lbs work the break.<br><em>Bait: Gold spoon, live blue crab chunk, large Gulp! on the bottom.</em></div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦈</span><span class="m-species-name">Flounder</span><span class="m-species-hot" style="color:#d4a017;">● ACTIVE</span></div><div class="m-species-detail"><strong>Ambush predators</strong> — you go to them. FLIR tip: scan sandy patches, sometimes show as a cooler outline.<br><em>Bait: Bucktail jig, curly tail, live finger mullet. Slow on the bottom.</em></div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐡</span><span class="m-species-name">Tripletail</span><span class="m-species-hot" style="color:#d4a017;">● SIGHT FISH</span></div><div class="m-species-detail"><strong>April–October.</strong> Every crab trap float and channel marker. Pitch a live shrimp 3–4 ft ahead, drift natural. Don't twitch.<br><em>Salinity: 20–30 PPT.</em></div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Spanish Mackerel</span><span class="m-species-hot" style="color:#d4a017;">● ACTIVE</span></div><div class="m-species-detail"><strong>Clear water + 25+ PPT</strong> = mackerel in. Watch for diving birds.<br><em>Bait: Small silver spoons, fast retrieve.</em></div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦀</span><span class="m-species-name">Cobia</span><span class="m-species-hot" style="color:#d4a017;">● APR–OCT</span></div><div class="m-species-detail">Up to 100 lbs. Chum near buoys and structure. Look for them near the surface.<br><em>Bait: Live eel, live croaker, heavy bucktail jig.</em></div></div>
-    </div></div>
-    <div class="bottom-pad"></div>
-  </div>
-
-  <div id="matt-rigs" class="matt-tab-content">
-    <div class="m-section-title">PROVEN RIGS · HORN ISLAND</div>
-    <div class="m-rig-card"><div class="m-rig-name">🪝 #1 — Popping Cork (Speck & Red)</div><div class="m-rig-body"><strong>Setup:</strong> Popping cork → 18–24" fluoro leader → 1/8 oz jig head → live shrimp or Gulp!<br><strong>When:</strong> Incoming tide, grass flats, 2–4 ft. Pop every 3–4 sec — specks hit on the pause.<br><strong>FLIR first:</strong> Above 82°? Move to channel edge.</div></div>
-    <div class="m-rig-card blue-left"><div class="m-rig-name">🪝 #2 — Carolina Bottom Rig (Reds & Flounder)</div><div class="m-rig-body"><strong>Setup:</strong> 1 oz egg sinker → swivel → 18" 20lb fluoro → circle hook #3/0 → live shrimp or crab chunk<br><strong>When:</strong> Surf east end, channel bottom. Cast, let it sit. Don't yank — circle hook sets itself. Works all day.</div></div>
-    <div class="m-rig-card green-left"><div class="m-rig-name">🪝 #3 — Free-lined Shrimp (Tripletail)</div><div class="m-rig-body"><strong>Setup:</strong> No weight. 2/0 hook through horn of shrimp. 20lb mono.<br><strong>When:</strong> Sight fishing floats. Pitch 3–4 ft ahead. Let it sink natural. Do not twitch.<br><strong>Salinity:</strong> Only worth it at 20+ PPT.</div></div>
-    <div class="m-rig-card orange-left"><div class="m-rig-name">🪝 #4 — Gold Spoon (Surf Reds & Mackerel)</div><div class="m-rig-body"><strong>Setup:</strong> 1/2 oz Johnson Silver Minnow gold → 18" 25lb fluoro<br><strong>Reds:</strong> Cast parallel to beach, slow steady retrieve.<br><strong>Mackerel:</strong> Cast far, fast retrieve just under surface. Watch for birds.</div></div>
-    <div class="bottom-pad"></div>
-  </div>
-
-  <div id="matt-spots" class="matt-tab-content">
-    <div class="m-section-title">KEY LOCATIONS · GAUTIER TO HORN ISLAND</div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🏠</span><span class="m-card-title">Dan's Dock → Horn Island</span><span class="m-card-badge mbadge-blue">~18 mi · 45 min</span></div><div class="m-card-body"><strong>800 Roys Rd, Gautier</strong> — Pascagoula River system, head south through Back Bay, cross Sound southeast.<br><br>⚠️ <strong>Check wind before leaving.</strong> SSE under 12 knots = comfortable. 15+ = rough. Head back by 11am if afternoon wind builds.</div></div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🐠</span><span class="m-card-title">East End — Horn Island Surf</span><span class="m-card-badge mbadge-green">Big Reds</span></div><div class="m-card-body">Prime surf spot. Wade the beach at first light. <strong>Redfish to 50 lbs</strong> work the break in summer.<br><br><strong>FLIR move:</strong> Scan the surf line for cooler pockets where deeper water surges in.<br><br>Also: pompano, sharks, large flounder, surface mackerel in clear water.</div></div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🌿</span><span class="m-card-title">North Side Flats — Sound Side</span><span class="m-card-badge mbadge-green">Speck Zone</span></div><div class="m-card-body">Grass flats on the Mississippi Sound side. <strong>Speck country.</strong><br><br><strong>Salinity check first</strong> — after rain, Pascagoula pushes freshwater in. Under 12 PPT? Move east or wait.<br><br>Popping cork + live shrimp, incoming tide, 2–3 ft over grass. Best: first 2 hours after sunup.</div></div>
-    <div class="m-card"><div class="m-card-header"><span class="m-card-icon">🔵</span><span class="m-card-title">Channel Edges — Midday Heat Move</span><span class="m-card-badge mbadge-gold">Summer</span></div><div class="m-card-body">When FLIR shows flats above 82°F, fish push to channel edges 3–5° cooler at depth. Carolina rig on the bottom. Reds and big specks both stack here when shallow water dies.</div></div>
-    <div class="bottom-pad"></div>
-  </div>
-
-  <div id="matt-rules" class="matt-tab-content">
-    <div class="m-section-title">MS SALTWATER REGS · QUICK REFERENCE</div>
-    <div class="m-card"><div style="padding:0;">
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Speckled Trout</span></div><div class="m-species-detail"><strong>Limit:</strong> 15 &nbsp;|&nbsp; <strong>Min:</strong> 12" &nbsp;|&nbsp; Max 2 over 15"/day</div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐠</span><span class="m-species-name">Redfish</span></div><div class="m-species-detail"><strong>Limit:</strong> 3 &nbsp;|&nbsp; <strong>Slot:</strong> 16"–23" &nbsp;|&nbsp; 1 over 23"/day</div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🦈</span><span class="m-species-name">Flounder</span></div><div class="m-species-detail"><strong>Limit:</strong> 10 &nbsp;|&nbsp; <strong>Min:</strong> 12" &nbsp;|&nbsp; Check season — closures occur</div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐟</span><span class="m-species-name">Cobia</span></div><div class="m-species-detail"><strong>Limit:</strong> 2 &nbsp;|&nbsp; <strong>Min:</strong> 33"</div></div>
-      <div class="m-species-item"><div class="m-species-row"><span class="m-species-emoji">🐡</span><span class="m-species-name">Spanish Mackerel</span></div><div class="m-species-detail"><strong>Limit:</strong> 15 &nbsp;|&nbsp; <strong>Min:</strong> 12"</div></div>
-    </div></div>
-    <div class="m-highlight-box"><div class="m-hb-title">⚠️ Always Verify Before You Go</div>Confirm current limits at <strong>mdmr.ms.gov</strong>. Flounder has seen seasonal closures. License required — mdmr.ms.gov or any local Walmart / Bass Pro.</div>
-    <div class="bottom-pad"></div>
+    <div id="tab-boater" class="tab-panel">
+      <div id="boater-content"></div>
+    </div>
+    <div id="tab-setup" class="tab-panel">
+      <div id="install-card">
+        <div class="install-title">📲 Add to Home Screen</div>
+        <div class="install-sub" id="install-sub">Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.</div>
+        <button id="install-btn" onclick="triggerInstall()">Install App</button>
+        <div class="ios-install-steps" id="ios-steps" style="display:none">
+          Tap <span>Share ⬆</span> in Safari → <span>Add to Home Screen</span> → <span>Add</span>
+        </div>
+      </div>
+      <div id="setup-content"></div>
+    </div>
   </div>
 </div>
 
 <script>
-/* ====== NOAA LIVE DATA ====== */
-const HORN = {
-  tide:"8742221", met:"8741533",
-  name:"📍 Horn Island, MS",
-  sub:"Home base: 800 Roys Rd, Gautier · ~18 mi · est. 45 min run",
-  metLabel:"Pascagoula NOAA", tideLabel:"Horn Island NOAA"
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
+const NWS_UA = '(PhishNBoat/2.0, matthighlife@gmail.com)';
+const NWS_ACCEPT = 'application/geo+json';
+const DEFAULT_LAT = 30.37, DEFAULT_LON = -88.60; // Horn Island area
+const NOAA_WIND_STN = '8741533';   // NOAA CO-OPS Ship Island (MS Sound)
+const NOAA_TIDE_STN = '8742221';   // Horn Island Pass
+const REFRESH_INTERVAL_MS = 12 * 60 * 1000; // 12 min
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = {
+  lat: null, lon: null, locLabel: 'Unknown',
+  profile: null,
+  nwsAlerts: [], nwsForecast: null,
+  gaugeData: null, noaaWind: null, noaaTide: null,
+  openMeteoWave: null,
+  lastFetch: null, fetchError: false,
+  verdict: 'loading',
+  sunTimes: null,
+  destination: null, nearby: [], nearbyIdx: 0
 };
-// Active stations — start at Dan's spot
-let TIDE_STATION = HORN.tide;
-let MET_STATION  = HORN.met;
-const API = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter";
-const MDAPI = "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json";
 
-function ymd(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');}
-
-/* distance between two lat/lon points (miles) */
-function distMi(la1,lo1,la2,lo2){
-  const R=3958.8, rad=Math.PI/180;
-  const dLa=(la2-la1)*rad, dLo=(lo2-lo1)*rad;
-  const a=Math.sin(dLa/2)**2+Math.cos(la1*rad)*Math.cos(la2*rad)*Math.sin(dLo/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+// ─── STORAGE ─────────────────────────────────────────────────────────────────
+function loadProfile() {
+  try { return JSON.parse(localStorage.getItem('pnb_profile')||'null'); }
+  catch(e) { return null; }
+}
+function saveProfile(p) {
+  try { localStorage.setItem('pnb_profile', JSON.stringify(p)); } catch(e) {}
+}
+function loadCache(key) {
+  try {
+    const c = JSON.parse(localStorage.getItem('pnb_cache_'+key)||'null');
+    if (!c) return null;
+    // Accept cache up to 20 min old as stale fallback
+    return c;
+  } catch(e) { return null; }
+}
+function saveCache(key, data) {
+  try { localStorage.setItem('pnb_cache_'+key, JSON.stringify({data, ts: Date.now()})); } catch(e) {}
 }
 
-/* find nearest station of a given type from NOAA's station list */
-async function nearestStation(lat,lon,type){
-  const r=await fetch(`${MDAPI}?type=${type}`);
-  const j=await r.json();
-  const list=j.stations||[];
-  let best=null, bestD=Infinity;
-  list.forEach(s=>{
-    if(s.lat==null||s.lng==null) return;
-    const d=distMi(lat,lon,s.lat,s.lng);
-    if(d<bestD){bestD=d;best=s;}
-  });
-  return best?{id:best.id,name:best.name,dist:bestD}:null;
+// ─── DESTINATION (the body of water the user picked) ─────────────────────────
+function loadDestination() {
+  try { return JSON.parse(localStorage.getItem('pnb_dest')||'null'); } catch(e) { return null; }
+}
+function saveDestination(d) {
+  try { localStorage.setItem('pnb_dest', JSON.stringify(d)); } catch(e) {}
+}
+function clearDestination(refresh) {
+  state.destination = null;
+  try { localStorage.removeItem('pnb_dest'); } catch(e) {}
+  if (refresh !== false) refreshAll();
+}
+function haversineMi(lat1, lon1, lat2, lon2) {
+  const R = 3958.8, toR = Math.PI/180;
+  const dLat = (lat2-lat1)*toR, dLon = (lon2-lon1)*toR;
+  const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*toR)*Math.cos(lat2*toR)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-/* ---- LOCATION TOGGLE ---- */
-function setHome(){
-  mode='salt';
-  const tideTab=document.querySelectorAll('.dan-tab')[2];
-  if(tideTab) tideTab.style.display='';
-  TIDE_STATION=HORN.tide; MET_STATION=HORN.met;
-  document.getElementById('loc-name').textContent=HORN.name;
-  document.getElementById('loc-sub').textContent=HORN.sub;
-  document.getElementById('loc-home').classList.add('active');
-  document.getElementById('loc-near').classList.remove('active');
-  resetLoading();
+// ─── NEARBY WATERS (rotating picker) ─────────────────────────────────────────
+let nearbyTimer = null;
+
+async function fetchNearbyCOOPS(lat, lon) {
+  // NOAA station list, trimmed + cached for 30 days
+  let cached = loadCache('coops_station_list');
+  let list = (cached && cached.data && (Date.now()-cached.ts) < 30*24*3600*1000) ? cached.data : null;
+  if (!list) {
+    try {
+      const r = await fetch('https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions');
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      list = (j.stations||[]).map(s=>({id:s.id, name:s.name, lat:s.lat, lon:s.lng}));
+      saveCache('coops_station_list', list);
+    } catch(e) { list = cached ? cached.data : null; }
+  }
+  if (!list || !list.length) return [];
+  return list
+    .map(s=>({...s, dist: haversineMi(lat,lon,s.lat,s.lon)}))
+    .sort((a,b)=>a.dist-b.dist).slice(0,3);
+}
+
+async function summarizeNearbySalt(stns) {
+  return Promise.all(stns.map(async s => {
+    const [tempR, tideR] = await Promise.all([
+      fetchCOOPS(s.id, 'water_temperature'),
+      fetchTidePredictions(s.id)
+    ]);
+    let temp = null;
+    if (tempR.data && tempR.data.data && tempR.data.data.length) {
+      temp = parseFloat(tempR.data.data[tempR.data.data.length-1].v);
+    }
+    let nextTide = null;
+    if (tideR.data && tideR.data.predictions) {
+      const now = Date.now();
+      const p = tideR.data.predictions.find(p=>new Date(p.t).getTime()>now);
+      if (p) nextTide = (p.type==='H'?'High ':'Low ')+new Date(p.t).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    }
+    return {...s, temp, nextTide};
+  }));
+}
+
+function startNearbyCycle() {
+  stopNearbyCycle();
+  renderNearbyBanner();
+  if (state.nearby.length > 1 && !state.destination) {
+    nearbyTimer = setInterval(()=>{
+      state.nearbyIdx = (state.nearbyIdx+1) % state.nearby.length;
+      renderNearbyBanner();
+    }, 3000);
+  }
+}
+function stopNearbyCycle() {
+  if (nearbyTimer) { clearInterval(nearbyTimer); nearbyTimer = null; }
+}
+
+function renderNearbyBanner() {
+  const el = document.getElementById('nearby-banner');
+  if (!el) return;
+  if (state.destination) {
+    el.style.display = 'block';
+    el.innerHTML = `🎯 Your spot: <span class="nb-pick">${escHtml(state.destination.name)}</span>
+      <span class="nb-clear" onclick="event.stopPropagation();clearDestination()">change spot</span>`;
+    el.onclick = null;
+    return;
+  }
+  if (!state.nearby.length) { el.style.display = 'none'; return; }
+  const i = state.nearbyIdx % state.nearby.length;
+  const s = state.nearby[i];
+  const bits = [];
+  if (s.dist != null) bits.push(s.dist.toFixed(1)+' mi');
+  if (s.temp != null) bits.push(s.temp.toFixed(0)+'°F water');
+  if (s.nextTide) bits.push('next: '+s.nextTide);
+  if (s.gaugeTxt) bits.push(s.gaugeTxt);
+  el.style.display = 'block';
+  el.innerHTML = `🌊 Nearest waters (${i+1}/${state.nearby.length}): <span class="nb-pick">${escHtml(s.name)}</span>${bits.length ? ' · '+bits.join(' · ') : ''} — <u>tap to make this your spot</u>`;
+  el.onclick = ()=>pickDestination(i);
+}
+
+function pickDestination(idx) {
+  const s = state.nearby[idx];
+  if (!s) return;
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  state.destination = {type: (!wt || wt.startsWith('salt')) ? 'coops' : 'usgs', id: s.id, name: s.name, lat: s.lat, lon: s.lon};
+  saveDestination(state.destination);
+  stopNearbyCycle();
+  renderNearbyBanner();
   refreshAll();
 }
 
-function setNearMe(){
-  mode='salt';
-  const tideTab=document.querySelectorAll('.dan-tab')[2];
-  if(tideTab) tideTab.style.display='';
-  document.getElementById('loc-near').classList.add('active');
-  document.getElementById('loc-home').classList.remove('active');
-  document.getElementById('loc-name').textContent='📍 Finding you…';
-  document.getElementById('loc-sub').textContent='Reading device location';
-  if(!navigator.geolocation){
-    document.getElementById('loc-name').textContent='📍 Location unavailable';
-    document.getElementById('loc-sub').textContent='This device/browser does not allow location';
-    return;
+function cycleWaterType() {
+  const order = ['salt_inshore','salt_offshore','river','lake'];
+  const p = state.profile || {name:'',homeWater:'',state:'MS',targetSpecies:[],license:null,setupDone:true,waterType:'salt_inshore'};
+  const idx = order.indexOf(p.waterType);
+  p.waterType = order[(idx+1) % order.length];
+  state.profile = p;
+  saveProfile(p);
+  clearDestination(false); // different water type = different spot, no auto-refresh (we refresh below)
+  updateWaterTypeBtn();
+  populateSpeciesChips(p.waterType);
+  renderFishingTab();
+  renderSetupTab();
+  refreshAll();
+}
+
+// ─── ONBOARDING ──────────────────────────────────────────────────────────────
+const ALL_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+
+function populateStateSelects() {
+  ['ob-state','ob-lic-state'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '<option value="">-- Select state --</option>' + ALL_STATES.map(s=>`<option value="${s}">${s}</option>`).join('');
+  });
+}
+
+let pendingProfile = {};
+let selectedPrivs = [];
+
+function selectWT(btn, type) {
+  document.querySelectorAll('.wt-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  pendingProfile.waterType = type;
+  // Populate species chips for step 3
+  populateSpeciesChips(type);
+}
+
+function getSpeciesForWaterType(wt) {
+  if (!wt || wt.startsWith('salt')) return SALT_SPECIES_LIST.map(s=>s.id);
+  return FW_SPECIES_LIST.map(s=>s.id);
+}
+
+function populateSpeciesChips(wt) {
+  const list = wt && wt.startsWith('salt') ? SALT_SPECIES_LIST : FW_SPECIES_LIST;
+  document.getElementById('ob-species-chips').innerHTML = list.map(s=>
+    `<div class="sp-chip" data-id="${s.id}" onclick="toggleSpeciesChip(this)">${s.emoji} ${s.name}</div>`
+  ).join('');
+}
+
+function toggleSpeciesChip(el) {
+  el.classList.toggle('selected');
+}
+
+function togglePriv(el, priv) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) selectedPrivs.push(priv);
+  else selectedPrivs = selectedPrivs.filter(p=>p!==priv);
+}
+
+function toggleLicense() {
+  const f = document.getElementById('license-fields');
+  f.classList.toggle('open');
+}
+
+function obNext(step) {
+  if (step === 2) {
+    pendingProfile.name = document.getElementById('ob-name').value.trim();
+    pendingProfile.homeWater = document.getElementById('ob-homewater').value.trim();
+    pendingProfile.state = document.getElementById('ob-state').value;
+    // Default chips to salt if no water type picked yet
+    if (!pendingProfile.waterType) populateSpeciesChips('salt_inshore');
   }
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    const lat=pos.coords.latitude, lon=pos.coords.longitude;
-    document.getElementById('loc-name').textContent='📍 Near you';
-    document.getElementById('loc-sub').textContent='Finding nearest NOAA stations…';
-    try{
-      const [tide,met]=await Promise.all([
-        nearestStation(lat,lon,'tidepredictions'),
-        nearestStation(lat,lon,'met')
-      ]);
-      if(tide) TIDE_STATION=tide.id;
-      if(met)  MET_STATION=met.id;
-      const tName=tide?tide.name:'nearest station';
-      const mDist=met?` · weather ${met.dist.toFixed(0)} mi`:'';
-      document.getElementById('loc-name').textContent='📍 '+tName;
-      document.getElementById('loc-sub').textContent=
-        `Nearest NOAA tide station ${tide?tide.dist.toFixed(0)+' mi':''}${mDist}`;
-      resetLoading();
-      refreshAll();
-    }catch(e){
-      document.getElementById('loc-name').textContent='📍 Lookup failed';
-      document.getElementById('loc-sub').textContent='Could not reach NOAA station list — tap Dan\u2019s Spot to go back';
+  if (step === 3 && !pendingProfile.waterType) {
+    // Nothing selected, skip
+  }
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('active'));
+  const el = document.getElementById('ob-step-'+step);
+  if (el) el.classList.add('active');
+}
+
+function obSkip() {
+  obFinish(true);
+}
+
+function obFinish(skipped) {
+  if (!skipped) {
+    pendingProfile.targetSpecies = Array.from(document.querySelectorAll('.sp-chip.selected')).map(el=>el.dataset.id);
+    const licNum = document.getElementById('ob-lic-num').value.trim();
+    if (licNum) {
+      pendingProfile.license = {
+        number: licNum,
+        state: document.getElementById('ob-lic-state').value,
+        expiry: document.getElementById('ob-lic-exp').value,
+        privileges: selectedPrivs
+      };
     }
-  }, err=>{
-    document.getElementById('loc-name').textContent='📍 Location blocked';
-    document.getElementById('loc-sub').textContent='Allow location access, or tap Dan\u2019s Spot';
-    document.getElementById('loc-near').classList.remove('active');
-    document.getElementById('loc-home').classList.add('active');
-  }, {enableHighAccuracy:true, timeout:10000, maximumAge:300000});
-}
-
-/* ---- FRESHWATER MODE — National Weather Service ---- */
-let mode='salt';
-
-function setFreshwater(){
-  mode='fresh';
-  document.getElementById('loc-fresh').classList.add('active');
-  document.getElementById('loc-near').classList.remove('active');
-  document.getElementById('loc-home').classList.remove('active');
-  document.getElementById('loc-name').textContent='🏞️ Finding you…';
-  document.getElementById('loc-sub').textContent='Reading device location';
-  const tideTab=document.querySelectorAll('.dan-tab')[2];
-  if(tideTab) tideTab.style.display='none';
-  if(!navigator.geolocation){
-    document.getElementById('loc-name').textContent='🏞️ Location unavailable';
-    document.getElementById('loc-sub').textContent='This device/browser does not allow location';
-    return;
   }
-  navigator.geolocation.getCurrentPosition(pos=>{
-    loadNWS(pos.coords.latitude,pos.coords.longitude);
-  }, err=>{
-    document.getElementById('loc-name').textContent='🏞️ Location blocked';
-    document.getElementById('loc-sub').textContent='Allow location access, or tap Dan\u2019s Spot';
-  }, {enableHighAccuracy:true, timeout:10000, maximumAge:300000});
+  const profile = {
+    name: pendingProfile.name || '',
+    homeWater: pendingProfile.homeWater || '',
+    state: pendingProfile.state || 'MS',
+    waterType: pendingProfile.waterType || 'salt_inshore',
+    targetSpecies: pendingProfile.targetSpecies || [],
+    license: pendingProfile.license || null,
+    setupDone: true
+  };
+  state.profile = profile;
+  saveProfile(profile);
+  document.getElementById('onboarding').classList.remove('open');
+  renderSetupTab();
+  refreshAll();
 }
 
-async function loadNWS(lat,lon){
-  document.getElementById('wind-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling live forecast from National Weather Service…</div>';
-  ['s-wind','s-gust','s-water','s-tide'].forEach(id=>document.getElementById(id).textContent='—');
-  try{
-    const pr=await fetch(`https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`,{headers:{'Accept':'application/geo+json'}});
-    const pj=await pr.json();
-    const place=pj.properties.relativeLocation&&pj.properties.relativeLocation.properties;
-    const placeName=place?`${place.city}, ${place.state}`:'your location';
-    document.getElementById('loc-name').textContent='🏞️ '+placeName;
-    document.getElementById('loc-sub').textContent='Live from National Weather Service';
-    const fr=await fetch(pj.properties.forecastHourly,{headers:{'Accept':'application/geo+json'}});
-    const fj=await fr.json();
-    const periods=fj.properties.periods.slice(0,12);
-    const now=periods[0];
-    function windToKnots(str){const nums=(str.match(/\d+/g)||[]).map(Number);const mph=nums.length?Math.max(...nums):0;return Math.round(mph*0.868976);}
-    const knots=windToKnots(now.windSpeed);
-    document.getElementById('s-wind').textContent=knots||'—';
-    document.getElementById('s-wind-dir').textContent=(now.windDirection||'')+' knots';
-    document.getElementById('s-gust').textContent='—';
-    document.getElementById('s-water').textContent=now.temperature;
-    document.getElementById('s-tide').textContent='—';
-    document.getElementById('s-tide-dir').textContent='no tide (inland)';
-    let rows='';
-    periods.forEach(p=>{
-      const t=new Date(p.startTime).toLocaleTimeString([], {hour:'numeric'});
-      const kn=windToKnots(p.windSpeed);
-      const c=kn<=8?'#2ecc71':kn<=13?'#f1c40f':kn<=18?'#e67e22':'#e74c3c';
-      rows+=`<tr><td class="time-cell">${t}</td><td style="color:var(--text);">${p.windDirection}</td><td class="wind-speed-cell" style="color:${c};">${kn}<span style="font-size:11px;color:var(--muted);"> kn</span></td><td style="color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;">${p.temperature}°</td><td style="color:var(--muted);font-size:11px;">${p.shortForecast}</td></tr>`;
-    });
-    const safe=knots<=12;
-    document.getElementById('wind-content').innerHTML=`
-      <div class="tip-card ${safe?'good':'warn'}">
-        <div class="tip-header"><span class="tip-icon">${safe?'🛶':'⚠️'}</span><span class="tip-title">Right Now: ${knots} kn ${now.windDirection} · ${now.temperature}°F</span></div>
-        <div class="tip-body">${now.shortForecast}. ${safe?'<strong>Comfortable on the water.</strong> Good conditions for a lake or river.':'<strong>Wind is up</strong> — small craft and kayaks beware. Open water will be choppy.'}</div>
-      </div>
-      <table class="forecast-table"><thead><tr><th style="text-align:left;padding-left:14px;">Hour</th><th>Dir</th><th>Wind</th><th>Air</th><th>Sky</th></tr></thead><tbody>${rows}</tbody></table>`;
-    document.getElementById('wind-updated').textContent='✓ live NWS';
-    document.getElementById('wind-src-station').textContent='National Weather Service ('+placeName+')';
-    document.getElementById('water-big').innerHTML=now.temperature+'<span class="temp-deg">°F</span>';
-    let pct=Math.max(0,Math.min(100,((now.temperature-40)/60)*100));
-    document.getElementById('water-fill').style.width=pct+'%';
-    document.getElementById('water-tip').innerHTML='<strong style="color:var(--blue-light);">Air temperature shown</strong> (NWS doesn\'t read water temp inland). Surface water usually lags air temp a few degrees — cooler in morning, warming through afternoon. Your FLIR is the real tool here: scan for warm shallows in spring, cool inflows in summer.';
-    document.getElementById('m-water').innerHTML=now.temperature+'<span class="m-tool-unit">°F</span>';
-    document.getElementById('m-water-status').textContent='air temp (use FLIR for water)';
-    document.getElementById('m-water-status').style.color='#5dade2';
-  }catch(e){
-    document.getElementById('wind-content').innerHTML='<div class="loading">Could not reach the National Weather Service right now. Refreshes when you reconnect.</div>';
-    document.getElementById('wind-updated').textContent='offline';
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'boater') renderBoaterTab();
+}
+
+// ─── LOCATION ─────────────────────────────────────────────────────────────────
+function getLocation() {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) { resolve({lat:DEFAULT_LAT,lon:DEFAULT_LON,label:'Default (Horn Island area)'}); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({lat:pos.coords.latitude,lon:pos.coords.longitude,label:`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`}),
+      () => resolve({lat:DEFAULT_LAT,lon:DEFAULT_LON,label:'Default (Horn Island area)'}),
+      {timeout:8000,maximumAge:60000}
+    );
+  });
+}
+
+function openLocModal() { document.getElementById('loc-modal').classList.add('open'); }
+function closeLocModal() { document.getElementById('loc-modal').classList.remove('open'); }
+function setManualLoc() {
+  const lat = parseFloat(document.getElementById('manual-lat').value);
+  const lon = parseFloat(document.getElementById('manual-lon').value);
+  if (isNaN(lat)||isNaN(lon)) { alert('Enter valid coordinates.'); return; }
+  state.lat = lat; state.lon = lon;
+  state.locLabel = `Manual: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  document.getElementById('loc-text').textContent = '📍 ' + state.locLabel;
+  closeLocModal();
+  refreshAll();
+}
+function toggleAlerts() {
+  const p = document.getElementById('alerts-panel');
+  p.classList.toggle('open');
+  document.getElementById('sg-alerts-btn').textContent = p.classList.contains('open') ? '▲ NWS Alerts' : '▼ NWS Alerts';
+}
+
+// ─── NWS ALERTS ──────────────────────────────────────────────────────────────
+async function fetchNWSAlerts(lat, lon) {
+  const url = `https://api.weather.gov/alerts/active?point=${lat.toFixed(4)},${lon.toFixed(4)}`;
+  try {
+    const r = await fetch(url, {headers:{'User-Agent':NWS_UA,'Accept':NWS_ACCEPT}});
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    const alerts = (j.features||[]).map(f=>f.properties);
+    saveCache('alerts', alerts);
+    return {data:alerts, stale:false};
+  } catch(e) {
+    const cached = loadCache('alerts');
+    return {data: cached ? cached.data : [], stale: true, ts: cached ? cached.ts : null};
   }
 }
 
-function resetLoading(){
-  document.getElementById('wind-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling live wind from NOAA…</div>';
-  document.getElementById('tide-content').innerHTML='<div class="loading"><span class="spinner"></span>Pulling today\u2019s tides from NOAA…</div>';
-  document.getElementById('water-tip').textContent='Loading live water temperature…';
-  ['s-wind','s-gust','s-water','s-tide'].forEach(id=>document.getElementById(id).textContent='—');
+// ─── NWS FORECAST ─────────────────────────────────────────────────────────────
+async function fetchNWSForecast(lat, lon) {
+  try {
+    const ptUrl = `https://api.weather.gov/points/${lat.toFixed(4)},${lon.toFixed(4)}`;
+    const ptR = await fetch(ptUrl, {headers:{'User-Agent':NWS_UA,'Accept':NWS_ACCEPT}});
+    if (!ptR.ok) throw new Error(ptR.status);
+    const ptJ = await ptR.json();
+    const fcUrl = ptJ.properties.forecast;
+    const fcR = await fetch(fcUrl, {headers:{'User-Agent':NWS_UA,'Accept':NWS_ACCEPT}});
+    if (!fcR.ok) throw new Error(fcR.status);
+    const fcJ = await fcR.json();
+    const periods = (fcJ.properties.periods||[]).slice(0,14);
+    saveCache('forecast', periods);
+    return {data:periods, stale:false};
+  } catch(e) {
+    const cached = loadCache('forecast');
+    return {data: cached ? cached.data : [], stale:true, ts: cached ? cached.ts : null};
+  }
 }
 
-/* ---- APP SWITCHING ---- */
-function showApp(app){
-  document.getElementById('dan-app').style.display=app==='dan'?'block':'none';
-  document.getElementById('matt-app').style.display=app==='matt'?'block':'none';
-  document.getElementById('switcher-dan').className='app-btn'+(app==='dan'?' active-dan':'');
-  document.getElementById('switcher-matt').className='app-btn'+(app==='matt'?' active-matt':'');
-  window.scrollTo(0,0);
-}
-function danTab(tab){
-  ['wind','fishing','tides'].forEach(t=>document.getElementById('dan-'+t).classList.toggle('active',t===tab));
-  document.querySelectorAll('.dan-tab').forEach((el,i)=>el.classList.toggle('active',['wind','fishing','tides'][i]===tab));
-}
-function mattTab(tab){
-  ['tools','species','rigs','spots','rules'].forEach(t=>document.getElementById('matt-'+t).classList.toggle('active',t===tab));
-  document.querySelectorAll('.matt-tab').forEach((el,i)=>el.classList.toggle('active',['tools','species','rigs','spots','rules'][i]===tab));
-}
-
-/* ---- STATIC: species + Dan's tips ---- */
-const species=[
-  {icon:"🐟",name:"Speckled Trout",status:"HOT",cls:"hot",note:"Surf & grass flats"},
-  {icon:"🐠",name:"Redfish",status:"HOT",cls:"hot",note:"East end, incoming tide"},
-  {icon:"🦈",name:"Flounder",status:"ACTIVE",cls:"warm",note:"Sandy bottom, jigs"},
-  {icon:"🐟",name:"Spanish Mack",status:"ACTIVE",cls:"warm",note:"Clear water, trolling"},
-  {icon:"🐟",name:"Cobia",status:"FAIR",cls:"warm",note:"Near buoys & floats"},
-  {icon:"🦐",name:"Pompano",status:"ACTIVE",cls:"warm",note:"Sandy surf zone"},
-  {icon:"🐠",name:"Black Drum",status:"SLOW",cls:"slow",note:"Structure & bridges"},
-  {icon:"🐡",name:"Sheepshead",status:"SLOW",cls:"slow",note:"Pilings & structure"},
-];
-const grid=document.getElementById('species-grid');
-species.forEach(s=>{const d=document.createElement('div');d.className='species-card';d.innerHTML=`<div class="species-emoji">${s.icon}</div><div class="species-info"><div class="species-name">${s.name}</div><div class="species-status ${s.cls}">● ${s.status} · <span style="color:var(--muted);">${s.note}</span></div></div>`;grid.appendChild(d);});
-const danTips=[
-  {icon:"🎣",type:"good",title:"East End Surf — First Light",body:"Wade the surf on the eastern tip at dawn. <strong>Big redfish up to 40–50 lbs</strong> work the break. Gold spoons and large Gulp! shrimp."},
-  {icon:"🦐",type:"info",title:"Live Shrimp: Never Wrong",body:"Live shrimp under a popping cork over the <strong>north side grass flats</strong> is the bread-and-butter rig around Horn Island."},
-  {icon:"🐡",type:"info",title:"Tripletail Around the Buoys",body:"April–October — <strong>every crab trap float and channel marker</strong> is worth checking. Pitch a live shrimp just ahead."},
-];
-const tipsEl=document.getElementById('dan-fishing-tips');
-danTips.forEach(t=>{const d=document.createElement('div');d.className=`tip-card ${t.type}`;d.innerHTML=`<div class="tip-header"><span class="tip-icon">${t.icon}</span><span class="tip-title">${t.title}</span></div><div class="tip-body">${t.body}</div>`;tipsEl.appendChild(d);});
-
-/* ---- LIVE TIDES ---- */
-async function loadTides(){
-  const today=new Date();
-  const url=`${API}?date=today&station=${TIDE_STATION}&product=predictions&datum=MLLW&time_zone=lst_ldt&interval=hilo&units=english&application=DanFinder&format=json`;
-  try{
-    const r=await fetch(url); const j=await r.json();
-    if(!j.predictions) throw new Error("no data");
-    const preds=j.predictions;
-    let html='';
-    preds.forEach(p=>{
-      const hi=p.type==='H';
-      const t=new Date(p.t.replace(' ','T'));
-      const tstr=t.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-      html+=`<div class="tide-row"><div style="font-size:18px;">${hi?'🔼':'🔽'}</div><div><div class="tide-time">${tstr}</div><div class="tide-type">${hi?'High Tide':'Low Tide'}</div></div><div class="tide-height">${parseFloat(p.v).toFixed(1)} ft</div></div>`;
+// ─── USGS GAUGE ───────────────────────────────────────────────────────────────
+async function fetchNearestUSGS(lat, lon, siteType) {
+  // siteType: 'ST' for stream/river, 'LK' for lake
+  const box = 0.4;
+  const url = `https://waterservices.usgs.gov/nwis/iv/?bBox=${(lon-box).toFixed(4)},${(lat-box).toFixed(4)},${(lon+box).toFixed(4)},${(lat+box).toFixed(4)}&parameterCd=00065,00060,00010&format=json&siteStatus=active&siteType=${siteType}`;
+  const cacheKey = `usgs_${siteType}`;
+  try {
+    const r = await fetch(url, {headers:{'User-Agent':NWS_UA}});
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    const sites = j.value && j.value.timeSeries ? j.value.timeSeries : [];
+    if (!sites.length) return {data:null, stale:false};
+    // Group by site, find nearest
+    const siteMap = {};
+    sites.forEach(ts => {
+      const sid = ts.sourceInfo.siteCode[0].value;
+      const sLat = ts.sourceInfo.geoLocation.geogLocation.latitude;
+      const sLon = ts.sourceInfo.geoLocation.geogLocation.longitude;
+      const dist = Math.hypot(sLat-lat, sLon-lon);
+      if (!siteMap[sid] || dist < siteMap[sid].dist) {
+        siteMap[sid] = {sid, name:ts.sourceInfo.siteName, lat:sLat, lon:sLon, dist, values:{}};
+      }
+      const paramCd = ts.variable.variableCode[0].value;
+      const vals = ts.values[0] && ts.values[0].value;
+      if (vals && vals.length) {
+        siteMap[sid].values[paramCd] = {
+          value: parseFloat(vals[vals.length-1].value),
+          dateTime: vals[vals.length-1].dateTime,
+          unitCode: ts.variable.unit.unitCode
+        };
+      }
     });
-    document.getElementById('tide-content').innerHTML=html;
-    document.getElementById('tide-updated').textContent='✓ live';
-    document.getElementById('tide-src-station').textContent='NOAA CO-OPS Station '+TIDE_STATION;
-    // next high tide for "best window"
-    const now=new Date();
-    const nextHigh=preds.find(p=>p.type==='H' && new Date(p.t.replace(' ','T'))>now);
-    if(nextHigh){
-      const ht=new Date(nextHigh.t.replace(' ','T'));
-      const start=new Date(ht.getTime()-90*60000);
-      const s=start.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-      const e=ht.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-      document.getElementById('best-window').textContent=`Top Window: ${s} – ${e} (incoming to high tide)`;
+    const sorted = Object.values(siteMap).sort((a,b)=>a.dist-b.dist);
+    let nearest = sorted[0];
+    if (state.destination && state.destination.type === 'usgs') {
+      const m = sorted.find(s=>s.sid===state.destination.id);
+      if (m) nearest = m;
+    }
+    // Try to get flood stage from NWS AHPS
+    let floodStage = null;
+    try {
+      const nwpsUrl = `https://api.water.noaa.gov/nwps/v1/gauges?bbox=${(lon-box).toFixed(4)},${(lat-box).toFixed(4)},${(lon+box).toFixed(4)},${(lat+box).toFixed(4)}`;
+      const nr = await fetch(nwpsUrl, {headers:{'User-Agent':NWS_UA}});
+      if (nr.ok) {
+        const nj = await nr.json();
+        const gauges = nj.gauges || [];
+        // Find closest NWS gauge
+        let bestG = null, bestDist = 9999;
+        gauges.forEach(g => {
+          if (!g.latitude || !g.longitude) return;
+          const d = Math.hypot(g.latitude-lat, g.longitude-lon);
+          if (d < bestDist) { bestDist = d; bestG = g; }
+        });
+        if (bestG && bestG.flood) {
+          floodStage = {
+            action: bestG.flood.action,
+            minor: bestG.flood.minor,
+            moderate: bestG.flood.moderate,
+            major: bestG.flood.major,
+            status: bestG.status,
+            nwsId: bestG.lid
+          };
+        }
+      }
+    } catch(e2) { /* flood stage unavailable */ }
+    const result = { ...nearest, floodStage, nearby3: sorted.slice(0,3).map(s=>({
+      id: s.sid, name: s.name, lat: s.lat, lon: s.lon,
+      dist: haversineMi(lat, lon, s.lat, s.lon),
+      gaugeTxt: s.values['00065'] ? ('stage '+s.values['00065'].value+' ft')
+              : (s.values['00060'] ? ('flow '+s.values['00060'].value+' cfs') : null)
+    })) };
+    saveCache(cacheKey, result);
+    return {data:result, stale:false};
+  } catch(e) {
+    const cached = loadCache(cacheKey);
+    return {data: cached ? cached.data : null, stale:true, ts: cached ? cached.ts : null};
+  }
+}
+
+// ─── NOAA CO-OPS ──────────────────────────────────────────────────────────────
+const COOPS_BASE = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
+async function fetchCOOPS(station, product, extras={}) {
+  const params = new URLSearchParams({
+    station, product, date:'latest',
+    units:'english', time_zone:'lst_ldt',
+    application:'phishnboat', format:'json', ...extras
+  });
+  const cacheKey = `coops_${station}_${product}`;
+  try {
+    const r = await fetch(`${COOPS_BASE}?${params}`);
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    if (j.error) throw new Error(j.error.message);
+    saveCache(cacheKey, j);
+    return {data:j, stale:false};
+  } catch(e) {
+    const cached = loadCache(cacheKey);
+    return {data: cached ? cached.data : null, stale:true, ts: cached ? cached.ts : null};
+  }
+}
+
+// Try the preferred station first; fall back to the default sensor station if it has no data
+async function fetchCOOPSWithFallback(stn, stnName, product) {
+  if (stn) {
+    const r = await fetchCOOPS(stn, product);
+    if (r.data && r.data.data && r.data.data.length) {
+      r.stnId = stn;
+      r.stnName = stnName || stn;
+      return r;
+    }
+  }
+  const fb = await fetchCOOPS(NOAA_WIND_STN, product);
+  fb.stnId = NOAA_WIND_STN; fb.stnName = 'Ship Island, MS Sound';
+  return fb;
+}
+
+async function fetchTidePredictions(station) {
+  const today = new Date();
+  const begin = fmtYMD(today);
+  const params = new URLSearchParams({
+    station, product:'predictions', begin_date:begin, range:'168',
+    datum:'MLLW', units:'english', time_zone:'lst_ldt',
+    interval:'hilo', application:'phishnboat', format:'json'
+  });
+  const cacheKey = `tides_${station}`;
+  try {
+    const r = await fetch(`${COOPS_BASE}?${params}`);
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    if (j.error) throw new Error(j.error.message);
+    saveCache(cacheKey, j);
+    return {data:j, stale:false};
+  } catch(e) {
+    const cached = loadCache(cacheKey);
+    return {data: cached ? cached.data : null, stale:true, ts: cached ? cached.ts : null};
+  }
+}
+
+// ─── OPEN-METEO MARINE ────────────────────────────────────────────────────────
+async function fetchOpenMeteoMarine(lat, lon) {
+  const url = `https://marine-api.open-meteo.com/v1/marine?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&hourly=wave_height,wave_direction,wave_period,swell_wave_height&wind_speed_unit=kn&forecast_days=3`;
+  const cacheKey = 'marine';
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    saveCache(cacheKey, j);
+    return {data:j, stale:false};
+  } catch(e) {
+    const cached = loadCache(cacheKey);
+    return {data: cached ? cached.data : null, stale:true, ts: cached ? cached.ts : null};
+  }
+}
+
+// ─── SAFETY VERDICT ───────────────────────────────────────────────────────────
+function computeVerdict(nwsAlerts, gaugeData, windKnots, windGustKnots) {
+  let verdict = 'go';
+  let drivers = [];
+
+  // NWS alerts: check for dangerous categories
+  const STOP_EVENTS = ['Tornado','Hurricane','Tropical Storm','Severe Thunderstorm','Flash Flood Warning','Flood Warning','Special Marine Warning','Gale Warning','Storm Warning','Hurricane Force Wind Warning'];
+  const CAUTION_EVENTS = ['Wind Advisory','Marine Weather Statement','Small Craft Advisory','Flood Watch','Flash Flood Watch','Dense Fog Advisory','Coastal Flood Advisory'];
+
+  nwsAlerts.forEach(a => {
+    const ev = a.event || '';
+    const sev = (a.severity||'').toLowerCase();
+    const cert = (a.certainty||'').toLowerCase();
+    if (STOP_EVENTS.some(e => ev.includes(e)) || sev === 'extreme' || sev === 'severe') {
+      verdict = 'stop';
+      drivers.push({label:`⛔ NWS: ${ev}`, cls:'sg-chip-stop'});
+    } else if (verdict !== 'stop' && (CAUTION_EVENTS.some(e => ev.includes(e)) || sev === 'moderate')) {
+      verdict = 'caution';
+      drivers.push({label:`⚠️ NWS: ${ev}`, cls:'sg-chip-warn'});
+    }
+  });
+
+  // Wind check (~20kt threshold)
+  if (windGustKnots !== null && windGustKnots !== undefined) {
+    if (windGustKnots >= 25) {
+      if (verdict !== 'stop') verdict = 'stop';
+      drivers.push({label:`⛔ Gust ${windGustKnots.toFixed(0)} kt`, cls:'sg-chip-stop'});
+    } else if (windGustKnots >= 18) {
+      if (verdict === 'go') verdict = 'caution';
+      drivers.push({label:`⚠️ Gust ${windGustKnots.toFixed(0)} kt`, cls:'sg-chip-warn'});
     } else {
-      document.getElementById('best-window').textContent='Top Window: fish the next incoming tide';
+      drivers.push({label:`✓ Gust ${windGustKnots.toFixed(0)} kt`, cls:'sg-chip-ok'});
     }
-    // tide direction for summary strip
-    if(preds.length){
-      const next=preds.find(p=>new Date(p.t.replace(' ','T'))>now)||preds[preds.length-1];
-      document.getElementById('s-tide').textContent=parseFloat(next.v).toFixed(1);
-      document.getElementById('s-tide-dir').textContent=(next.type==='H'?'rising →':'falling →');
+  } else if (windKnots !== null && windKnots !== undefined) {
+    if (windKnots >= 20) {
+      if (verdict !== 'stop') verdict = 'stop';
+      drivers.push({label:`⛔ Wind ${windKnots.toFixed(0)} kt`, cls:'sg-chip-stop'});
+    } else if (windKnots >= 15) {
+      if (verdict === 'go') verdict = 'caution';
+      drivers.push({label:`⚠️ Wind ${windKnots.toFixed(0)} kt`, cls:'sg-chip-warn'});
+    } else {
+      drivers.push({label:`✓ Wind ${windKnots.toFixed(0)} kt`, cls:'sg-chip-ok'});
     }
-  }catch(e){
-    document.getElementById('tide-content').innerHTML='<div class="loading">Could not reach NOAA tides right now. It refreshes when you reconnect.</div>';
-    document.getElementById('tide-updated').textContent='offline';
   }
+
+  // USGS gauge vs flood stage
+  if (gaugeData) {
+    const stageVal = gaugeData.values && gaugeData.values['00065'] && gaugeData.values['00065'].value;
+    const fs = gaugeData.floodStage;
+    if (stageVal !== undefined && stageVal !== null) {
+      if (fs) {
+        if (fs.major !== null && stageVal >= fs.major) {
+          verdict = 'stop';
+          drivers.push({label:`⛔ Major flood stage (${stageVal.toFixed(1)}ft)`, cls:'sg-chip-stop'});
+        } else if (fs.moderate !== null && stageVal >= fs.moderate) {
+          verdict = 'stop';
+          drivers.push({label:`⛔ Moderate flood (${stageVal.toFixed(1)}ft)`, cls:'sg-chip-stop'});
+        } else if (fs.minor !== null && stageVal >= fs.minor) {
+          if (verdict !== 'stop') verdict = 'stop';
+          drivers.push({label:`⛔ Minor flood (${stageVal.toFixed(1)}ft)`, cls:'sg-chip-stop'});
+        } else if (fs.action !== null && stageVal >= fs.action) {
+          if (verdict === 'go') verdict = 'caution';
+          drivers.push({label:`⚠️ Action stage (${stageVal.toFixed(1)}ft)`, cls:'sg-chip-warn'});
+        } else {
+          drivers.push({label:`✓ Stage ${stageVal.toFixed(1)}ft (below action)`, cls:'sg-chip-ok'});
+        }
+      } else {
+        // No flood stage data — just show level, our note
+        drivers.push({label:`River ${stageVal.toFixed(1)}ft (flood stage unavailable)`, cls:'sg-chip-warn'});
+      }
+    }
+  }
+
+  if (drivers.length === 0 && verdict === 'go') {
+    drivers.push({label:'✓ No active alerts', cls:'sg-chip-ok'});
+  }
+
+  return {verdict, drivers};
 }
 
-/* ---- LIVE WIND ---- */
-async function loadWind(){
-  const url=`${API}?date=latest&station=${MET_STATION}&product=wind&time_zone=lst_ldt&units=english&application=DanFinder&format=json`;
-  try{
-    const r=await fetch(url); const j=await r.json();
-    if(!j.data||!j.data.length) throw new Error("no data");
-    const d=j.data[0];
-    const mph=parseFloat(d.s);          // speed mph
-    const gust=parseFloat(d.g);         // gust mph
-    const dir=d.dr||'';                 // text dir
-    const knots=Math.round(mph*0.868976);
-    const gustK=Math.round(gust*0.868976);
-    document.getElementById('s-wind').textContent=isNaN(knots)?'—':knots;
-    document.getElementById('s-wind-dir').textContent=(dir?dir+' ':'')+'knots';
-    document.getElementById('s-gust').textContent=isNaN(gustK)?'—':gustK;
-    // build summary block
-    const t=new Date(d.t.replace(' ','T'));
-    const tstr=t.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
-    const safe = knots<=12;
-    document.getElementById('wind-content').innerHTML=`
-      <div class="tip-card ${safe?'good':'warn'}">
-        <div class="tip-header"><span class="tip-icon">${safe?'⛵':'⚠️'}</span><span class="tip-title">Right Now: ${knots} kn ${dir} · gusting ${gustK} kn</span></div>
-        <div class="tip-body">${safe
-          ? 'Comfortable for the crossing from Roys Rd dock. <strong>Good window to run to Horn Island.</strong> Still keep an eye on the afternoon — the Sound builds fast.'
-          : 'Wind is up. <strong>Crossing the Sound will be choppy.</strong> Consider waiting for it to lay down, or fish closer in. Dan, you know how that Sound turns.'}</div>
-      </div>
-      <div class="tip-card info">
-        <div class="tip-header"><span class="tip-icon">🧭</span><span class="tip-title">Boating Rule of Thumb</span></div>
-        <div class="tip-body">Under <strong>12 knots</strong> = comfortable. <strong>12–18</strong> = doable but watch it. <strong>Over 18</strong> = rough crossing, think twice. Reading taken ${tstr}.</div>
+function renderSafetyGate(verdict, drivers, alerts) {
+  const badge = document.getElementById('sg-badge');
+  const driversEl = document.getElementById('sg-drivers');
+  const alertsBtn = document.getElementById('sg-alerts-btn');
+  const alertsPanel = document.getElementById('alerts-panel');
+
+  badge.className = '';
+  if (verdict === 'go') {
+    badge.className = 'sg-go';
+    badge.textContent = '✅ GOOD TO GO';
+  } else if (verdict === 'caution') {
+    badge.className = 'sg-caution';
+    badge.textContent = '⚠️ CAUTION';
+  } else if (verdict === 'stop') {
+    badge.className = 'sg-stop';
+    badge.textContent = '🛑 DO NOT LAUNCH';
+  } else {
+    badge.className = 'sg-loading';
+    badge.textContent = '⏳ Checking...';
+  }
+
+  driversEl.innerHTML = drivers.map(d=>`<span class="sg-chip ${d.cls}">${d.label}</span>`).join('');
+
+  // Safety warning shown — user decides (no feature lockdown)
+
+  // NWS alerts panel
+  if (alerts && alerts.length > 0) {
+    alertsBtn.style.display = 'inline-block';
+    alertsBtn.textContent = `▼ ${alerts.length} NWS Alert${alerts.length>1?'s':''}`;
+    alertsPanel.innerHTML = alerts.map(a => {
+      const ts = a.sent ? new Date(a.sent).toLocaleString() : 'Unknown time';
+      const exts = a.expires ? new Date(a.expires).toLocaleString() : 'No expiry';
+      return `<div class="alert-item">
+        <div class="alert-headline">${escHtml(a.headline||a.event||'Alert')}</div>
+        <div class="alert-meta">Sent: ${ts} · Expires: ${exts} · Severity: ${a.severity||'Unknown'}</div>
+        <div class="alert-body">${escHtml(a.description||'')}</div>
+        ${a.instruction ? `<div class="alert-body" style="margin-top:6px;"><strong>Instruction:</strong> ${escHtml(a.instruction)}</div>` : ''}
+        <div class="alert-attribution">Shown word-for-word from the NWS feed — not edited by this app. Source: api.weather.gov · NWS Office: ${a.senderName||'NWS'}</div>
       </div>`;
-    document.getElementById('wind-updated').textContent='✓ live';
-    document.getElementById('wind-src-station').textContent='NOAA CO-OPS Station '+MET_STATION;
-  }catch(e){
-    document.getElementById('wind-content').innerHTML='<div class="loading">Could not reach NOAA wind right now. Refreshes when you reconnect.</div>';
-    document.getElementById('wind-updated').textContent='offline';
+    }).join('');
+  } else {
+    alertsBtn.style.display = 'none';
+    alertsPanel.innerHTML = '';
+    alertsPanel.classList.remove('open');
   }
 }
 
-/* ---- LIVE WATER TEMP ---- */
-async function loadWaterTemp(){
-  const url=`${API}?date=latest&station=${MET_STATION}&product=water_temperature&time_zone=lst_ldt&units=english&application=DanFinder&format=json`;
-  try{
-    const r=await fetch(url); const j=await r.json();
-    if(!j.data||!j.data.length) throw new Error("no data");
-    const temp=parseFloat(j.data[0].v);
-    const tt=Math.round(temp);
-    document.getElementById('s-water').textContent=tt;
-    document.getElementById('water-big').innerHTML=tt+'<span class="temp-deg">°F</span>';
-    // gauge fill 60-90 range
-    let pct=Math.max(0,Math.min(100,((temp-60)/30)*100));
-    document.getElementById('water-fill').style.width=pct+'%';
-    // tip logic
-    let tip;
-    if(temp>=82){tip='<strong style="color:var(--yellow);">Summer peak temps.</strong> Fish early and late — reds and specks push to cooler channel edges by 10am. Work the surf at first light, then go deep.';}
-    else if(temp>=68&&temp<82){tip='<strong style="color:var(--green);">Prime range.</strong> Specks and reds both active. Standard popping cork and live shrimp working well across the flats.';}
-    else if(temp<68&&temp>=58){tip='<strong style="color:var(--blue-light);">Cooler water.</strong> Slow your presentation. Bottom fishing for black drum and sheepshead near structure outperforms.';}
-    else if(temp<58){tip='<strong style="color:var(--blue-light);">Cold water.</strong> Fish are sluggish. Fish slow and deep, midday when it warms slightly.';}
-    else{tip='Live water temperature from NOAA Pascagoula station.';}
-    document.getElementById('water-tip').innerHTML=tip;
-    // Matt's tools mirror
-    document.getElementById('m-water').innerHTML=tt+'<span class="m-tool-unit">°F</span>';
-    let mstatus, mcolor;
-    if(temp>=82){mstatus='⚠ Upper warm range';mcolor='#e07b2a';}
-    else if(temp>=68){mstatus='✓ Good — speck zone';mcolor='#2ecc71';}
-    else if(temp>=58){mstatus='Cool — slow bite';mcolor='#5dade2';}
-    else{mstatus='Cold — sluggish';mcolor='#5dade2';}
-    document.getElementById('m-water-status').textContent=mstatus;
-    document.getElementById('m-water-status').style.color=mcolor;
-    document.getElementById('m-temp-marker').style.left=Math.max(0,Math.min(100,((temp-55)/40)*100))+'%';
-  }catch(e){
-    document.getElementById('water-tip').innerHTML='Could not reach the NOAA water temp sensor right now (the Pascagoula station occasionally drops out). It refreshes automatically.';
-    document.getElementById('s-water').textContent='—';
-    document.getElementById('m-water-status').textContent='offline';
+// ─── SOLAR CALC (offline) ─────────────────────────────────────────────────────
+function sunriseSunset(lat, lon, date) {
+  // Simplified sunrise/sunset (Meeus)
+  const rad = Math.PI/180;
+  const D = (date||new Date());
+  const JD = Math.floor(D/86400000) + 2440588 - 0.5;
+  const n = JD - 2451545.0;
+  const L = (280.46 + 0.9856474*n) % 360;
+  const g = (357.528 + 0.9856003*n) % 360;
+  const lambda = L + 1.915*Math.sin(g*rad) + 0.020*Math.sin(2*g*rad);
+  const sinDec = Math.sin(23.439*rad)*Math.sin(lambda*rad);
+  const dec = Math.asin(sinDec)/rad;
+  const cosH = (Math.cos(90.833*rad) - Math.sin(lat*rad)*Math.sin(dec*rad))/(Math.cos(lat*rad)*Math.cos(dec*rad));
+  if (Math.abs(cosH) > 1) return null; // Polar day/night
+  const H = Math.acos(cosH)/rad;
+  const LSTM = (Math.floor(lon/15)*15);
+  const EoT = (9.87*Math.sin(2*(360/365*(n-81))*rad) - 7.53*Math.cos((360/365*(n-81))*rad) - 1.5*Math.sin((360/365*(n-81))*rad));
+  const TC = 4*(lon - LSTM) + EoT;
+  const solarNoon = 720 - TC;
+  const rise = (solarNoon - H*4);
+  const set = (solarNoon + H*4);
+  const tzOff = -D.getTimezoneOffset();
+  function toTime(mins) {
+    const m = Math.round(mins + tzOff);
+    const h = Math.floor(m/60)%24;
+    const mm = m%60;
+    const ampm = h>=12?'PM':'AM';
+    const hh = h>12?h-12:h===0?12:h;
+    return `${hh}:${String(mm).padStart(2,'0')} ${ampm}`;
+  }
+  return {rise: toTime(rise), set: toTime(set)};
+}
+
+// ─── CONDITIONS RENDERING ─────────────────────────────────────────────────────
+function renderConditions() {
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  const el = document.getElementById('tab-conditions');
+  if (wt === 'river') renderRiverConditions(el);
+  else if (wt === 'lake') renderLakeConditions(el);
+  else renderSaltConditions(el);
+}
+
+function staleNote(ts) {
+  if (!ts) return '';
+  const ago = Math.round((Date.now()-ts)/60000);
+  return `<div class="stale-note">⚠️ As of ${ago}min ago — retrying</div>`;
+}
+
+function renderSaltConditions(el) {
+  const wind = state.noaaWind;
+  const tide = state.noaaTide;
+  const marine = state.openMeteoWave;
+  const fc = state.nwsForecast;
+
+  let html = '';
+
+  // Wind card
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">💨 Wind & Sea</span>
+    <span class="card-badge badge-blue">NOAA CO-OPS</span></div>
+    <div class="card-body">`;
+  if (wind && wind.data && wind.data.data && wind.data.data.length) {
+    const w = wind.data.data[wind.data.data.length-1];
+    const spd = parseFloat(w.s)||0;
+    const gst = parseFloat(w.g)||0;
+    const dir = w.dr || w.d || '—';
+    html += `<div class="data-row"><span class="dr-label">Wind speed</span><span class="dr-val">${spd.toFixed(1)} kt (${dir})</span></div>`;
+    html += `<div class="data-row"><span class="dr-label">Gust</span><span class="dr-val ${gst>=25?'text-red':gst>=18?'text-yellow':'text-green'}">${gst.toFixed(1)} kt</span></div>`;
+    html += `<div class="data-row"><span class="dr-label">Updated</span><span class="dr-val text-muted" style="font-size:11px">${w.t||'—'}</span></div>`;
+    const windStnId = wind.stnId || NOAA_WIND_STN;
+    const windStnName = wind.stnName || 'Ship Island, MS Sound';
+    html += `<div class="source-note">Station ${windStnId} (${escHtml(windStnName)}) · NOAA CO-OPS · <a href="https://tidesandcurrents.noaa.gov/stationhome.html?id=${windStnId}" target="_blank">Station page</a></div>`;
+    if (wind.stale) html += staleNote(wind.ts);
+  } else {
+    html += `<p class="loading-text">Wind data unavailable${wind&&wind.stale?' — showing cached':''}.</p>`;
+  }
+  // Wave data
+  if (marine && marine.data && marine.data.hourly) {
+    const now = new Date();
+    const hrs = marine.data.hourly.time||[];
+    const wvH = marine.data.hourly.wave_height||[];
+    const wvP = marine.data.hourly.wave_period||[];
+    let idx = hrs.findIndex(t=>new Date(t)>=now);
+    if (idx < 0) idx = 0;
+    const wvHft = wvH[idx] != null ? (wvH[idx]*3.28084).toFixed(1) : null;
+    const wvPsec = wvP[idx] != null ? wvP[idx].toFixed(0) : null;
+    if (wvHft) {
+      html += `<div class="data-row"><span class="dr-label">Wave height</span><span class="dr-val ${parseFloat(wvHft)>=3?'text-yellow':''}">${wvHft} ft</span></div>`;
+      if (wvPsec) html += `<div class="data-row"><span class="dr-label">Wave period</span><span class="dr-val">${wvPsec} sec</span></div>`;
+    }
+    html += `<div class="source-note">Wave forecast: Open-Meteo Marine API (open-source)</div>`;
+  }
+  html += `</div></div>`;
+
+  // Water temp
+  const wt_coops = state.noaaTemp;
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">🌡️ Water Temperature</span>
+    <span class="card-badge badge-blue">NOAA CO-OPS</span></div>
+    <div class="card-body">`;
+  if (wt_coops && wt_coops.data && wt_coops.data.data && wt_coops.data.data.length) {
+    const t = wt_coops.data.data[wt_coops.data.data.length-1];
+    html += `<div class="data-row"><span class="dr-label">Water temp</span><span class="dr-val">${parseFloat(t.v).toFixed(1)} °F</span></div>`;
+    html += `<div class="data-row"><span class="dr-label">Updated</span><span class="dr-val text-muted" style="font-size:11px">${t.t||'—'}</span></div>`;
+    if (wt_coops.stale) html += staleNote(wt_coops.ts);
+  } else {
+    html += `<p class="loading-text">Water temp unavailable.</p>`;
+  }
+  html += `</div></div>`;
+
+  // Tides
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">🌊 Tide Predictions</span>
+    <span class="card-badge badge-blue">NOAA CO-OPS</span></div>
+    <div class="card-body" style="padding:0;">`;
+  if (tide && tide.data && tide.data.predictions && tide.data.predictions.length) {
+    const upcoming = tide.data.predictions.filter(p=>new Date(p.t)>=new Date()).slice(0,14);
+    html += `<table class="tide-table"><thead><tr><th>Time</th><th>Type</th><th>Height (ft)</th></tr></thead><tbody>`;
+    upcoming.forEach(p => {
+      const dt = new Date(p.t);
+      const timeStr = dt.toLocaleDateString()+' '+dt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      html += `<tr><td>${timeStr}</td><td class="tide-type-${p.type}">${p.type==='H'?'HIGH':'LOW'}</td><td>${parseFloat(p.v).toFixed(2)}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    const tideStnNote = state.activeTide
+      ? `${state.activeTide.id} (${escHtml(state.activeTide.name)})`
+      : `${NOAA_TIDE_STN} (Horn Island Pass)`;
+    html += `<div class="source-note" style="padding:8px 12px">Station ${tideStnNote} · NOAA CO-OPS · Datum: MLLW</div>`;
+    if (tide.stale) html += staleNote(tide.ts);
+  } else {
+    html += `<p class="loading-text" style="padding:12px">Tide predictions unavailable.</p>`;
+  }
+  html += `</div></div>`;
+
+  // NWS Forecast
+  html += renderForecastCard(fc);
+
+  el.innerHTML = html;
+}
+
+function renderRiverConditions(el) {
+  const gauge = state.gaugeData;
+  const fc = state.nwsForecast;
+  let html = '';
+
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">📊 River Gauge</span>
+    <span class="card-badge badge-blue">USGS WaterServices</span></div>
+    <div class="card-body">`;
+  if (gauge && gauge.data) {
+    const g = gauge.data;
+    const stage = g.values && g.values['00065'];
+    const flow = g.values && g.values['00060'];
+    const temp = g.values && g.values['00010'];
+    html += `<div class="data-row"><span class="dr-label">Gauge</span><span class="dr-val" style="font-size:12px">${g.name||g.sid}</span></div>`;
+    if (stage) html += `<div class="data-row"><span class="dr-label">Stage</span><span class="dr-val">${stage.value.toFixed(2)} ft</span></div>`;
+    if (flow) html += `<div class="data-row"><span class="dr-label">Discharge</span><span class="dr-val">${flow.value.toLocaleString()} cfs</span></div>`;
+    if (temp) html += `<div class="data-row"><span class="dr-label">Water temp</span><span class="dr-val">${(temp.value*9/5+32).toFixed(1)} °F</span></div>`;
+    // Flood stage comparison
+    if (g.floodStage) {
+      const fs = g.floodStage;
+      const sv = stage ? stage.value : null;
+      html += `<div style="margin-top:10px;padding:8px 10px;background:var(--panel2);border-radius:4px;">`;
+      html += `<div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:700;text-transform:uppercase;">Stage vs. NWS Thresholds</div>`;
+      [['Action',fs.action],['Minor flood',fs.minor],['Moderate flood',fs.moderate],['Major flood',fs.major]].forEach(([label,thresh])=>{
+        if (thresh == null) return;
+        const over = sv !== null && sv >= thresh;
+        html += `<div class="data-row"><span class="dr-label">${label}</span><span class="dr-val ${over?'text-red':'text-muted'}">${thresh} ft ${over?'⚠️ EXCEEDS':''}</span></div>`;
+      });
+      html += `</div>`;
+      html += `<div class="source-note">Stage thresholds from NWS AHPS (NWS gauge ${fs.nwsId||'nearby'}). Our calculation based on reported thresholds — not an official NWS statement.</div>`;
+    } else {
+      html += `<div class="source-note">Flood stage thresholds unavailable for this gauge. Check NWS Advanced Hydrologic Prediction Service for official flood status.</div>`;
+    }
+    if (gauge.stale) html += staleNote(gauge.ts);
+  } else {
+    html += `<p class="loading-text">River gauge data unavailable. Using GPS to find nearest USGS gauge.</p>`;
+  }
+  html += `<div class="source-note">Data: USGS National Water Information System · <a href="https://waterdata.usgs.gov/nwis" target="_blank">waterdata.usgs.gov</a></div>`;
+  html += `</div></div>`;
+
+  html += renderForecastCard(fc);
+  el.innerHTML = html;
+}
+
+function renderLakeConditions(el) {
+  const gauge = state.gaugeData;
+  const fc = state.nwsForecast;
+  let html = '';
+
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">💧 Lake / Pool Elevation</span>
+    <span class="card-badge badge-blue">USGS WaterServices</span></div>
+    <div class="card-body">`;
+  if (gauge && gauge.data) {
+    const g = gauge.data;
+    const stage = g.values && (g.values['00065']||g.values['62614']);
+    const temp = g.values && g.values['00010'];
+    html += `<div class="data-row"><span class="dr-label">Gauge</span><span class="dr-val" style="font-size:12px">${g.name||g.sid}</span></div>`;
+    if (stage) html += `<div class="data-row"><span class="dr-label">Pool elevation</span><span class="dr-val">${stage.value.toFixed(2)} ft</span></div>`;
+    if (temp) html += `<div class="data-row"><span class="dr-label">Water temp</span><span class="dr-val">${(temp.value*9/5+32).toFixed(1)} °F</span></div>`;
+    if (gauge.stale) html += staleNote(gauge.ts);
+  } else {
+    html += `<p class="loading-text">Lake gauge unavailable. Try refreshing or check manually at waterdata.usgs.gov.</p>`;
+  }
+  html += `</div></div>`;
+
+  html += renderForecastCard(fc);
+  el.innerHTML = html;
+}
+
+function renderForecastCard(fc) {
+  let html = `<div class="card">
+    <div class="card-hdr"><span class="card-title">📅 NWS Forecast</span>
+    <span class="card-badge badge-blue">api.weather.gov</span></div>`;
+  if (fc && fc.data && fc.data.length) {
+    html += `<div class="forecast-scroll"><div class="forecast-row">`;
+    fc.data.slice(0,8).forEach(p => {
+      const icon = nwsIconEmoji(p.shortForecast||'');
+      html += `<div class="fc-cell">
+        <div class="fc-period">${(p.name||'').substring(0,10)}</div>
+        <div class="fc-icon">${icon}</div>
+        <div class="fc-temp">${p.temperature}°${p.temperatureUnit||'F'}</div>
+        <div class="fc-short">${(p.shortForecast||'').substring(0,20)}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+    html += `<div class="source-note" style="padding:8px 12px">Source: api.weather.gov · National Weather Service</div>`;
+    if (fc.stale) html += `<div class="stale-note" style="padding:0 12px 8px">⚠️ Forecast cached — retrying</div>`;
+  } else {
+    html += `<div class="card-body"><p class="loading-text">Forecast unavailable.</p></div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function nwsIconEmoji(txt) {
+  const t = txt.toLowerCase();
+  if (t.includes('thunder')) return '⛈️';
+  if (t.includes('rain')||t.includes('shower')) return '🌧️';
+  if (t.includes('snow')||t.includes('sleet')) return '❄️';
+  if (t.includes('fog')) return '🌫️';
+  if (t.includes('wind')) return '💨';
+  if (t.includes('cloud')||t.includes('overcast')) return '☁️';
+  if (t.includes('partly')) return '⛅';
+  if (t.includes('sunny')||t.includes('clear')||t.includes('fair')) return '☀️';
+  return '🌤️';
+}
+
+// ─── SPECIES DATA ─────────────────────────────────────────────────────────────
+const SALT_SPECIES_LIST = [
+  {id:'spotted-seatrout', name:'Spotted Seatrout', emoji:'🐟', aka:'Speckled Trout',
+   marks:['Body silver with distinct black spots extending onto dorsal fin and tail','Mouth angles upward, lower jaw protrudes slightly','1–2 prominent canine teeth visible at tip of upper jaw','No scales on soft dorsal, anal, or caudal fins'],
+   lookalike:'Sand seatrout (white trout)', lookalikeTell:'Sand seatrout is plain silvery with no spots on the tail. Spotted seatrout always has spots on the tail.',
+   wikiSlug:'Spotted_seatrout',
+   regs:{MS:{bag:15,min:12,notes:'Max 2 over 15" per day'},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'red-drum', name:'Red Drum', emoji:'🎣', aka:'Redfish',
+   marks:['Copper-bronze or reddish body','One or more black spots near base of tail (always at least one)','Slightly underslung mouth (feeds head-down)','No spots on dorsal fins'],
+   lookalike:'Black drum', lookalikeTell:'Black drum lacks the tail spot(s) and is much darker/greener. Juvenile black drum have vertical bars. Adult red drum stay copper-toned.',
+   wikiSlug:'Red_drum',
+   regs:{MS:{bag:3,min:16,max:23,slot:'16"–23"',notes:'1 over 23" per day'},AL:{bag:3,min:16,max:26,slot:'16"–26"',notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'southern-flounder', name:'Southern Flounder', emoji:'🫓', aka:'Flounder',
+   marks:['Both eyes on LEFT side of body (left-eye flounder)','Lies flat on bottom, colored side up','Brown with irregular mottled pattern, no distinct ocellated spots','Wide mouth with teeth on both jaws'],
+   lookalike:'Gulf flounder', lookalikeTell:'Gulf flounder has three distinct ocellated (eye-like) spots in a triangle pattern on its body. Southern flounder has none.',
+   wikiSlug:'Southern_flounder',
+   regs:{MS:{bag:10,min:12,notes:'Check for seasonal closures — closures occur'},AL:{bag:10,min:12,notes:'Check season'},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'cobia', name:'Cobia', emoji:'🦈', aka:'Ling',
+   marks:['Dark brown, flattened shark-like head','White/cream stripes on sides when young, fading with age','8–9 short, sharp free dorsal spines ahead of main dorsal','Broad, slightly forked tail'],
+   lookalike:'Remora (shark sucker)', lookalikeTell:'Cobia has those free dorsal spines ahead of the main dorsal fin. Remoras have a sucker disc on top of the flat head — no free spines.',
+   wikiSlug:'Cobia',
+   regs:{MS:{bag:2,min:33,notes:''},AL:{bag:2,min:33,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'atlantic-spanish-mackerel', name:'Spanish Mackerel', emoji:'⚡', aka:'Macks',
+   marks:['Silver body with brassy/golden oval spots above lateral line','Green or blue-green back','Forked tail, very sharp teeth','Lateral line curves gently downward, does NOT drop sharply mid-body'],
+   lookalike:'King mackerel (kingfish)', lookalikeTell:'King mackerel lateral line drops sharply downward at mid-body. Spanish mackerel is much smaller (usually under 4 lbs) and has distinct gold spots. Kings rarely have spots.',
+   wikiSlug:'Spanish_mackerel',
+   regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'sheepshead', name:'Sheepshead', emoji:'🦷', aka:'Convict fish',
+   marks:['5–7 bold black vertical bars on silver-gray body','Incisor-like human teeth (used to crush barnacles)','Strong spines on dorsal and anal fins','Blunt snout'],
+   lookalike:'Black drum (juvenile)', lookalikeTell:'Juvenile black drum has similar bars but no human-like teeth. Sheepshead teeth are unmistakable — look like small human front teeth.',
+   wikiSlug:'Archosargus_probatocephalus',
+   regs:{MS:{bag:15,min:12,notes:''},AL:{bag:15,min:12,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'black-drum', name:'Black Drum', emoji:'🥁', aka:'Drum',
+   marks:['Dark gray to black body, yellowish in juveniles','Vertical bars when young (disappear with age)','Barbels (chin whiskers) under lower jaw','Rounded tail'],
+   lookalike:'Red drum', lookalikeTell:'Red drum always has that copper tone and the black spot(s) near the tail. Black drum has chin barbels (red drum does not) and is much darker.',
+   wikiSlug:'Black_drum',
+   regs:{MS:{bag:5,min:14,max:30,slot:'14"–30"',notes:''},AL:{bag:5,min:14,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}},
+  {id:'tripletail', name:'Tripletail', emoji:'🐡', aka:'Tripletail',
+   marks:['Three rounded lobes at tail end (dorsal, caudal, anal all rounded) — looks like 3 tails','Mottled brown/black, often seen floating sideways near structure','Drifts on its side near crab trap floats and channel markers','Compressed body'],
+   lookalike:'None common', lookalikeTell:'The three-lobe tail silhouette is unmistakable. No other Gulf fish looks like a drifting leaf near a crab trap float.',
+   wikiSlug:'Tripletail_(fish)',
+   regs:{MS:{bag:5,min:18,notes:''},AL:{bag:5,min:18,notes:''},TN:{bag:null,min:null,notes:'Saltwater — N/A'}}}
+];
+
+const FW_SPECIES_LIST = [
+  {id:'largemouth-bass', name:'Largemouth Bass', emoji:'🐟', aka:'Largemouth',
+   marks:['Upper jaw extends well past rear of eye (key field mark)','Dark horizontal stripe along mid-body','Dorsal fin deeply notched, nearly divided into two separate fins','Greenish-olive body with white belly'],
+   lookalike:'Smallmouth bass', lookalikeTell:'Smallmouth jaw stops at the rear of the eye — it does NOT extend past it. Smallmouth has vertical brown bars, not a horizontal stripe.',
+   wikiSlug:'Largemouth_bass',
+   regs:{MS:{bag:10,min:12,notes:'Check individual waters — reservoirs vary'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
+  {id:'smallmouth-bass', name:'Smallmouth Bass', emoji:'🐠', aka:'Bronzeback',
+   marks:['Upper jaw ends AT rear of eye (does NOT extend past)','Vertical brown/olive bars on sides','Copper-bronze coloring, never green-striped','Red eye in adults'],
+   lookalike:'Largemouth bass', lookalikeTell:'Largemouth jaw extends clearly past the eye. Largemouth has a horizontal dark stripe, not vertical bars.',
+   wikiSlug:'Smallmouth_bass',
+   regs:{MS:{bag:10,min:12,notes:'Uncommon in MS'},AL:{bag:10,min:12,notes:''},TN:{bag:10,min:12,notes:''}}},
+  {id:'black-crappie', name:'Black Crappie', emoji:'🐟', aka:'Crappie / Speckled Perch',
+   marks:['7–8 dorsal spines (count carefully)','Dark irregular spots scattered with no consistent pattern','No vertical bars','Silvery with dark olive-green mottling'],
+   lookalike:'White crappie', lookalikeTell:'White crappie has only 5–6 dorsal spines and shows distinct vertical bars. Black crappie has 7–8 spines and random spots.',
+   wikiSlug:'Black_crappie',
+   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:9,notes:''},TN:{bag:30,min:9,notes:''}}},
+  {id:'bluegill', name:'Bluegill / Bream', emoji:'🫐', aka:'Bream, Sunfish',
+   marks:['Dark blue/black ear flap (opercle tab)','Olive body with orange-yellow belly in males','Dark spot at rear base of soft dorsal fin','Vertical dusky bars on sides (most visible in juveniles)'],
+   lookalike:'Redear sunfish (shellcracker)', lookalikeTell:'Redear has a bright red or orange edge on its ear flap. Bluegill ear flap is solid dark blue-black with NO colored edge.',
+   wikiSlug:'Bluegill',
+   regs:{MS:{bag:50,min:null,notes:'No statewide minimum'},AL:{bag:50,min:null,notes:''},TN:{bag:50,min:null,notes:''}}},
+  {id:'channel-catfish', name:'Channel Catfish', emoji:'🐛', aka:'Channel cat',
+   marks:['Slender body, deeply forked tail','Scattered black spots on sides (faint in large adults)','Rounded (convex) anal fin with 24–29 rays','Blue-gray coloring'],
+   lookalike:'Blue catfish', lookalikeTell:'Blue catfish has a straight-edged (flat) anal fin with 30–36 rays and NO spots at any size. Blue catfish also has a hump behind the head.',
+   wikiSlug:'Channel_catfish',
+   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
+  {id:'blue-catfish', name:'Blue Catfish', emoji:'🔵', aka:'Blue cat, Hump-back',
+   marks:['Slate blue-gray body, NO spots at any size','Straight-edged (flat bottom) anal fin, 30–36 rays','Humped back profile','Deeply forked tail, fork depth greater than channel cat'],
+   lookalike:'Channel catfish', lookalikeTell:'Channel catfish has spots, a rounded (curved) anal fin, and no hump. Blue catfish anal fin bottom is dead straight.',
+   wikiSlug:'Blue_catfish',
+   regs:{MS:{bag:25,min:null,notes:''},AL:{bag:25,min:null,notes:''},TN:{bag:25,min:null,notes:''}}},
+  {id:'flathead-catfish', name:'Flathead Catfish', emoji:'🟡', aka:'Mudcat, Yellow cat',
+   marks:['Distinctly flat, wide head (like a shovel)','Squarish/slightly notched tail — NOT deeply forked','Lower jaw protrudes beyond upper jaw','Yellow-brown mottled body'],
+   lookalike:'Channel/Blue catfish', lookalikeTell:'No other common catfish has that flat, wide head. The squarish tail seals it — channel and blue cats have deeply forked tails.',
+   wikiSlug:'Flathead_catfish',
+   regs:{MS:{bag:10,min:null,notes:''},AL:{bag:10,min:null,notes:''},TN:{bag:10,min:null,notes:''}}},
+  {id:'striped-bass', name:'Striped Bass', emoji:'🦓', aka:'Stripers, Rockfish',
+   marks:['7–8 continuous dark horizontal stripes running full length of body','Silvery body, two separate dorsal fins','Second anal spine shorter than third','Large fish — commonly 5–30 lbs'],
+   lookalike:'White bass', lookalikeTell:'White bass is much smaller (usually under 3 lbs), stripes are broken/interrupted and do not run cleanly to the tail, and the second anal spine is nearly as long as the third.',
+   wikiSlug:'Striped_bass',
+   regs:{MS:{bag:5,min:18,notes:'Check for size/creel variation on specific waters'},AL:{bag:10,min:15,notes:''},TN:{bag:5,min:15,notes:''}}},
+  {id:'white-bass', name:'White Bass', emoji:'⬜', aka:'Sand bass',
+   marks:['Silver body with broken/interrupted horizontal stripes (not clean full-length lines)','Prominent teeth on middle of tongue (run finger down tongue — feel the patch)','Two separate dorsal fins','Usually under 3 lbs'],
+   lookalike:'Striped bass (young)', lookalikeTell:'Striped bass stripes run cleanly full length. Striper has no teeth patch on tongue. Stripers usually much larger even as juveniles.',
+   wikiSlug:'White_bass',
+   regs:{MS:{bag:30,min:9,notes:''},AL:{bag:30,min:10,notes:''},TN:{bag:30,min:9,notes:''}}}
+];
+
+// All 50 state agency URLs
+const STATE_REGS_URLS = {
+  AL:'https://www.outdooralabama.com/fishing',
+  AK:'https://www.adfg.alaska.gov/index.cfm?adfg=fishregulations.main',
+  AZ:'https://www.azgfd.com/fishing/regulations/',
+  AR:'https://www.agfc.com/en/fishing/regulations/',
+  CA:'https://wildlife.ca.gov/Licensing/Fishing',
+  CO:'https://cpw.state.co.us/thingstodo/Pages/FishingRegulations.aspx',
+  CT:'https://portal.ct.gov/DEEP/Fishing/Freshwater-Fishing-Guide',
+  DE:'https://dnrec.delaware.gov/fish-wildlife/fishing/',
+  FL:'https://myfwc.com/fishing/saltwater/recreational/regulations/',
+  GA:'https://georgiawildlife.com/fishing/regulations',
+  HI:'https://dlnr.hawaii.gov/dar/fishing/',
+  ID:'https://idfg.idaho.gov/fish/rules',
+  IL:'https://www2.illinois.gov/dnr/fishing/Pages/fishingRegs.aspx',
+  IN:'https://www.in.gov/dnr/fish-and-wildlife/fishing/fishing-regulations/',
+  IA:'https://www.iowadnr.gov/Fishing/Fishing-Regulations',
+  KS:'https://ksoutdoors.com/Fishing/Regulations-Seasons',
+  KY:'https://fw.ky.gov/Fish/Pages/regulations.aspx',
+  LA:'https://www.wlf.louisiana.gov/page/fishing-regulations',
+  ME:'https://www.maine.gov/ifw/fishing-boating/fishing/laws-rules/index.html',
+  MD:'https://dnr.maryland.gov/fisheries/Pages/regulations/index.aspx',
+  MA:'https://www.mass.gov/info-details/massfishingon',
+  MI:'https://www.michigan.gov/dnr/managing-resources/fisheries/fm-fishingguide',
+  MN:'https://www.dnr.state.mn.us/regulations/fishing/index.html',
+  MS:'https://www.mdwfp.com/wildlife-fishing/fisheries-bureau/fishing-regulations/',
+  MO:'https://mdc.mo.gov/fishing/regulations',
+  MT:'https://fwp.mt.gov/fishing/regulations',
+  NE:'https://outdoornebraska.gov/fishing/regulations/',
+  NV:'https://www.ndow.org/Fishing/Regulations/',
+  NH:'https://www.wildlife.nh.gov/fishing/regulations.html',
+  NJ:'https://www.nj.gov/dep/fgw/fishing.htm',
+  NM:'https://www.wildlife.state.nm.us/fishing/',
+  NY:'https://www.dec.ny.gov/outdoor/fishing.html',
+  NC:'https://www.ncwildlife.org/Licensing-Regulations/Regulations/Fishing',
+  ND:'https://gf.nd.gov/fishing/regulations',
+  OH:'https://ohiodnr.gov/go-and-do/plan-a-visit/fish/regulations',
+  OK:'https://www.wildlifedepartment.com/fishing/regulations',
+  OR:'https://myodfw.com/fishing/regulations',
+  PA:'https://www.fishandboat.com/Fishing/FishingRegulations/Pages/default.aspx',
+  RI:'https://dem.ri.gov/programs/fish-wildlife/',
+  SC:'https://www.dnr.sc.gov/regs/fishing.html',
+  SD:'https://gfp.sd.gov/fishing/',
+  TN:'https://www.tn.gov/twra/license-sales-and-permits/fishing/tennessee-fishing-regulations.html',
+  TX:'https://tpwd.texas.gov/regulations/outdoor-annual/fishing',
+  UT:'https://wildlife.utah.gov/fishing/regulations.html',
+  VT:'https://vtfishandwildlife.com/fish/fishing-regulations',
+  VA:'https://dwr.virginia.gov/fishing/regulations/',
+  WA:'https://wdfw.wa.gov/fishing/regulations',
+  WV:'https://wvdnr.gov/fishing/',
+  WI:'https://dnr.wisconsin.gov/topic/Fishing/regulations.html',
+  WY:'https://wgfd.wyo.gov/Fishing/Fishing-Regulations'
+};
+
+// ─── FISHING TAB ──────────────────────────────────────────────────────────────
+function renderFishingTab() {
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  const targets = state.profile ? (state.profile.targetSpecies||[]) : [];
+  const list = (wt && !wt.startsWith('salt')) ? FW_SPECIES_LIST : SALT_SPECIES_LIST;
+  const el = document.getElementById('fishing-content');
+  let html = `<div class="species-list">`;
+  list.forEach(sp => {
+    const isStar = targets.includes(sp.id);
+    html += `<div class="sp-item" onclick="openSpeciesCard('${sp.id}')">
+      <span class="sp-emoji">${sp.emoji}</span>
+      <div class="sp-info">
+        <div class="sp-name">${sp.name}${isStar?'<span class="sp-star">★ Yours</span>':''}</div>
+        <div class="sp-sub">${sp.aka||''}</div>
+      </div>
+      <span class="sp-arrow">›</span>
+    </div>`;
+  });
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+// ─── SPECIES CARD ─────────────────────────────────────────────────────────────
+async function openSpeciesCard(speciesId) {
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  const list = (wt && !wt.startsWith('salt')) ? FW_SPECIES_LIST : SALT_SPECIES_LIST;
+  const sp = list.find(s=>s.id===speciesId);
+  if (!sp) return;
+
+  const overlay = document.getElementById('species-overlay');
+  const content = document.getElementById('soc-content');
+  document.getElementById('soc-title').textContent = sp.name;
+  overlay.classList.add('open');
+  overlay.scrollTop = 0;
+
+  const state_code = state.profile ? state.profile.state : 'MS';
+  const regsUrl = STATE_REGS_URLS[state_code] || STATE_REGS_URLS['MS'];
+  const spRegs = sp.regs || {};
+
+  // Image placeholder shown first
+  content.innerHTML = `<div class="soc-img-placeholder" id="soc-img-wrap">
+    <span>🔍 Loading photo...</span>
+  </div>` + renderSpeciesCardBody(sp, spRegs, regsUrl);
+
+  // Async: load image
+  if (sp.wikiSlug) {
+    try {
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${sp.wikiSlug}`);
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.thumbnail && j.thumbnail.source) {
+          const imgSrc = j.thumbnail.source;
+          const imgWrap = document.getElementById('soc-img-wrap');
+          if (imgWrap) {
+            imgWrap.outerHTML = `<div style="background:var(--panel2);">
+              <img class="soc-img" src="${escHtml(imgSrc)}" alt="${escHtml(sp.name)}" onerror="this.parentElement.innerHTML='<div class=soc-img-placeholder>Photo unavailable</div>'">
+              <div style="font-size:10px;color:var(--muted);padding:4px 12px;">Photo: Wikipedia · CC license · Tap species name for full article</div>
+            </div>`;
+          }
+        } else {
+          const imgWrap = document.getElementById('soc-img-wrap');
+          if (imgWrap) imgWrap.innerHTML = `<span>No photo available for this species.</span>`;
+        }
+      }
+    } catch(e) {
+      const imgWrap = document.getElementById('soc-img-wrap');
+      if (imgWrap) imgWrap.innerHTML = `<span>Could not load photo — check connection.</span>`;
+    }
+  } else {
+    const imgWrap = document.getElementById('soc-img-wrap');
+    if (imgWrap) imgWrap.innerHTML = `<span>Illustration: Source USFWS Digital Media Library. Image loading not yet configured for this species.</span>`;
   }
 }
 
-function refreshAll(){loadTides();loadWind();loadWaterTemp();}
-refreshAll();
-setInterval(refreshAll, 6*60*1000); // refresh every 6 minutes
+function renderSpeciesCardBody(sp, spRegs, regsUrl) {
+  const state_code = state.profile ? state.profile.state : 'MS';
+  let html = `<div class="soc-body">`;
+
+  // Field marks
+  html += `<div class="soc-section">
+    <div class="soc-section-title">🔍 How to ID This Fish</div>
+    <div class="soc-marks">${sp.marks.map(m=>`<div class="soc-mark">${escHtml(m)}</div>`).join('')}</div>
+  </div>`;
+
+  // Look-alike
+  html += `<div class="soc-section">
+    <div class="soc-section-title">⚠️ Easy Mix-Up</div>
+    <div class="lookalike-box">
+      <div class="lookalike-species">Confused with: ${escHtml(sp.lookalike)}</div>
+      <div class="lookalike-tell"><strong>The tell:</strong> ${escHtml(sp.lookalikeTell)}</div>
+    </div>
+  </div>`;
+
+  // Regs
+  html += `<div class="soc-section">
+    <div class="soc-section-title">📋 Size / Bag / Slot — AL · MS · TN</div>
+    <table class="regs-table"><thead><tr><th>State</th><th>Bag</th><th>Min size</th><th>Slot/Notes</th></tr></thead><tbody>`;
+  ['AL','MS','TN'].forEach(st => {
+    const r = sp.regs && sp.regs[st];
+    if (r) {
+      if (r.bag === null) {
+        html += `<tr><td>${st}</td><td colspan="3">${r.notes||'Saltwater — N/A'}</td></tr>`;
+      } else {
+        html += `<tr><td>${st}</td><td>${r.bag==null?'—':r.bag}</td><td>${r.min?r.min+'"':'—'}</td><td>${r.slot||r.notes||'—'}</td></tr>`;
+      }
+    }
+  });
+  html += `</tbody></table>`;
+
+  if (!['AL','MS','TN'].includes(state_code)) {
+    html += `<div style="font-size:12px;color:var(--yellow);margin-top:8px;">Limits for ${state_code} still being added — use the official link below.</div>`;
+  }
+  html += `</div>`;
+
+  // Law bar
+  html += `<div class="law-bar">
+    <div class="law-bar-text">⚖️ <strong>Field guide, not the law</strong> — Confirm limits before you keep a fish. Regulations change.<br>
+    <a href="${escHtml(regsUrl)}" target="_blank">Official ${state_code} fishing regulations →</a></div>
+  </div>`;
+
+  html += `</div>`;
+  return html;
+}
+
+function closeSpeciesCard() {
+  document.getElementById('species-overlay').classList.remove('open');
+}
+
+// ─── BOATER TAB ───────────────────────────────────────────────────────────────
+function renderBoaterTab() {
+  const sun = sunriseSunset(state.lat||DEFAULT_LAT, state.lon||DEFAULT_LON, new Date());
+  const now = new Date();
+  const isNight = sun && (now < new Date(now.toDateString()+' '+sun.rise) || now > new Date(now.toDateString()+' '+sun.set));
+  const profile = state.profile || {};
+
+  let html = '';
+
+  // Sun times
+  html += `<div class="sun-row">
+    <div class="sun-cell"><span class="sun-icon">🌅</span><span class="sun-label">Sunrise</span><div class="sun-time">${sun?sun.rise:'—'}</div></div>
+    <div class="sun-cell"><span class="sun-icon">🌇</span><span class="sun-label">Sunset</span><div class="sun-time">${sun?sun.set:'—'}</div></div>
+  </div>`;
+
+  // Nav lights reminder
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">💡 Navigation Lights</span>
+    <span class="card-badge ${isNight?'badge-red':'badge-green'}">${isNight?'REQUIRED NOW':'Not required yet'}</span></div>
+    <div class="card-body">
+      <p style="font-size:13px;line-height:1.5;color:var(--text);">Required from <strong>sunset to sunrise</strong> and during periods of restricted visibility. Under 26 ft: red/green bow lights + white stern light (or an all-around white light for vessels under sail or at anchor). Powerboats must show red/green sidelights and a white stern light.</p>
+      <div class="source-note">USCG CFR 33 Part 83 (COLREGS Rule 20). Confirm current requirements at <a href="https://www.uscgboating.org/regulations/navigation-rules.php" target="_blank">uscgboating.org</a></div>
+    </div>
+  </div>`;
+
+  // Float plan
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">📋 Float Plan</span>
+    <span class="card-badge badge-blue">Copy & Share</span></div>
+    <div class="card-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;">Generate a quick float plan to leave with someone ashore.</p>
+      <textarea class="float-plan-area" id="float-plan-text" rows="6">${generateFloatPlan(profile, sun)}</textarea>
+      <button class="copy-btn" onclick="copyFloatPlan()">📋 Copy Float Plan</button>
+    </div>
+  </div>`;
+
+  // Nearest ramp note
+  html += `<div class="card">
+    <div class="card-hdr"><span class="card-title">🚢 Nearest Boat Ramp</span></div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--text);line-height:1.5;">Use the link below to find the nearest public boat ramp to your current location.</p>
+      <a href="https://www.google.com/maps/search/boat+ramp/@${(state.lat||DEFAULT_LAT).toFixed(4)},${(state.lon||DEFAULT_LON).toFixed(4)},13z" target="_blank" style="display:block;margin-top:10px;padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:4px;color:var(--blue-lt);font-size:13px;text-align:center;">Open Google Maps — Boat Ramps Near Me →</a>
+      <div class="source-note">Opens Google Maps in your browser. No data is collected by this app.</div>
+    </div>
+  </div>`;
+
+  // License locker display
+  if (profile.license && profile.license.number) {
+    const lic = profile.license;
+    const expDate = lic.expiry ? new Date(lic.expiry) : null;
+    const expired = expDate && expDate < new Date();
+    html += `<div class="card">
+      <div class="card-hdr"><span class="card-title">🪪 License Locker</span>
+      <span class="card-badge ${expired?'badge-red':'badge-green'}">${expired?'EXPIRED':'Valid'}</span></div>
+      <div class="card-body">
+        <div class="data-row"><span class="dr-label">License #</span><span class="dr-val">${escHtml(lic.number)}</span></div>
+        <div class="data-row"><span class="dr-label">State</span><span class="dr-val">${lic.state||'—'}</span></div>
+        ${lic.expiry?`<div class="data-row"><span class="dr-label">Expires</span><span class="dr-val ${expired?'text-red':''}">${lic.expiry}${expired?' ⚠️ EXPIRED':''}</span></div>`:''}
+        ${lic.privileges&&lic.privileges.length?`<div class="data-row"><span class="dr-label">Privileges</span><span class="dr-val" style="font-size:12px">${lic.privileges.join(', ')}</span></div>`:''}
+        <div class="source-note">Stored on-device only. Never sent anywhere.</div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('boater-content').innerHTML = html;
+}
+
+function generateFloatPlan(profile, sun) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString()+' '+now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  return `FLOAT PLAN — ${dateStr}
+Angler: ${profile.name||'[Name]'}
+Home water: ${profile.homeWater||'[Location]'}
+Departing from: [Boat ramp / dock address]
+Destination: [Fishing area]
+Vessel: [Boat description / color / registration #]
+Souls on board: [Number]
+Expected return: [Time/date]
+If not back by: [Time] — call Coast Guard or local authorities.
+Emergency contact: [Name / Phone]
+VHF radio: [Channel 16 / yes/no]
+—
+Sunrise: ${sun?sun.rise:'—'} · Sunset: ${sun?sun.set:'—'}
+Conditions checked: ${state.lat?`${state.lat.toFixed(4)}, ${state.lon.toFixed(4)}`:'Location not set'}
+Safety verdict: ${state.verdict||'—'}`;
+}
+
+function copyFloatPlan() {
+  const el = document.getElementById('float-plan-text');
+  if (!el) return;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(el.value).then(()=>alert('Float plan copied to clipboard!'));
+  } else {
+    el.select(); document.execCommand('copy'); alert('Float plan copied!');
+  }
+}
+
+// ─── SETUP TAB ────────────────────────────────────────────────────────────────
+function renderSetupTab() {
+  const p = state.profile || {};
+  const wtLabels = {river:'River',lake:'Lake / Reservoir',salt_inshore:'Salt — Inshore',salt_offshore:'Salt — Offshore'};
+  let html = `<div class="card"><div class="card-hdr"><span class="card-title">⚙️ Boat Base</span></div><div class="card-body">`;
+
+  html += `<div class="setup-row"><div><div class="setup-label">Name</div><div class="setup-sub">${p.name||'Not set'}</div></div><button class="setup-btn" onclick="openOnboarding()">Edit</button></div>`;
+  html += `<div class="setup-row"><div><div class="setup-label">Home water</div><div class="setup-sub">${p.homeWater||'Not set'}</div></div></div>`;
+  html += `<div class="setup-row"><div><div class="setup-label">State</div><div class="setup-sub">${p.state||'Not set'}</div></div></div>`;
+  html += `<div class="setup-row"><div><div class="setup-label">Water type</div><div class="setup-sub">${wtLabels[p.waterType]||'Not set'}</div></div></div>`;
+  html += `<div class="setup-row"><div><div class="setup-label">Target species</div><div class="setup-sub">${(p.targetSpecies||[]).length?p.targetSpecies.join(', '):'None starred'}</div></div></div>`;
+  html += `</div></div>`;
+
+  html += `<div class="card"><div class="card-hdr"><span class="card-title">📊 Data Sources</span></div><div class="card-body">`;
+  html += `<div class="data-row"><span class="dr-label">NWS Alerts</span><span class="dr-val text-muted" style="font-size:11px">api.weather.gov</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">NWS Forecast</span><span class="dr-val text-muted" style="font-size:11px">api.weather.gov</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">USGS Gauge</span><span class="dr-val text-muted" style="font-size:11px">waterservices.usgs.gov</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">NOAA CO-OPS</span><span class="dr-val text-muted" style="font-size:11px">tidesandcurrents.noaa.gov</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">Wave forecast</span><span class="dr-val text-muted" style="font-size:11px">open-meteo.com (marine)</span></div>`;
+  html += `<div class="data-row"><span class="dr-label">Fish photos</span><span class="dr-val text-muted" style="font-size:11px">Wikipedia (CC licensed)</span></div>`;
+  html += `<div class="source-note">All sources: keyless, free, government or open-source. $0 to run. No accounts. No tracking. All user data stored only on this device.</div>`;
+  html += `</div></div>`;
+
+  html += `<div class="card"><div class="card-hdr"><span class="card-title">🗑️ Data</span></div><div class="card-body">`;
+  html += `<button class="setup-btn" style="width:100%;padding:10px;" onclick="if(confirm('Clear all app data?')){localStorage.clear();location.reload();}">Clear all app data</button>`;
+  html += `</div></div>`;
+
+  document.getElementById('setup-content').innerHTML = html;
+}
+
+function updateWaterTypeBtn() {
+  const wt = state.profile ? state.profile.waterType : null;
+  const labels = {river:'🎣 River',lake:'🎣 Lake',salt_inshore:'🌊 Salt Inshore',salt_offshore:'🌊 Salt Offshore'};
+  const btn = document.getElementById('water-type-btn');
+  if (btn) btn.textContent = (wt && labels[wt]) ? labels[wt] + ' ⇄' : '⇄ Water type';
+}
+
+function openOnboarding() {
+  const p = state.profile || {};
+  // Pre-fill
+  document.getElementById('ob-name').value = p.name||'';
+  document.getElementById('ob-homewater').value = p.homeWater||'';
+  document.getElementById('ob-state').value = p.state||'';
+  populateSpeciesChips(p.waterType||'salt_inshore');
+  pendingProfile = {...p};
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('ob-step-1').classList.add('active');
+  document.getElementById('onboarding').classList.add('open');
+}
+
+// ─── MAIN REFRESH ─────────────────────────────────────────────────────────────
+let _refreshTimer = null;
+async function refreshAll() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) { btn.textContent = '↻'; btn.style.opacity='.5'; }
+
+  // Get location
+  if (!state.lat) {
+    const loc = await getLocation();
+    state.lat = loc.lat; state.lon = loc.lon; state.locLabel = loc.label;
+  }
+  document.getElementById('loc-text').textContent = '📍 ' + state.locLabel;
+
+  // Fetch in parallel
+  const wt = state.profile ? state.profile.waterType : 'salt_inshore';
+  const isSalt = !wt || wt.startsWith('salt');
+  const isRiver = wt === 'river';
+  const isLake = wt === 'lake';
+
+  const promises = [
+    fetchNWSAlerts(state.lat, state.lon),
+    fetchNWSForecast(state.lat, state.lon)
+  ];
+
+  // Pick the station: user's chosen spot first, otherwise the closest station to the GPS fix
+  let mainStn = (state.destination && state.destination.type === 'coops') ? state.destination.id : null;
+  let mainStnName = state.destination ? state.destination.name : null;
+  if (isSalt && !mainStn) {
+    try {
+      const near = await fetchNearbyCOOPS(state.lat, state.lon);
+      state.nearby = near;
+      if (near.length) { mainStn = near[0].id; mainStnName = near[0].name; }
+    } catch(e) {}
+  }
+  state.activeTide = {id: mainStn || NOAA_TIDE_STN, name: mainStnName || 'Horn Island Pass'};
+  if (isSalt) {
+    promises.push(fetchCOOPSWithFallback(mainStn, mainStnName, 'wind'));
+    promises.push(fetchCOOPSWithFallback(mainStn, mainStnName, 'water_temperature'));
+    promises.push(fetchTidePredictions(mainStn || NOAA_TIDE_STN));
+    promises.push(fetchOpenMeteoMarine(state.lat, state.lon));
+    promises.push(Promise.resolve(null)); // placeholder for gauge
+  } else if (isRiver) {
+    promises.push(Promise.resolve(null)); // wind
+    promises.push(Promise.resolve(null)); // temp
+    promises.push(Promise.resolve(null)); // tides
+    promises.push(Promise.resolve(null)); // marine
+    promises.push(fetchNearestUSGS(state.lat, state.lon, 'ST'));
+  } else if (isLake) {
+    promises.push(Promise.resolve(null));
+    promises.push(Promise.resolve(null));
+    promises.push(Promise.resolve(null));
+    promises.push(Promise.resolve(null));
+    promises.push(fetchNearestUSGS(state.lat, state.lon, 'LK'));
+  }
+
+  const [alerts, forecast, windR, tempR, tideR, marineR, gaugeR] = await Promise.all(promises);
+
+  state.nwsAlerts = alerts ? alerts.data||[] : [];
+  state.nwsForecast = forecast;
+  state.noaaWind = windR;
+  state.noaaTemp = tempR;
+  state.noaaTide = tideR;
+  state.openMeteoWave = marineR;
+  state.gaugeData = gaugeR;
+  state.lastFetch = Date.now();
+
+  // Extract wind for safety gate
+  let windKt = null, gustKt = null;
+  if (windR && windR.data && windR.data.data && windR.data.data.length) {
+    const w = windR.data.data[windR.data.data.length-1];
+    windKt = parseFloat(w.s)||null;
+    gustKt = parseFloat(w.g)||null;
+  }
+
+  const {verdict, drivers} = computeVerdict(state.nwsAlerts, gaugeR ? gaugeR.data : null, windKt, gustKt);
+  state.verdict = verdict;
+  renderSafetyGate(verdict, drivers, state.nwsAlerts);
+
+  renderConditions();
+  renderFishingTab();
+
+  if (btn) { btn.textContent = '↻'; btn.style.opacity='1'; }
+
+  // Friendlier location label once a spot is picked
+  if (state.destination) {
+    document.getElementById('loc-text').textContent = '📍 Near ' + state.destination.name;
+  }
+
+  // Discover the nearest 3 bodies of water for the rotating picker
+  try {
+    if (isSalt) {
+      const near = (state.nearby && state.nearby.length) ? state.nearby : await fetchNearbyCOOPS(state.lat, state.lon);
+      state.nearby = await summarizeNearbySalt(near);
+    } else {
+      state.nearby = (gaugeR && gaugeR.data && gaugeR.data.nearby3) ? gaugeR.data.nearby3 : [];
+    }
+  } catch(e) { state.nearby = []; }
+  state.nearbyIdx = 0;
+  startNearbyCycle();
+
+  // Schedule next refresh (replace any pending one so they don't stack up)
+  clearTimeout(_refreshTimer);
+  _refreshTimer = setTimeout(refreshAll, REFRESH_INTERVAL_MS);
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtYMD(d) {
+  return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0');
+}
+
+// ─── PWA INSTALL ─────────────────────────────────────────────────────────────
+let _installPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _installPrompt = e;
+  showInstallCard('native');
+});
+
+window.addEventListener('appinstalled', () => {
+  const card = document.getElementById('install-card');
+  if (card) card.classList.remove('visible');
+  _installPrompt = null;
+});
+
+function showInstallCard(type) {
+  const card = document.getElementById('install-card');
+  if (!card) return;
+  if (type === 'native') {
+    document.getElementById('install-btn').style.display = 'block';
+    document.getElementById('ios-steps').style.display = 'none';
+    document.getElementById('install-sub').textContent = 'Install Phish-N-Boat as an app — works offline, loads instantly, no app store needed.';
+    card.classList.add('visible');
+  } else if (type === 'ios') {
+    document.getElementById('install-btn').style.display = 'none';
+    document.getElementById('ios-steps').style.display = 'block';
+    document.getElementById('install-sub').textContent = 'Add Phish-N-Boat to your Home Screen in Safari:';
+    card.classList.add('visible');
+  }
+}
+
+function triggerInstall() {
+  if (_installPrompt) {
+    _installPrompt.prompt();
+    _installPrompt.userChoice.then(r => {
+      _installPrompt = null;
+      if (r.outcome === 'accepted') {
+        const card = document.getElementById('install-card');
+        if (card) card.classList.remove('visible');
+      }
+    });
+  }
+}
+
+function detectIOSInstallable() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone) showInstallCard('ios');
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+function init() {
+  populateStateSelects();
+  state.profile = loadProfile();
+  state.destination = loadDestination();
+  updateWaterTypeBtn();
+  if (!state.profile || !state.profile.setupDone) {
+    document.getElementById('onboarding').classList.add('open');
+    populateSpeciesChips('salt_inshore');
+  }
+  renderSetupTab();
+  renderFishingTab();
+  refreshAll();
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
-<!-- GitHub CI deploy test: Mon Jun  8 12:34:35 UTC 2026 -->
